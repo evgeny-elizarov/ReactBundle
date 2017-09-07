@@ -1,0 +1,9 @@
+{
+  "name": "andevis/RectBundle",
+  "homepage": "http://andevis.ee",
+  "autoload": {
+    "psr-0" : {
+      "Andevis\\RectBundle" : "src"
+    }
+  }
+}

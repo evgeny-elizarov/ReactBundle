@@ -1,0 +1,4 @@
+services:
+#    andevis_react.example:
+#        class: Andevis\ReactBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
