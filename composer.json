@@ -1,9 +1,9 @@
 {
-  "name": "andevis/RectBundle",
+  "name": "andevis/ReactBundle",
   "homepage": "http://andevis.ee",
   "autoload": {
     "psr-0" : {
-      "Andevis\\RectBundle" : "src"
+      "Andevis\\ReactBundle" : "src"
     }
   }
 }
