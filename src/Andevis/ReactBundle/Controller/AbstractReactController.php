@@ -58,6 +58,7 @@ abstract class AbstractReactController extends Controller{
         $locale = $request->getLocale();
         $serializer = $this->get('serializer');
         $tokenStorage = $this->container->get('security.token_storage');
+
         $user = $tokenStorage->getToken()->getUser();
         if($user == 'anon.'){
             $userObj = null;
@@ -69,7 +70,7 @@ abstract class AbstractReactController extends Controller{
                 'lastname' => $user->getLastname(),
                 'personalCode' => $user->getPersonalCode(),
                 'email' => $user->getEmail(),
-                'isActive' => $user->isActive()
+                'isActive' => $user->isActive(),
             );
         }
 
@@ -88,8 +89,9 @@ abstract class AbstractReactController extends Controller{
             }
         }
 
-
+        $session_cookie_lifetime = $this->container->getParameter('session.storage.options')['cookie_lifetime'];
         $defaultProps = array(
+            'sessionCookieLifetime' => $session_cookie_lifetime,
             'user' => $userObj,
             'userPermissions' => $userPermissions,
             'requestUri' => $request->getRequestUri(),
