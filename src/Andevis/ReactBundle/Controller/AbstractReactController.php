@@ -59,9 +59,10 @@ abstract class AbstractReactController extends Controller{
         $serializer = $this->get('serializer');
         $tokenStorage = $this->container->get('security.token_storage');
         $user = $tokenStorage->getToken()->getUser();
+	$userObj = null;
         if($user == 'anon.'){
             $userObj = null;
-        } else {
+        } else if($user instanceof User) {
             $userObj = array(
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
@@ -71,7 +72,19 @@ abstract class AbstractReactController extends Controller{
                 'email' => $user->getEmail(),
                 'isActive' => $user->isActive()
             );
-        }
+        } else if (is_string($user) && $user !== '' ) {
+	   $user = $this->getDoctrine()->getRepository('Andevis\AuthBundle\Entity\User')->findOneBy(
+            ['username' => $user]);
+           $userObj = array(
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'firstname' => $user->getFirstname(),
+                'lastname' => $user->getLastname(),
+                'personalCode' => $user->getPersonalCode(),
+                'email' => $user->getEmail(),
+                'isActive' => $user->isActive()
+           );
+	}
 
         $userPermissions = array();
         if($user instanceof User)
