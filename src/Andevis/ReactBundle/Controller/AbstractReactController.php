@@ -58,6 +58,7 @@ abstract class AbstractReactController extends Controller{
         $locale = $request->getLocale();
         $serializer = $this->get('serializer');
         $tokenStorage = $this->container->get('security.token_storage');
+
         $user = $tokenStorage->getToken()->getUser();
 	$userObj = null;
         if($user == 'anon.'){
@@ -70,7 +71,7 @@ abstract class AbstractReactController extends Controller{
                 'lastname' => $user->getLastname(),
                 'personalCode' => $user->getPersonalCode(),
                 'email' => $user->getEmail(),
-                'isActive' => $user->isActive()
+                'isActive' => $user->isActive(),
             );
         } else if (is_string($user) && $user !== '' ) {
 	   $user = $this->getDoctrine()->getRepository('Andevis\AuthBundle\Entity\User')->findOneBy(
@@ -101,8 +102,9 @@ abstract class AbstractReactController extends Controller{
             }
         }
 
-
+        $session_cookie_lifetime = $this->container->getParameter('session.storage.options')['cookie_lifetime'];
         $defaultProps = array(
+            'sessionCookieLifetime' => $session_cookie_lifetime,
             'user' => $userObj,
             'userPermissions' => $userPermissions,
             'requestUri' => $request->getRequestUri(),
