@@ -18,10 +18,6 @@
       "url":"git@git.mozart.andevis.ee:andevis/AuthReactBundle.git"
     }
   ],
-  "require": {
-    "andevis/graph-ql-bundle": "~1.0",
-    "andevis/auth-react-bundle": "~1.0"
-  },
   "autoload": {
     "psr-0" : {
       "Andevis\\ReactBundle" : "src"
