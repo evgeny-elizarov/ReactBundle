@@ -8,11 +8,21 @@
       "email": "evgeny@andevis.ee"
     }
   ],
+  "repositories": [
+    {
+      "type":"git",
+      "url":"git@git.mozart.andevis.ee:andevis/GraphQLBundle.git"
+    },
+    {
+      "type":"git",
+      "url":"git@git.mozart.andevis.ee:andevis/AuthReactBundle.git"
+    }
+  ],
   "require": {
     "doctrine/orm": ">=2.5",
     "symfony/symfony": ">=3.4",
     "andevis/graph-ql-bundle": ">=1.0",
-    "andevis/auth-bundle": ">=1.0"
+    "andevis/auth-react-bundle": ">=1.0"
   },
   "autoload": {
     "psr-0" : {
