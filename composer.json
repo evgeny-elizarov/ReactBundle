@@ -10,7 +10,7 @@
   ],
   "require": {
     "doctrine/orm": ">=2.5",
-    "symfony/symfony": ">=3.4.*"
+    "symfony/symfony": ">=3.4"
   },
   "autoload": {
     "psr-0" : {
