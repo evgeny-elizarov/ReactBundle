@@ -1,6 +1,17 @@
 {
-  "name": "andevis/ReactBundle",
+  "name": "andevis/react-bundle",
+  "description": "React UI for symfony",
   "homepage": "http://andevis.ee",
+  "authors": [
+    {
+      "name": "Evgeny Elizarov",
+      "email": "evgeny@andevis.ee"
+    }
+  ],
+  "require": {
+    "doctrine/orm": ">=2.5",
+    "symfony/symfony": ">=3.4.*"
+  },
   "autoload": {
     "psr-0" : {
       "Andevis\\ReactBundle" : "src"
