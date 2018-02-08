@@ -1,3 +1,7 @@
-andevis_react_homepage:
-    path:     /
-    defaults: { _controller: AndevisReactBundle:Default:index }
+# App routes
+react_app:
+    path:     /{path}
+    defaults: { _controller: AndevisReactBundle:App:index, path: null }
+    requirements:
+        path: "^(?!bundles)(.+)$"
+

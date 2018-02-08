@@ -1,0 +1,22 @@
+.form-input{
+
+  &.has-error{
+    input{
+      background: url(data:image/gif;base64,R0lGODlhCgAEAMIEAP9BGP6pl//Wy/7//P///////////////yH5BAEKAAQALAAAAAAKAAQAAAMROCOhK0oA0MIUMmTAZhsWBCYAOw==) repeat-x scroll 0 100% #fff;
+      display: inline-block;
+      padding-bottom: 1px;
+    }
+  }
+
+  &.has-warning{
+    border-color: #F68E38;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  }
+
+  &.has-warning{
+    border-color: #3DC94A;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  }
+}

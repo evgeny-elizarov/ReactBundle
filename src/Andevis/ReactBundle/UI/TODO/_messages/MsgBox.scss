@@ -1,0 +1,14 @@
+.MsgBox{
+  .icon{
+    background: url('../../images/msgbox_icons.png') no-repeat;
+    display: inline-block;
+    float: left;
+    margin-right: 5px;
+  }
+  .icon-critical-15{
+    width: 15px;
+    height: 15px;
+    background-position-x: -4px;
+    background-position-y: -4px;
+  }
+}

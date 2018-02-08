@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="{{ app.request.locale|split('_')[0] }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
+<meta name="theme-color" content="#000000">
+<title>{% block title %}Simple react application{% endblock %}</title>
+{% block styles %}
+{% endblock %}
+</head>
+<body>
+{% block root %}
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="root"></div>
+{% endblock %}
+<script type="application/javascript">
+    (function() {
+        window.AndevisReactBundle = {
+            viewsUserHandlers: {{ viewsUserHandlers|json_encode()|raw }},
+            viewsInitialState: {{ viewsInitialState|json_encode()|raw }}
+        };
+    })();
+</script>
+{% block scripts %}
+{% endblock %}
+</body>
+</html>

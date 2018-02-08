@@ -1,4 +1,90 @@
 services:
-#    andevis_react.example:
-#        class: Andevis\ReactBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+    # Auto-builder
+    Andevis\ReactBundle\EventSubscriber\BuildSubscriber:
+        arguments: ['@service_container']
+        tags: [kernel.event_subscriber]
+
+    Andevis\ReactBundle\GraphQL\Schema:
+        tags: [graphql.schema]
+
+    # Component translation service
+    andevis_react.ui_translator:
+        class: Andevis\ReactBundle\Service\UITranslator
+        arguments: ['@service_container','%locale%', '%locales%']
+        public: true
+
+    # Entity helper
+    andevis.react.entityHelper:
+        class: Andevis\ReactBundle\Service\EntityHelper
+        arguments: ['@service_container']
+        public: true
+
+    # React components
+#    Andevis\ReactBundle\UI\Components\:
+#        resource: '../../UI/Components/*'
+#        public: true
+#        tags: [react.components]
+
+    andevis_react.component_set:
+        class: Andevis\ReactBundle\UI\ComponentBase\ComponentSet
+        arguments: ['@service_container']
+        public: true
+
+    # Auto-register react components
+    Andevis\ReactBundle\UI\Components\:
+      resource: '../../UI/Components/*'
+      public: true
+      tags: [react.components]
+      arguments: ['@?']
+
+    # Auto-register react components
+    Andevis\ReactBundle\UI\Views\:
+      resource: '../../UI/Views/*'
+      public: true
+      tags: [react.components]
+      arguments: ['@?']
+
+
+#    Andevis\ReactBundle\UI\Components\View\View:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+#
+#    Andevis\ReactBundle\UI\Components\Form\Form:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+#
+#    Andevis\ReactBundle\UI\Components\Button\Button:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+#
+#    Andevis\ReactBundle\UI\Components\Select\Select:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+#
+#    Andevis\ReactBundle\UI\Components\Text\Text:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+#
+#    Andevis\ReactBundle\UI\Components\TextArea\TextArea:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+#
+#    Andevis\ReactBundle\UI\Components\AutoComplete\AutoComplete:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+
+#    Andevis\ReactBundle\UI\Components\DataGrid\DataGrid:
+#        public: true
+#        tags: [react.components]
+#        arguments: ['@?']
+#
+
+
+

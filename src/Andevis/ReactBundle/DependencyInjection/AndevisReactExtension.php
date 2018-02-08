@@ -2,6 +2,7 @@
 
 namespace Andevis\ReactBundle\DependencyInjection;
 
+use Andevis\ReactBundle\Loader\ComponentLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -25,4 +26,5 @@ class AndevisReactExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
+
 }
