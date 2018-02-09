@@ -363,7 +363,6 @@ export default class Component extends React.Component {
                 // 3. Call backend user event handler (if exists)
                 //
                 // console.log(this.getName(), eventName, "step 3 on:backend");
-
                 if(this.allowCallBackend(eventName)) {
 
 
@@ -450,7 +449,7 @@ export default class Component extends React.Component {
                         //console.log(this.getName(), eventName, "C");
                         // TODO: create system critial message
                         alert(e);
-                        //reject(e);
+                        reject(e);
                         return;
                     }
                     //console.log(this.getName(), eventName, "D");

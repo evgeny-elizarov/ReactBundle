@@ -307,7 +307,9 @@ class EntityHelper implements ContainerAwareInterface
                     switch ($entityMeta->fieldMappings[$fieldName]['type'])
                     {
                         case 'datetime':
-                            $value = DateTime::createFromFormat(self::DATE_TIME_FORMAT, $value);
+                            if(!is_null($value)){
+                                $value = DateTime::createFromFormat(self::DATE_TIME_FORMAT, $value);
+                            }
                             break;
                     }
 

@@ -248,24 +248,24 @@ export default class Menu extends Component {
     }
 
 
-    componentWillUpdate(nextProps, nextState) {
-        //     let formState = this.formApi.getFormState();
-        console.log('componentWillUpdate', this.getName(), nextProps, nextState);
-        //     if(nextProps.defaultValues !== this.props.defaultValues){
-        //
-        //         formState.values = nextProps.defaultValues;
-        //         this.values = nextProps.defaultValues;
-        //         console.log("!!!!", formState.values);
-        //         this.formApi.setFormState(formState);
-        //     } else {
-        //         const attrValues = this.getAttributeStateName('values');
-        //         const nextStateValues = (nextState.hasOwnProperty(attrValues)) ? nextState[attrValues] : null;
-        //         if(formState.values !== nextStateValues){
-        //             nextState[attrValues] = formState.values;
-        //         }
-        //     }
-        //
-    }
+    // componentWillUpdate(nextProps, nextState) {
+    //     //     let formState = this.formApi.getFormState();
+    //     console.log('componentWillUpdate', this.getName(), nextProps, nextState);
+    //     //     if(nextProps.defaultValues !== this.props.defaultValues){
+    //     //
+    //     //         formState.values = nextProps.defaultValues;
+    //     //         this.values = nextProps.defaultValues;
+    //     //         console.log("!!!!", formState.values);
+    //     //         this.formApi.setFormState(formState);
+    //     //     } else {
+    //     //         const attrValues = this.getAttributeStateName('values');
+    //     //         const nextStateValues = (nextState.hasOwnProperty(attrValues)) ? nextState[attrValues] : null;
+    //     //         if(formState.values !== nextStateValues){
+    //     //             nextState[attrValues] = formState.values;
+    //     //         }
+    //     //     }
+    //     //
+    // }
 
     render() {
         const className = classNames(

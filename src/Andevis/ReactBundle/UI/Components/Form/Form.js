@@ -124,7 +124,9 @@ export default class Form extends Component {
                            resolve();
                        });
                     }).catch((e) => {
-                        reject(e);
+                       this.setAttributeValue('isProcessing', false, () => {
+                           reject(e);
+                       });
                     });
            });
        });
@@ -186,7 +188,7 @@ export default class Form extends Component {
 
 
     prepareStateAfterEvent(nextState){
-        console.log("prepareStateAfterEvent", nextState);
+        // console.log("prepareStateAfterEvent", nextState);
         // Когда изменяется состояние (допустим после события на бэкенде)
         // устанавливаем значения для formApi
         if(this.formApi && nextState){

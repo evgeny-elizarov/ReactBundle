@@ -48,7 +48,7 @@ export default class Grid extends Component {
         this.setState(serverData, () => {
             (async () => {
                 await this.fireEvent('loadData');
-                console.log("jqxDataAdapterLoad", this.state);
+                // console.log("jqxDataAdapterLoad", this.state);
                 if (callback)
                     callback({
                         records: this.state.records,

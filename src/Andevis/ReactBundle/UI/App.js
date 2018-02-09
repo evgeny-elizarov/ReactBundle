@@ -8,7 +8,7 @@ import GraphQLClient from '@AndevisGraphQLBundle/UI/GraphQL';
 import { appState } from '@AndevisReactBundle/UI/Stores';
 import { getLocaleMessages } from './Translation';
 import { CookiesProvider } from 'react-cookie';
-import UserProvider from "@AndevisAuthBundle/UI/Views/UserProvider/UserProvider";
+import UserProvider from "@AndevisAuthReactBundle/UI/Views/UserProvider/UserProvider";
 //import registerServiceWorker from './Services/registerServiceWorker';
 
 
