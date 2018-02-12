@@ -172,15 +172,11 @@ class EntityHelper implements ContainerAwareInterface
     /**
      * Denormalize entity
      * @param $entityClass
-     * @param array $attributes
-     * @return object
+     * @param object $entityObject
+     * @return array
      */
-    public function denormalize($entityClass, array $attributes){
-        $context = [];
-        if(sizeof($attributes) > 0){
-            $context['attributes'] = $attributes;
-        }
-        return $this->serializer->denormalize($attributes, $entityClass, $context);
+    public function denormalize($entityClass, $entityObject){
+        return $this->serializer->denormalize($entityObject, $entityClass);
     }
 
     /**
@@ -200,16 +196,18 @@ class EntityHelper implements ContainerAwareInterface
     /**
      * @param string $entityClass
      * @param array $entityData
+     * @return null|object
      */
     function saveEntity(string $entityClass, array $entityData)
     {
         // Update entity
         $needFlush = false;
-        $this->updateEntity($entityClass, $entityData, $needFlush, true);
+        $dbEntity = $this->updateEntity($entityClass, $entityData, $needFlush, true);
         if($needFlush){
             $em = $this->getEntityManager();
             $em->flush();
         }
+        return $dbEntity;
     }
 
     /**
