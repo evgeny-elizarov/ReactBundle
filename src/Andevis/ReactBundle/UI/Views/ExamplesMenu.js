@@ -4,6 +4,7 @@ import ExampleForm from "@AndevisReactBundle/UI/Views/ExampleForm/ExampleForm";
 import ExampleGrid from "@AndevisReactBundle/UI/Views/ExampleGrid/ExampleGrid";
 import ExampleComponents from "@AndevisReactBundle/UI/Views/ExampleComponents/ExampleComponents";
 import Menu from "@AndevisReactBundle/UI/Components/Menu/Menu";
+import ExampleComponentsArray from "@AndevisReactBundle/UI/Views/ExampleComponentsArray/ExampleComponentsArray";
 
 export default (props) => (
     <div className="examples">
@@ -24,6 +25,10 @@ export default (props) => (
                             {
                                 label: 'Custom component',
                                 link: '/react/example/component',
+                            },
+                            {
+                                label: 'Component array',
+                                link: '/react/example/component-array',
                             }
                         ]}
                     />
@@ -35,6 +40,7 @@ export default (props) => (
                 <Route path='/react/example/form' component={ExampleForm}/>
                 <Route path='/react/example/grid' component={ExampleGrid}/>
                 <Route path='/react/example/component' component={ExampleComponents}/>
+                <Route path='/react/example/component-array' component={ExampleComponentsArray}/>
             </Switch>
         </div>
     </div>

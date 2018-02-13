@@ -45,7 +45,7 @@ export default class Button extends Component
     @autobind
     click(e) {
         this.setAttributeValue('isProcessing', true, ()=> {
-            this.fireEvent('click').then(() => {
+            this.fireEvent('click').finally(() => {
                 if(!this._willUnmount){
                     this.setAttributeValue('isProcessing', false);
                 }

@@ -28,16 +28,19 @@ class ExecutionContext
 
     private $container;
 
-    private $componentsProps = [];
-
-    private $componentsState = [];
+    /** @var array  */
+    private $componentsStack = [];
+    /** @var array  */
+    private $componentsIdByName = [];
+    /** @var array  */
+    private $componentsById = [];
 
     private $componentMountStack = [];
 
-    /** @var array  */
-    private $componentsIdByName = [];
 
-    private $componentsById = [];
+    private $componentsProps = [];
+    private $componentsState = [];
+
 
     private $updatedComponentState = [];
 
@@ -88,11 +91,7 @@ class ExecutionContext
         {
             $methodComponent = $this->view;
         } else {
-            $methodComponent = $this->getComponentByName($id['componentName']);
-//            // Init component
-//            /** @var Component $component */
-//            $componentClass = $this->componentSet->getComponentClass($id['componentClass']);
-//            $component = new $componentClass($id['componentName'], $this, $this->container);
+            $methodComponent = $this->getComponentById($componentId);
         }
 
         $callbackMethod = [$methodComponent, $methodName];
@@ -136,13 +135,11 @@ class ExecutionContext
         $viewClass = $this->componentSet->getComponentClass($id['viewClass']);
         $viewName = self::getShortClassName($viewClass);
 
-        // Register component
-        //$viewId = $id['viewClass'].":".$id['viewClass'].":".$viewName;
-        // Mount components
+        // Register components
         if(is_array($args['event']['components'])) {
             foreach ($args['event']['components'] as $componentData) {
                 // Mount component
-                $this->mountComponent($componentData['id']);
+                $this->registerComponent($componentData['id']);
             }
         }
 
@@ -153,10 +150,11 @@ class ExecutionContext
         // 1. Before calls event set component state and props from frontend
         //
         if(is_array($args['event']['components'])) {
-            foreach ($args['event']['components'] as $componentData){
-                $componentParsedId = ExecutionContext::parseComponentId($componentData['id']);
+            foreach ($args['event']['components'] as $componentData)
+            {
+                //$componentParsedId = ExecutionContext::parseComponentId($componentData['id']);
 
-                $component = $this->getComponentByName($componentParsedId['componentName']);
+                $component = $this->getComponentById($componentData['id']);
 
                 // Set component props
                 if(isset($componentData['props']))
@@ -179,47 +177,8 @@ class ExecutionContext
                     }
                     $this->setComponentState($component, $componentNewState, true);
                 }
-
-                // Unmount component
-//                if(isset($componentUpdate['status']) && $componentUpdate['status'] == COMPONENT_UNMOUNTED)
-//                {
-//                    $this->getContext()->unmountComponent($componentUpdate['id']);
-//                }
             }
         }
-
-//        $this->loadViewState($viewId);
-
-
-//
-//        if($id['viewClass'] == $id['componentClass'])
-//        {
-//            $eventComponent = $this->view;
-//        } else {
-//            $eventComponent = $this->getComponentByName($id['componentName']);
-////            // Init component
-////            /** @var Component $component */
-////            $componentClass = $this->componentSet->getComponentClass($id['componentClass']);
-////            $component = new $componentClass($id['componentName'], $this, $this->container);
-//        }
-//
-//        $eventComponentCallbackMethod = [$eventComponent, $resolveConfig->getMethodName()];
-//
-//        // Remove ID argument
-//        unset($args['id']);
-//        if(is_callable($eventComponentCallbackMethod)){
-//            $return = call_user_func($eventComponentCallbackMethod, $args);
-//            //$this->saveState();
-//            return $return;
-//        }
-//        else {
-//            throw new \Exception(
-//                sprintf('Method `%s` not implemented in component `%s`',
-//                    $resolveConfig->getMethodName(),
-//                    get_class($eventComponent)
-//                )
-//            );
-//        }
         return $this->executeComponentMethod($componentId, $resolveConfig->getMethodName(), [$args]);
     }
 
@@ -323,7 +282,7 @@ class ExecutionContext
     function loadViewState(string $viewId){
         $session = $this->container->get('session');
 
-        $this->componentsIdByName = [];
+        $this->components = [];
 
         // Load props
         $storeKey = 'componentsProps:'.$viewId;
@@ -332,7 +291,8 @@ class ExecutionContext
             $this->componentsProps = $componentsProps;
             foreach ($this->componentsProps as $id => $state){
                 $parsedId = self::parseComponentId($id);
-                $this->componentsIdByName[$parsedId['componentName']] = $id;
+                $component = $this->getComponentByName($parsedId['componentName']);
+                $this->components[$parsedId['componentName']] = $component;
                 $this->componentsById[$id] = $this->getComponentByName($parsedId['componentName']);
             }
         }
@@ -369,63 +329,82 @@ class ExecutionContext
     }
 
     /**
-     * Mount component
+     * Register component
      * @param $componentId
-     * @return bool
+     * @return Component
      * @throws \Exception
      */
-    function mountComponent($componentId)
+    function registerComponent($componentId)
     {
-        $id = self::parseComponentId($componentId);
-        if(isset($this->componentsIdByName[$id['componentName']])){
-            throw new \Exception('Component with name `'. $id['componentName'] . '` already mounted in view `'.$this->getView()->getName().'`!');
+        if(in_array($componentId, $this->componentsStack)){
+            throw new \Exception(sprintf(
+                'Component with ID `%s` already registered in view `%s`!', $componentId, $this->getView()->getName()));
         }
-        // Fill mount stack
-        array_push($this->componentMountStack, $componentId);
+        // Fill components stack
+        array_push($this->componentsStack, $componentId);
 
-        // Register new component
-        $this->componentsIdByName[$id['componentName']] = $componentId;
+        $idParts = self::parseComponentId($componentId);
+        if(is_numeric($idParts['componentIndex'])) {
+            if(!isset($this->componentsIdByName[$idParts['componentName']])) {
+                $this->componentsIdByName[$idParts['componentName']] = [];
+            }
+            $this->componentsIdByName[$idParts['componentName']][$idParts['componentIndex']] = $componentId;
+        } else {
+            $this->componentsIdByName[$idParts['componentName']] = $componentId;
+        }
 
-//        if(
-//            !isset($this->componentsIdByName[$id['componentName']]) ||
-//            $this->componentsIdByName[$id['componentName']] !== $componentId
-//        ) {
-//            // Register new component
-//            $this->componentsIdByName[$id['componentName']] = $componentId;
-//
-//            // Reset state
-//            $this->componentsState[$componentId] = [];
-//        }
+        $componentSet = $this->container->get("andevis_react.component_set");
+        // Construct component
+        $idParts = self::parseComponentId($componentId);
+        $class = $componentSet->getComponentClass($idParts['componentClass']);
+        $this->componentsById[$componentId] = new $class(
+            $idParts['componentName'],
+            $idParts['componentIndex'],
+            $this,
+            $this->container
+        );
+        return $this->componentsById[$componentId];
     }
 
     /**
-     * Unmount component
+     * Un register component
      * @param $componentId
-     * @return bool
+     * @throws \Exception
      */
-    function unmountComponent($componentId)
+    function unRegisterComponent($componentId)
     {
-        $id = self::parseComponentId($componentId);
-        if(isset($this->componentsIdByName[$id['componentName']])) {
-            unset($this->componentsIdByName[$id['componentName']]);
-            unset($this->componentsState[$id['componentName']]);
+        if(!in_array($componentId, $this->componentsStack)){
+            throw new \Exception(sprintf(
+                'Component with ID `%s` not registered in view `%s`!', $componentId, $this->getView()->getName()));
         }
-        $i = array_search($id['componentName'], $this->componentMountStack);
-        array_slice($this->componentMountStack, $i, 1);
+        $i = array_search($componentId, $this->componentsStack);
+        array_slice($this->componentsStack, $i, 1);
+
+        $idParts = self::parseComponentId($componentId);
+        if(is_numeric($idParts['componentIndex'])) {
+            $i = array_search($componentId, $this->componentsIdByName[$idParts['componentName']]);
+            unset($this->componentsIdByName[$idParts['componentName']][$i]);
+        } else {
+            unset($this->componentsIdByName[$idParts['componentName']]);
+        }
+
+        unset($this->componentsById[$componentId]);
     }
+
 
     /**
      * Get mounted components
      */
-    function getMountedComponents()
-    {
-        $components = [];
-        foreach ($this->componentMountStack as $id)
+    /*
+        function getMountedComponents()
         {
-            array_push($components, $this->componentsById[$id]);
-        }
-        return $components;
-    }
+            $components = [];
+            foreach ($this->componentMountStack as $id)
+            {
+                array_push($components, $this->componentsById[$id]);
+            }
+            return $components;
+        }*/
 
 //    function loadComponentsState(){
 //        $session = $this->container->get('session');
@@ -444,25 +423,29 @@ class ExecutionContext
     /**
      * Component by name
      * @param $componentName
-     * @return Component
+     * @return array|Component
+     * @throws \Exception
      */
     function getComponentByName($componentName){
 
         if(!isset($this->componentsIdByName[$componentName])){
-            throw new Exception(sprintf('Component with name `%s` not found!', $componentName));
+            throw new Exception(sprintf('Component with name `%s` not registered!', $componentName));
         }
 
-        $componentId = $this->componentsIdByName[$componentName];
+        if(is_array($this->componentsIdByName[$componentName]))
+        {
+            $components = [];
+            foreach ($this->componentsIdByName[$componentName] as $id)
+            {
+                $components[] = $this->componentsById[$id];
+            }
 
-        if(!isset($this->componentsById[$componentId])){
-            // Construct component
-            $id = self::parseComponentId($componentId);
-            $componentSet = $this->container->get("andevis_react.component_set");
-            $class = $componentSet->getComponentClass($id['componentClass']);
-            $this->componentsById[$componentId] = new $class($id['componentName'], $this, $this->container);
+            return $components;
+
+        } else {
+            $id = $this->componentsIdByName[$componentName];
+            return $this->componentsById[$id];
         }
-
-        return $this->componentsById[$componentId];
     }
 
     /**
@@ -472,8 +455,10 @@ class ExecutionContext
      */
     function getComponentById(string $componentId)
     {
-        $id = self::parseComponentId($componentId);
-        return $this->getComponentByName($id['componentName']);
+        if(!isset($this->componentsById[$componentId])){
+            throw new Exception(sprintf('Component with ID `%s` not registered!', $componentId));
+        }
+        return $this->componentsById[$componentId];
     }
 
     /**

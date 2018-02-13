@@ -32,6 +32,9 @@ abstract class Component implements ComponentInterface
     /** @var string */
     protected $name;
 
+    /** @var integer */
+    protected $index;
+
     /** @var ExecutionContext */
     protected $context;
 
@@ -44,12 +47,14 @@ abstract class Component implements ComponentInterface
     /**
      * Component constructor.
      * @param $name
+     * @param $index
      * @param $context
      * @param $container
      */
-    function __construct($name, $context, $container)
+    function __construct($name, ?int $index, $context, $container)
     {
         $this->name = $name;
+        $this->index = $index;
         $this->context = $context;
         $this->container = $container;
     }
@@ -64,7 +69,8 @@ abstract class Component implements ComponentInterface
         return self::getComponentId(
             get_class($this->context->getView()),
             get_class($this),
-            $this->getName()
+            $this->getName(),
+            $this->getIndex()
         );
     }
 
@@ -84,8 +90,15 @@ abstract class Component implements ComponentInterface
         if (substr($className, -9) == 'Component') {
             $className = substr($className, 0, -9);
         }
-
         return $className;
+    }
+
+    /**
+     * Get index
+     * @return int|null
+     */
+    function getIndex(){
+        return $this->index;
     }
 
     /**

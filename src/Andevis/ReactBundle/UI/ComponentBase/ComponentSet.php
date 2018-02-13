@@ -89,12 +89,14 @@ class ComponentSet
         foreach ($this->getBundleComponentClasses() as $componentClass) {
             if (is_subclass_of($componentClass, View::class)) {
 
-                // Get view ID
-                $viewClass = View::getComponentClassName($componentClass);
-                $viewId = $viewClass . ":" . $viewClass . ":" . View::getShortClassName($componentClass);
+                // Get view global name
+                $viewGlobalName = View::getComponentGlobalName(
+                    $componentClass,
+                    $componentClass,
+                    View::getShortClassName($componentClass));
 
-                if (!isset($viewsUserHandlers[$viewId]))
-                    $viewsUserHandlers[$viewId] = [];
+                if (!isset($viewsUserHandlers[$viewGlobalName]))
+                    $viewsUserHandlers[$viewGlobalName] = [];
 
                 // Get all user handlers
                 $class = new ReflectionClass($componentClass);
@@ -102,7 +104,7 @@ class ComponentSet
                 foreach ($methods as $method) {
                     $parts = explode("_", $method->getName());
                     if (sizeof($parts) == 2) {
-                        $viewsUserHandlers[$viewId][] = $method->getName();
+                        $viewsUserHandlers[$viewGlobalName][] = $method->getName();
                     }
                 }
             }

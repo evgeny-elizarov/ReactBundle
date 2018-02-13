@@ -19,10 +19,16 @@ export default class View extends Component
         super(props, context);
 
         // Mounted components by name
-        this.componentsByName = {};
+        this.components = {};
+
+        // Components by Id
+        this.componentsById = [];
 
         // Component mount stack
         this.componentMountStack = [];
+
+
+
 
         // Next event components update
         // TODO: remove
@@ -51,148 +57,6 @@ export default class View extends Component
         };
     }
 
-    // /**
-    //  * Resolve config
-    //  * @returns {[null,null]}
-    //  */
-    // resolveConfig(){
-    //     let config = super.resolveConfig();
-    //     config.push(
-    //         new MutationResolveConfig(
-    //             'reactOnInit',
-    //             'init',
-    //             'components: [ComponentInput!]',
-    //             `componentsUpdateState {
-    //                 componentId,
-    //                 updateState {
-    //                     name, value
-    //                 }
-    //             }`)
-    //     );
-    //     return config;
-    // }
-
-
-    // componentDidMount(){
-    //     //super.componentDidMount();
-    //     // Load object
-    //     if(!this.loaded) this.load();
-    // }
-    //
-    // /**
-    //  * Load all components in stack
-    //  */
-    // load(){
-    //     this.fireEvent('load', null, true);
-    // }
-
-    // componentDidUpdate(){
-    //     console.log("componentDidUpdate", this.initialized);
-    //     // Initialize object
-    //     if(!this.initialized){
-    //         this.init();
-    //     }
-    // }
-
-    //
-    // /**
-    //  * TODO: remove
-    //  * Initialize view
-    //  */
-    // init() {
-    //     // Prepare registered components data
-    //     let components = [];
-    //     Object.values(this.componentsByName).forEach((component) => {
-    //         components.push({
-    //             componentId: component.getId(),
-    //             status: 'MOUNTED',
-    //             updateState: component.getStateAttributes()
-    //         });
-    //     });
-    //     // Init view on backend
-    //     return new Promise((resolve, reject) => {
-    //
-    //         (async () => {
-    //
-    //             //
-    //             // 1. Call frontend inti handlers for all components
-    //             //
-    //             (async () => {
-    //                 await Promise.all(Object.values(this.componentsByName).map(async (component) => {
-    //                     let viewUserHandlerName = component.getName() + '_init';
-    //                     if (typeof this.getView()[viewUserHandlerName] === 'function') {
-    //                         await this.getView()[viewUserHandlerName].call(this, this);
-    //                     }
-    //                 }));
-    //             })();
-    //
-    //             //
-    //             // 2. Call view backend init
-    //             //
-    //
-    //             // Search backend init handlers
-    //             let gotOnOrMoreInit = false;
-    //             let backendUserHandlers = this.getBackendUserHandlers();
-    //             for(let i in backendUserHandlers){
-    //                 if(backendUserHandlers.hasOwnProperty(i)){
-    //                     let userHandler = backendUserHandlers[i];
-    //                     if(userHandler.split('_')[1] === 'init'){
-    //                         gotOnOrMoreInit = true;
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    //
-    //             if(gotOnOrMoreInit)
-    //             {
-    //                 const viewInitStatus = await this.backend.reactOnInit({ components: components });
-    //                 //
-    //                 // 3. Update state after all events
-    //                 //
-    //                 // Prepare new component state from backend
-    //                 let componentsNewState = {};
-    //                 viewInitStatus.componentsUpdateState.forEach((componentUpdateState) => {
-    //
-    //                     const componentName = componentUpdateState.componentId.split(":")[2];
-    //
-    //                     // Prepare new state object
-    //                     componentsNewState[componentName] = {};
-    //                     // componentsNewState[componentName] = {};
-    //                     componentUpdateState.updateState.forEach((stateAttribute) => {
-    //                         componentsNewState[componentName][stateAttribute.name] = JSON.parse(stateAttribute.value);
-    //                     });
-    //                 });
-    //
-    //                 // Initialize all components
-    //                 Object.values(this.componentsByName).forEach((component) => {
-    //                     if (componentsNewState[component.getName()] === undefined) {
-    //                         componentsNewState[component.getName()] = {};
-    //                     }
-    //                     // Set initialization flag
-    //                     Object.assign(componentsNewState[component.getName()], {
-    //                         _propertyInitialized: true
-    //                     });
-    //
-    //                     // Update component state
-    //                     component.setState(componentsNewState[component.getName()], null, true);
-    //                 });
-    //             } else {
-    //                 // Initialize all components
-    //                 Object.values(this.componentsByName).forEach((component) => {
-    //                     component.setState({
-    //                         _propertyInitialized: true
-    //                     }, null, true);
-    //                 });
-    //             }
-    //
-    //             resolve();
-    //         })();
-    //
-    //     });
-    //
-    // }
-
-
     /**
      * Check if user handler exists on backend
      * @param component
@@ -204,9 +68,9 @@ export default class View extends Component
             throw new Error('viewsConfig not set in view context');
         }
         const userHandlerName = component.getName()+'_on' + ucfirst(eventName);
-        if(this.context.viewsConfig[this.getId()] !== undefined){
+        if(this.context.viewsConfig[this.getGlobalName()] !== undefined){
 
-            return this.context.viewsConfig[this.getId()].includes(userHandlerName);
+            return this.context.viewsConfig[this.getGlobalName()].includes(userHandlerName);
         }
     }
 
@@ -215,31 +79,45 @@ export default class View extends Component
      * @returns {*}
      */
     getBackendUserHandlers(){
-        if(this.context.viewsConfig[this.getId()] !== undefined){
-            return this.context.viewsConfig[this.getId()];
+        if(this.context.viewsConfig[this.getGlobalName()] !== undefined){
+            return this.context.viewsConfig[this.getGlobalName()];
         }
     }
-
 
     /**
      * Get component by id
      */
     getComponentById(id) {
-        const componentName = id.split(":")[2];
-        if(!this.componentsByName[componentName]){
-            throw new ComponentNotFoundException('Component with id `'+id+'` not found');
+        if(!this.componentsById.hasOwnProperty(id)){
+            throw new ComponentNotFoundException('Component with id `'+id+'` not mounted');
         }
-        return this.componentsByName[componentName];
+        return this.componentsById[id];
+        // const idParts = id.split(":");
+        // const componentName = idParts[2];
+        // if(!this.components[componentName]) {
+        //     throw new ComponentNotFoundException('Component with id `'+id+'` not found');
+        // }
+        //
+        // // Get index if exists
+        // let index = null;
+        // if(idParts.length >= 4) {
+        //     index = parseInt(idParts[3], 10);
+        // }
+        //
+        // if(!this.components[componentName][index]) {
+        //     throw new ComponentNotFoundException('Component with id `'+id+'` not found');
+        // }
+        // return Number.isInteger(index) ? this.components[componentName][index] : this.components[componentName];
     }
 
     /**
      * Get component by name
      */
     getComponentByName(name) {
-        if(!this.componentsByName[name]){
+        if(!this.components[name]){
             throw new Error('Component with name `'+name +'` not found ');
         }
-        return this.componentsByName[name];
+        return this.components[name];
     }
 
     // /**
@@ -286,20 +164,39 @@ export default class View extends Component
      * @param component
      */
     mountComponent(component){
-        // console.log("!mountComponent", this.getId(), component.getName());
-        // Check if component already registered
-        if(this.componentsByName[component.getName()]){
-            throw new Error('Component with name `'+ component.getName() + '` already mounted in view `'+this.constructor.name+'`!');
+
+        if(this.componentsById.hasOwnProperty(component.getId())){
+            throw new Error('Component with ID `'+component.getId()+'` is already registered!');
         }
+        // Add component to mount stack
+        this.componentMountStack.push(component);
 
-        // Add component to mount state
-        this.componentMountStack.push(component.getName());
+        // Add components to register by ID
+        this.componentsById[component.getId()] = component;
 
-        // // Set component status update
-        // this.setComponentStatusUpdate(component, 'MOUNTED');
-
-        // Add component to register
-        this.componentsByName[component.getName()] = component;
+        // Add component to register by Name
+        if(Number.isInteger(component.index)) {
+            if (this.components.hasOwnProperty(component.getName())) {
+                if (!Array.isArray(this.components[component.getName()])) {
+                    throw new Error('Component with name `' + component.getName() + '` already mounted in view without index. Rename this component or add index to component with same name.');
+                }
+                if (typeof this.components[component.getName()][component.index] !== 'undefined') {
+                    throw new Error('Component with name `' + component.getName() + '` and index `' + component.index + '` already mounted');
+                }
+            } else {
+                // ... create component array
+                this.components[component.getName()] = [];
+            }
+            this.components[component.getName()][component.index] = component;
+        } else {
+            if (this.components.hasOwnProperty(component.getName())) {
+                if(Array.isArray(this.components[component.getName()])){
+                    throw new Error('Component with name `'+ component.getName() + '` already mounted in view with index. Add index to this component or rename component with same name.');
+                }
+                throw new Error('Component with name `' + component.getName() + '` already mounted. Rename component or add index to both components with same name.');
+            }
+            this.components[component.getName()] = component;
+        }
     }
 
     /**
@@ -307,19 +204,27 @@ export default class View extends Component
      * @param component
      */
     unmountComponent(component){
-        if(!this.componentsByName[component.getName()]){
+        if(!this.componentsById.hasOwnProperty(component.getId())){
+            throw new Error('Component with ID `'+ component.getName() + '` not registered in view `'+this.constructor.name+'`!');
+        }
+
+        if(!this.components.hasOwnProperty(component.getName())){
             throw new Error('Component with name `'+ component.getName() + '` not registered in view `'+this.constructor.name+'`!');
         }
 
         // Remove component from mount stack
-        const i = this.componentMountStack.indexOf(component.getName());
+        const i = this.componentMountStack.indexOf(component);
         this.componentMountStack.splice(i, 1);
 
-        // // Set component status update
-        // this.setComponentStatusUpdate(component, 'UNMOUNTED');
+        // Remove from register by ID
+        delete this.componentsById[component.getId()];
 
-        // Remove component from register
-        delete this.componentsByName[component.getName()];
+        // Remove component from register by Name
+        if(Number.isInteger(component.index)){
+            delete this.components[component.getName()][component.index];
+        } else {
+            delete this.components[component.getName()];
+        }
     }
 
 

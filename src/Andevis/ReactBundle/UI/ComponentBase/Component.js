@@ -10,7 +10,8 @@ import {ComponentDataToJsonString} from "../Helpers/base";
 export default class Component extends React.Component {
 
     static propTypes = {
-        name: PropTypes.string
+        name: PropTypes.string,
+        index: PropTypes.number
     };
     static defaultProps = {};
     static contextTypes = {
@@ -25,6 +26,7 @@ export default class Component extends React.Component {
 
         // Name variable
         this.name = null;
+        this.index = this.props.index;
         this._willUnmount = false;
 
         // Load initial state
@@ -50,6 +52,89 @@ export default class Component extends React.Component {
                 };
             },
         });
+    }
+
+    getIndex(){
+        return this.index;
+    }
+
+    getGlobalName() {
+        return this.getView().getClassName() + ':' + this.getClassName() + ':' + this.getName();
+    }
+
+    /**
+     * Get id
+     * @returns {string}
+     */
+    getId() {
+        return (Number.isInteger(this.getIndex())) ? this.getGlobalName() + ':' + this.getIndex() : this.getGlobalName();
+    }
+
+    /**
+     * Get auto name
+     * @returns {string}
+     */
+    getAutoName() {
+        let className = this.constructor.name;
+        if (className.substr(-9) === 'Component') {
+            className = className.substr(0, className.length - 9);
+        }
+        // Generate name Class name + number
+        let name = className;
+        let n = 1;
+        // TODO: add exception when limit
+        while (n < 256) {
+            name = className + n.toString();
+            if (!this.getView().components.hasOwnProperty(name)) {
+                break;
+            }
+            n++;
+        }
+
+        return name;
+    }
+
+    /**
+     * Get name
+     * @returns {string}
+     */
+    getName() {
+        if (this.props.name) return this.props.name;
+        if (this.name) return this.name;
+        this.name = this.getAutoName();
+        return this.name;
+    }
+
+    /**
+     * Get bundle name
+     * @returns {string}
+     */
+    getBundleName() {
+
+        // // TODO: можно упростить эту задачу таким орбазом - либо брать маппинг из webpack @BlaBlaBla и есть название бандла
+        // // TODO: либо ложить в паку бандла файл типа bundleInfo.js который будет автоматически подключаться ко всем компонентам этого бандла
+        // const name = (this.prototype) ? this.prototype.name : this;
+        // console.log(this);
+        throw new Error('getBundleName not implemented!. Add function getBundleName to component `' + this.getName() + '` !');
+        // if (!this.context.bundleName)
+        //     throw new Error('Bundle context not set for this component. Wrap the component in a Bundle tag');
+        // return this.context.bundleName;
+    }
+
+    /**
+     * Get short class name
+     * @returns {string}
+     */
+    getShortClassName() {
+        return this.constructor.name;
+    }
+
+    /**
+     * Get class name
+     * @returns {string}
+     */
+    getClassName() {
+        return this.getBundleName() + this.getShortClassName();
     }
 
     /**
@@ -133,80 +218,7 @@ export default class Component extends React.Component {
         this.setAttributeValue('hasFocus', value);
     }
 
-    /**
-     * Get id
-     * @returns {string}
-     */
-    getId() {
-        return this.getView().getClassName() + ':' + this.getClassName() + ':' + this.getName();
-    }
 
-    /**
-     * Get auto name
-     * @returns {string}
-     */
-    getAutoName() {
-        let className = this.constructor.name;
-        if (className.substr(-9) === 'Component') {
-            className = className.substr(0, className.length - 9);
-        }
-        // Generate name Class name + number
-        let name = className;
-        let n = 1;
-        // TODO: add exception when limit
-        while (n < 256) {
-            name = className + n.toString();
-            if (!this.getView().componentsByName.hasOwnProperty(name)) {
-                break;
-            }
-            n++;
-        }
-
-        return name;
-    }
-
-    /**
-     * Get name
-     * @returns {string}
-     */
-    getName() {
-        if (this.props.name) return this.props.name;
-        if (this.name) return this.name;
-        this.name = this.getAutoName();
-        return this.name;
-    }
-
-    /**
-     * Get bundle name
-     * @returns {string}
-     */
-    getBundleName() {
-
-        // // TODO: можно упростить эту задачу таким орбазом - либо брать маппинг из webpack @BlaBlaBla и есть название бандла
-        // // TODO: либо ложить в паку бандла файл типа bundleInfo.js который будет автоматически подключаться ко всем компонентам этого бандла
-        // const name = (this.prototype) ? this.prototype.name : this;
-        // console.log(this);
-        throw new Error('getBundleName not implemented!. Add function getBundleName to component `' + this.getName() + '` !');
-        // if (!this.context.bundleName)
-        //     throw new Error('Bundle context not set for this component. Wrap the component in a Bundle tag');
-        // return this.context.bundleName;
-    }
-
-    /**
-     * Get short class name
-     * @returns {string}
-     */
-    getShortClassName() {
-        return this.constructor.name;
-    }
-
-    /**
-     * Get class name
-     * @returns {string}
-     */
-    getClassName() {
-        return this.getBundleName() + this.getShortClassName();
-    }
 
     /**
      * Get schema name
@@ -329,7 +341,7 @@ export default class Component extends React.Component {
                 //
                 // 1. Call frontend before user event handler
                 //
-                // console.log(this.getName(), eventName, "step 1 before");
+                console.log(this.getId(), this.getName(), eventName, "step 1 before");
                 const viewBeforeUserHandlerName = this.getName() + '_before' + ucfirst(eventName);
                 if (typeof this.getView()[viewBeforeUserHandlerName] === 'function') {
                     arguments[0] = this;
@@ -395,9 +407,7 @@ export default class Component extends React.Component {
 
 
 
-                        const componentName = view.componentMountStack[i];
-                        const component = view.getComponentByName(componentName);
-
+                        const component = view.componentMountStack[i];
 
                         let componentData = {
                             id: component.getId()

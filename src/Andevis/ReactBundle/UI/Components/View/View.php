@@ -26,6 +26,22 @@ use Youshido\GraphQL\Type\Scalar\StringType;
 
 class View extends Component implements ViewInterface
 {
+    /**
+     * Component constructor.
+     * @param $name
+     * @param $index
+     * @param $context
+     * @param $container
+     * @throws \Exception
+     */
+    function __construct($name, ?int $index, $context, $container)
+    {
+        if(!is_null($index)){
+            throw new \Exception('View can not have an index');
+        }
+        parent::__construct($name, $index, $context, $container);
+    }
+
 //    static function resolveConfig()
 //    {
 //        $config = parent::resolveConfig();
@@ -85,7 +101,7 @@ class View extends Component implements ViewInterface
                 $id = self::parseComponentId($componentData['componentId']);
 
                 // Register component
-                $this->getContext()->mountComponent($componentData['componentId']);
+                $this->getContext()->registerComponent($componentData['componentId']);
 
                 // Get component
                 $component = $this->getContext()->getComponentByName($id['componentName']);

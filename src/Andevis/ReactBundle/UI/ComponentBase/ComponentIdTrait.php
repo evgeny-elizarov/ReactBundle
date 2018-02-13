@@ -19,14 +19,15 @@ trait ComponentIdTrait
      */
     static function parseComponentId($componentId){
         $parts = explode(":", $componentId);
-        if(sizeof($parts) !== 3)
+        if(sizeof($parts) < 3 || sizeof($parts) > 4)
             throw new \Exception(sprintf('Bad componentId `%s` format!', $componentId));
 
-        list($viewClass, $componentClass, $componentName) = explode(":", $componentId);
+        $idParts = explode(":", $componentId);
         return [
-            'viewClass' => $viewClass,
-            'componentClass' => $componentClass,
-            'componentName' => $componentName,
+            'viewClass' => $idParts[0],
+            'componentClass' => $idParts[1],
+            'componentName' => $idParts[2],
+            'componentIndex' => isset($idParts[3]) ? intval($idParts[3]) : null
         ];
     }
 
@@ -89,16 +90,30 @@ trait ComponentIdTrait
     }
 
     /**
-     * Get view id
+     * Get component global name
      * @param $viewClassName
      * @param $componentClassName
      * @param $componentName
      * @return string
      */
-    static function getComponentId($viewClassName, $componentClassName, $componentName){
+    static function getComponentGlobalName($viewClassName, $componentClassName, $componentName){
         $viewClass = self::getComponentClassName($viewClassName);
         $componentClass = self::getComponentClassName($componentClassName);
         return $viewClass.":".$componentClass.":".$componentName;
+    }
+
+    /**
+     * Get view id
+     * @param $viewClassName
+     * @param $componentClassName
+     * @param $componentName
+     * @param int|null $componentIndex
+     * @return string
+     */
+    static function getComponentId($viewClassName, $componentClassName, $componentName, ?int $componentIndex){
+        return ($componentIndex) ?
+            self::getComponentGlobalName($viewClassName, $componentClassName, $componentName).":".$componentIndex :
+            self::getComponentGlobalName($viewClassName, $componentClassName, $componentName);
     }
 
     /**
