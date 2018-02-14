@@ -11,9 +11,12 @@ export default class Component extends React.Component {
 
     static propTypes = {
         name: PropTypes.string,
-        index: PropTypes.number
+        index: PropTypes.number,
+        enabled: PropTypes.bool
     };
-    static defaultProps = {};
+    static defaultProps = {
+        enabled: true
+    };
     static contextTypes = {
         bundleName: PropTypes.string,
         viewsConfig: PropTypes.object.isRequired,
@@ -199,7 +202,7 @@ export default class Component extends React.Component {
      * @returns {*}
      */
     get enabled() {
-        return this.getAttributeValue('enabled', true);
+        return this.getAttributeValue('enabled', this.props.enabled);
     }
 
     set enabled(value) {

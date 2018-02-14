@@ -13,6 +13,8 @@ use DateTime;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NativeQuery;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -396,6 +398,8 @@ class EntityHelper implements ContainerAwareInterface
      * Delete entity by id
      * @param $entityClass
      * @param $id
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     function deleteById($entityClass, $id){
         $em = $this->getEntityManager();
@@ -406,4 +410,28 @@ class EntityHelper implements ContainerAwareInterface
         $em->flush();
     }
 
+    /**
+     * Create native query
+     * @param string $query
+     * @param null|array $parameters
+     * @param array $mapping
+     * @return array
+     */
+    function nativeQuery(string $query, ?array $parameters, array $mapping){
+        $rsm = new ResultSetMapping();
+        foreach ($mapping as $key => $name){
+            $rsm->addScalarResult($key, $name);
+        }
+
+        $em = $this->getEntityManager();
+        /** @var NativeQuery $q */
+        $q = $em->createNativeQuery($query, $rsm);
+        $i = 0;
+        if(is_array($parameters)){
+            foreach ($parameters as $parameter){
+                $q->setParameter($i, $parameter);
+            }
+        }
+        return $q->getArrayResult();
+    }
 }

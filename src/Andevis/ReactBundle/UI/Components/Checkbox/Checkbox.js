@@ -2,6 +2,7 @@ import React from 'react';
 import { Component } from './../../ComponentBase';
 import { FormField } from 'react-form';
 import { autobind } from 'core-decorators';
+import { InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -53,12 +54,16 @@ export default class Checkbox extends Component
     }
 
     render(){
+        let props = Object.assign({}, this.props);
+        props.className = classNames(props.className, "form-input-checkbox");
         return (
-            <input
-                type="checkbox"
-                checked={this.checked}
-                onChange={this.handleOnChangeEvent}
-            />
+            <InputWrapper hasFocus={this.hasFocus} {...props}>
+                <input
+                    type="checkbox"
+                    checked={this.checked}
+                    onChange={this.handleOnChangeEvent}
+                />
+            </InputWrapper>
         )
     }
 }

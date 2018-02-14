@@ -21,7 +21,7 @@ class SelectBase extends FormInputBase {
      * @returns {*}
      */
     get options() {
-        const defaultOptions = this.props.options.slice(0);
+        const defaultOptions = this.props.options ? this.props.options.slice(0) : [];
         return this.getAttributeValue('options', defaultOptions);
     }
 
@@ -68,12 +68,16 @@ class SelectBase extends FormInputBase {
 
     @autobind
     handleOnChangeEvent(event) {
+        this.value = event.target.value;
         this.change(event.target.value);
     }
 
     render() {
         let props = Object.assign({}, this.props);
         props.className = classNames(props.className, "form-input-select");
+        // Convert value to string
+        const value = typeof this.value === 'undefined' || this.value === null ?
+            '' : String(this.value);
         return (
             <InputWrapper hasFocus={this.hasFocus} {...props}>
                 <select
@@ -86,7 +90,7 @@ class SelectBase extends FormInputBase {
                     onBlur={this.handleOnBlurEvent}
                     onClick={this.handleOnClickEvent}
                     disabled={this.props.readOnly || !this.enabled}
-                    defaultValue={this.value}>
+                    value={value}>
                      {this.options.map((option, i) =>
                          <option key={i} value={option.value}>{option.text}</option>
                      )}

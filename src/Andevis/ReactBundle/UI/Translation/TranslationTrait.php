@@ -65,6 +65,7 @@ trait TranslationTrait
      * @param $localKey
      * @param array $parameters
      * @param null $locale
+     * @param null $messageFile
      * @return string
      * @throws \Exception
      */

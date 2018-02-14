@@ -11,9 +11,9 @@ import classNames from 'classnames';
 // TODO: это повзолит дисейблить кнопку на момент выполнения submit события
 export default class Button extends Component
 {
-    static defaultProps = {
+    static defaultProps = Object.assign({}, Component.defaultProps, {
         type: "button"
-    };
+    });
 
     // Attribute: isProcessing
     get isProcessing() {
