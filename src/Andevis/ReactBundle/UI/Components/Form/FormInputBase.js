@@ -72,19 +72,27 @@ class FormInputBase extends Component {
         return 'React';
     }
 
+    getFieldName(){
+        return this.props.fieldApi.getFieldName();
+    }
+
     // Attribute: value
     get value() {
         if (this.props.fieldApi) {
-            let formValue = this.props.fieldApi.getValue();
-            return typeof formValue === 'string' ? formValue : '';
+            return this.props.fieldApi.getValue();
+            // return formValue;
+            // return typeof formValue === 'string' ? formValue : '';
         } else {
             this.getAttributeValue('value', '');
         }
     }
     set value(value) {
-        this.props.fieldApi ?
-            this.props.fieldApi.setValue(value) :
+        if(this.props.fieldApi){
+            this.props.fieldApi.setValue(value);
+        } else {
             this.setAttributeValue('value', value);
+        }
+
     }
 
     componentWillUpdate(nextProps, nextState){
@@ -97,7 +105,7 @@ class FormInputBase extends Component {
     }
 
     eventList() {
-        return super.eventList().concat(['click', 'change']);
+        return super.eventList().concat(['click', 'change', 'input']);
     }
 
     click() {
@@ -116,6 +124,7 @@ class FormInputBase extends Component {
     @autobind
     handleOnInputEvent(event) {
         this.value = event.target.value;
+        this.change(event.target.value);
     }
 
     @autobind

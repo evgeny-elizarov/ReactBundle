@@ -341,7 +341,7 @@ export default class Component extends React.Component {
                 //
                 // 1. Call frontend before user event handler
                 //
-                console.log(this.getId(), this.getName(), eventName, "step 1 before");
+                // console.log(this.getId(), this.getName(), eventName, "step 1 before");
                 const viewBeforeUserHandlerName = this.getName() + '_before' + ucfirst(eventName);
                 if (typeof this.getView()[viewBeforeUserHandlerName] === 'function') {
                     arguments[0] = this;

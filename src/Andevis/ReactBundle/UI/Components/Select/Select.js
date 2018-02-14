@@ -3,9 +3,14 @@ import { FormField } from 'react-form';
 import { autobind } from 'core-decorators';
 import classNames from 'classnames';
 import {FormInputBase, InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
+import { Component } from "@AndevisReactBundle/UI/ComponentBase";
+import PropTypes from "prop-types";
 
 
 class SelectBase extends FormInputBase {
+    static propTypes = Object.assign({}, FormInputBase.propTypes, {
+        options: PropTypes.array,
+    });
 
     getBundleName() {
         return 'React';
@@ -16,7 +21,8 @@ class SelectBase extends FormInputBase {
      * @returns {*}
      */
     get options() {
-        return this.getAttributeValue('options', []);
+        const defaultOptions = this.props.options.slice(0);
+        return this.getAttributeValue('options', defaultOptions);
     }
 
     set options(value) {
@@ -75,11 +81,11 @@ class SelectBase extends FormInputBase {
                     placeholder={this.props.placeholder}
                     autoComplete={this.props.autoComplete}
                     required={this.props.required}
-                    readOnly={this.props.readOnly}
+                    // readOnly={this.props.readOnly}
                     onChange={this.handleOnChangeEvent}
                     onBlur={this.handleOnBlurEvent}
                     onClick={this.handleOnClickEvent}
-                    disabled={!this.enabled}
+                    disabled={this.props.readOnly || !this.enabled}
                     defaultValue={this.value}>
                      {this.options.map((option, i) =>
                          <option key={i} value={option.value}>{option.text}</option>

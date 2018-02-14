@@ -12,6 +12,11 @@ class TextAreaBase extends FormInputBase {
     render() {
         let props = Object.assign({}, this.props);
         props.className = classNames(props.className, "form-input-textarea");
+
+        // Convert value to string
+        const value = typeof this.value === 'undefined' || this.value === null ?
+            '' : String(this.value);
+
         return (
             <InputWrapper hasFocus={this.hasFocus} {...props}>
                 <textarea
@@ -23,7 +28,7 @@ class TextAreaBase extends FormInputBase {
                     onInput={this.handleOnInputEvent}
                     onBlur={this.handleOnBlurEvent}
                     onClick={this.handleOnClickEvent}
-                    value={this.value}
+                    value={value}
                     disabled={!this.enabled}
                 />
             </InputWrapper>
