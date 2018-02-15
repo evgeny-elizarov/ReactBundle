@@ -291,7 +291,7 @@ export default class Component extends React.Component {
      * @param eventName
      * @returns {boolean}
      */
-    allowCallBackend(eventName){
+    allowCallEventBackend(eventName){
         return this.getView().isBackendUserHandlerExists(this, eventName);
     }
 
@@ -396,7 +396,7 @@ export default class Component extends React.Component {
                 // 3. Call backend user event handler (if exists)
                 //
                 // console.log(this.getName(), eventName, "step 3 on:backend");
-                if(this.allowCallBackend(eventName)) {
+                if(this.allowCallEventBackend(eventName)) {
 
 
                     let componentsUpdatedState = {};

@@ -29,7 +29,7 @@ export default class ExampleComponent extends Component {
     }
 
     // Always call backend
-    allowCallBackend(eventName){
+    allowCallEventBackend(eventName){
         return true;
     }
 

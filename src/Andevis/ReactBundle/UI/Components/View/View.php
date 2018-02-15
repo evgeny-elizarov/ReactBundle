@@ -167,6 +167,7 @@ class View extends Component implements ViewInterface
      * Get component by name
      * @param $componentName
      * @return Component
+     * @throws \Exception
      */
     function getComponentByName($componentName){
         return $this->getContext()->getComponentByName($componentName);
