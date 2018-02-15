@@ -8,10 +8,10 @@
 
 namespace Andevis\ReactBundle\UI\ComponentBase;
 
+use Andevis\HelperBundle\Service\NormalizedEntityManager;
 use Andevis\ReactBundle\GraphQL\InputType\EventInputType;
 use Andevis\ReactBundle\GraphQL\Type\EventResponseType;
 use Andevis\ReactBundle\GraphQL\MutationResolveConfig;
-use Andevis\ReactBundle\Service\EntityHelper;
 use Andevis\ReactBundle\UI\Translation\TranslationTrait;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\Container;
@@ -471,11 +471,11 @@ abstract class Component implements ComponentInterface
     }
 
     /**
-     * Shortcut function to get entity helper
-     * @return EntityHelper
+     * Shortcut function to get normalized entity manager
+     * @return NormalizedEntityManager
      */
-    function getEntityHelper(){
-        return $this->container->get('andevis.react.entityHelper');
+    function getNormalizedEntityManager(){
+        return $this->container->get('andevis.helper.normalized_entity_manager');
     }
 
 }

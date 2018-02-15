@@ -13,12 +13,6 @@ services:
         arguments: ['@service_container','%locale%', '%locales%']
         public: true
 
-    # Entity helper
-    andevis.react.entityHelper:
-        class: Andevis\ReactBundle\Service\EntityHelper
-        arguments: ['@service_container']
-        public: true
-
     # React components
 #    Andevis\ReactBundle\UI\Components\:
 #        resource: '../../UI/Components/*'
@@ -43,48 +37,4 @@ services:
       public: true
       tags: [react.components]
       arguments: ['@?']
-
-
-#    Andevis\ReactBundle\UI\Components\View\View:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-#
-#    Andevis\ReactBundle\UI\Components\Form\Form:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-#
-#    Andevis\ReactBundle\UI\Components\Button\Button:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-#
-#    Andevis\ReactBundle\UI\Components\Select\Select:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-#
-#    Andevis\ReactBundle\UI\Components\Text\Text:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-#
-#    Andevis\ReactBundle\UI\Components\TextArea\TextArea:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-#
-#    Andevis\ReactBundle\UI\Components\AutoComplete\AutoComplete:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-
-#    Andevis\ReactBundle\UI\Components\DataGrid\DataGrid:
-#        public: true
-#        tags: [react.components]
-#        arguments: ['@?']
-#
-
-
 
