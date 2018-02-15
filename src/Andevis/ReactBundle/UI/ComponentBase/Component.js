@@ -358,7 +358,25 @@ export default class Component extends React.Component {
                 }
 
                 //
-                // 2. Call frontend user event handler
+                // 2. Call props user event handler
+                //
+                //console.log(this.getName(), eventName, "step 2 on:frontend");
+                const propsUserHandlerName  = 'on' + ucfirst(eventName);
+                if (this.props.hasOwnProperty(propsUserHandlerName)) {
+                    arguments[0] = this;
+                    eventResult = await this.props[propsUserHandlerName].apply(this.getView(), arguments);
+                    // needCallBackend = (ret !== false);
+                    // If backend return false, skip frontend event callbacks
+                    if(eventResult === false) {
+                        //console.log("DD");
+                        resolve(eventResult);
+                        return;
+                    }
+                }
+
+
+                //
+                // 2.1 Call frontend user event handler
                 //
                 const viewUserHandlerName = this.getName() + '_on' + ucfirst(eventName);
                 //console.log(this.getName(), eventName, "step 2 on:frontend");
