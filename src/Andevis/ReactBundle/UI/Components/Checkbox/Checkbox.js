@@ -1,15 +1,13 @@
 import React from 'react';
-import { Component } from './../../ComponentBase';
 import { FormField } from 'react-form';
 import { autobind } from 'core-decorators';
-import { InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
-import PropTypes from 'prop-types';
+import {FormInputBase, InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
 import classNames from 'classnames';
 
 
 
 @FormField
-export default class Checkbox extends Component
+export default class Checkbox extends FormInputBase
 {
     // static propTypes = Object.assign({}, Component.propTypes, {
     //     field: PropTypes.string.isRequired
@@ -21,29 +19,19 @@ export default class Checkbox extends Component
 
     @autobind
     handleOnChangeEvent(e) {
-        if(this.props.fieldApi) {
-            this.props.fieldApi.setValue(!this.checked);
-        } else {
-            this.setAttributeValue('checked', !this.checked);
-        }
+        this.checked = !this.checked;
+        this.setAttributeValue('checked', !this.checked, () => {
+            this.change(this.checked);
+        });
     }
 
     // Attribute: checked
     get checked() {
-        if(this.props.fieldApi){
-            let v = this.props.fieldApi.getValue();
-            return typeof v === 'boolean' ? v : false;
-        } else {
-            return this.getAttributeValue('checked', false);
-        }
+        return this.value;
     }
 
     set checked(value) {
-        if(this.props.fieldApi){
-            this.props.fieldApi.setValue(value);
-        } else {
-            this.setAttributeValue('checked', value);
-        }
+        this.value = value;
     }
 
     componentDidMount(){
