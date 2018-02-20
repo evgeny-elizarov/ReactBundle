@@ -88,6 +88,17 @@ export default class Grid extends Component {
     // refresh() {
     //     this.refs.Grid.refresh();
     // }
+    /**
+     *
+     * @param records
+     * @param recordsTotal
+     */
+    setRecords(records, recordsTotal){
+        this.setState({
+            records: records,
+            recordstotal: recordsTotal
+        });
+    }
 
     render() {
         const grid = this;
