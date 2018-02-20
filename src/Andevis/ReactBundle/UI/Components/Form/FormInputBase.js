@@ -83,7 +83,7 @@ class FormInputBase extends Component {
             // return formValue;
             // return typeof formValue === 'string' ? formValue : '';
         } else {
-            this.getAttributeValue('value', '');
+            this.getAttributeValue('value', null);
         }
     }
     set value(value) {
@@ -92,7 +92,6 @@ class FormInputBase extends Component {
         } else {
             this.setAttributeValue('value', value);
         }
-
     }
 
     componentWillUpdate(nextProps, nextState){

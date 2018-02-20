@@ -10,7 +10,7 @@ export default class Form extends Component {
 
     static propTypes = Object.assign({}, Component.propTypes, {
         defaultValues: PropTypes.object,
-        onFormUpdate: PropTypes.func
+        onFormUpdate: PropTypes.func,
     });
 
     static childContextTypes = Object.assign({}, Component.childContextTypes, {
@@ -35,12 +35,12 @@ export default class Form extends Component {
     }
 
     // Attribute: isProcessing
-    get isProcessing() {
-        return this.getAttributeValue('isProcessing', false);
-    }
-    set isProcessing(value) {
-        this.setAttributeValue('isProcessing', value);
-    }
+    // get isProcessing() {
+    //     return this.getAttributeValue('isProcessing', false);
+    // }
+    // set isProcessing(value) {
+    //     this.setAttributeValue('isProcessing', value);
+    // }
 
     /**
      * Attribute: values
@@ -96,18 +96,7 @@ export default class Form extends Component {
      * @returns {Promise}
      */
     didMount() {
-        return new Promise((resolve, reject) => {
-            this.setAttributeValue('isProcessing', true, ()=> {
-                this.fireEvent('didMount')
-                    .then(() => {
-                        this.setAttributeValue('isProcessing', false, () => {
-                            resolve();
-                        });
-                    }).catch((e) => {
-                    reject(e);
-                });
-            });
-        });
+        return this.fireEvent('didMount');
     }
 
 
@@ -116,20 +105,7 @@ export default class Form extends Component {
      */
     @autobind
     submit() {
-       return new Promise((resolve, reject) => {
-           this.setAttributeValue('isProcessing', true, ()=> {
-               this.fireEvent('submit', this.getValues())
-                   .then(() => {
-                       this.setAttributeValue('isProcessing', false, () => {
-                           resolve();
-                       });
-                    }).catch((e) => {
-                       this.setAttributeValue('isProcessing', false, () => {
-                           reject(e);
-                       });
-                    });
-           });
-       });
+       return this.fireEvent('submit', this.getValues());
     }
 
     @autobind
@@ -298,8 +274,9 @@ export default class Form extends Component {
     @autobind
     handleFormDidUpdate(formState)
     {
-        if(this.props.onFormUpdate)
+        if(this.props.onFormUpdate) {
             this.props.onFormUpdate(formState);
+        }
         const attrValues = this.getAttributeStateName('values');
         const attrErrors = this.getAttributeStateName('errors');
         const attrWarnings = this.getAttributeStateName('warnings');
@@ -332,12 +309,12 @@ export default class Form extends Component {
                                  {form.getCommonError()}
                              </div>
                             }
-                            <Loader
-                                show={form.isProcessing}
-                                backgroundStyle={{backgroundColor: 'rgba (255, 255, 255, 0.8)'}}
-                                message={null}>
+                            {/*<Loader*/}
+                                {/*show={form.isProcessing}*/}
+                                {/*backgroundStyle={{backgroundColor: 'rgba (255, 255, 255, 0.8)'}}*/}
+                                {/*message={null}>*/}
                             {this.props.children}
-                            </Loader>
+                            {/*</Loader>*/}
                         </form>
                     );
                 }}

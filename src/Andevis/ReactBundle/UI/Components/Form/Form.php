@@ -23,7 +23,7 @@ class Form extends Component
      * Values attribute getter
      */
     function getValues(){
-        return $this->getAttributeValue('values', []);
+        return $this->getAttributeValue('values', $this->getProperty('defaultValues'));
     }
 
     /**

@@ -37,7 +37,7 @@ export default class Checkbox extends FormInputBase
     componentDidMount(){
         if(this.props.checked)
         {
-            this.checked = true;
+            this.checked = this.props.checked;
         }
     }
 
