@@ -43,6 +43,10 @@ export default class Grid extends Component {
         return ['loadData']
     }
 
+    loadData(){
+        this.refs.Grid.updatebounddata();
+    }
+
     @autobind
     jqxDataAdapterLoad(serverData, source, callback) {
         this.setState(serverData, () => {

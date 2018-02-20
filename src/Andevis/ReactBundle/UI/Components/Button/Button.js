@@ -2,6 +2,7 @@ import React from 'react';
 import { Component } from './../../ComponentBase';
 import { autobind } from 'core-decorators';
 import classNames from 'classnames';
+import PropTypes from "prop-types";
 
 /**
  * Button component
@@ -11,8 +12,12 @@ import classNames from 'classnames';
 // TODO: это повзолит дисейблить кнопку на момент выполнения submit события
 export default class Button extends Component
 {
+    static propTypes = Object.assign({}, Component.propTypes, {
+        title: PropTypes.string,
+    });
+
     static defaultProps = Object.assign({}, Component.defaultProps, {
-        type: "button"
+        type: "button",
     });
 
     // Attribute: isProcessing
