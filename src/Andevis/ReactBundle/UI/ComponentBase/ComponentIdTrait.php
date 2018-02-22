@@ -9,6 +9,8 @@
 namespace Andevis\ReactBundle\UI\ComponentBase;
 
 
+use Andevis\HelperBundle\Helper\SymfonyHelper;
+
 trait ComponentIdTrait
 {
     /**
@@ -39,18 +41,7 @@ trait ComponentIdTrait
      * @throws \Exception
      */
     static function getBundleName($className){
-        $parts = explode("\\", $className);
-        $bundleName = "";
-        for($i = 0; $i < sizeof($parts); $i++)
-        {
-            $name = $parts[$i];
-
-            // Remove postfix
-            if(substr($name, -6) == "Bundle"){
-                $bundleName = substr($name, 0, -6);
-                break;
-            }
-        }
+        $bundleName = SymfonyHelper::getBundleName($className);
         if(!$bundleName){
             throw new \Exception('Can`t detect view bundle name');
         }
