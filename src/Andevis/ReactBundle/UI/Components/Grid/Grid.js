@@ -82,12 +82,12 @@ export default class Grid extends Component {
     //     this.refs.Grid.updatebounddata();
     // }
 
-    // /**
-    //  * Refresh
-    //  */
-    // refresh() {
-    //     this.refs.Grid.refresh();
-    // }
+     /**
+      * Refresh
+      */
+     refresh() {
+         this.refs.Grid.refresh();
+     }
     /**
      *
      * @param records
@@ -98,6 +98,8 @@ export default class Grid extends Component {
             records: records,
             recordstotal: recordsTotal
         });
+        
+        this.refs.Grid.updatebounddata();
     }
 
     render() {
@@ -107,9 +109,36 @@ export default class Grid extends Component {
                 // Fake url address to emulate remote loading
                 url: '//graphql',
                 datatype: 'json',
-                sort: function()
+                sort: function(dataField, sortOrder)
                 {
-                    grid.refs.Grid.updatebounddata();
+                    var records = grid.state.records;
+                    var index = records.length - 1;
+
+                    while (index >= 0) {
+                        if (records[index].LPG_ID == "") {
+                          records.splice(index, 1);
+                        }
+
+                        index -= 1;
+                    }
+
+                    records.sortByKey = function(array, key, order) {
+                        return array.sort(function(a, b) {
+                            var x = a[key]; var y = b[key];
+                            
+                            if(order == 'ascending')
+                                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+                            else if(order == 'descending')
+                                return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+                        });
+                    }
+                    records.sortByKey(records, dataField, sortOrder);
+                    
+                    grid.state.records = records;
+                    console.log(grid.state.records);
+                    grid.refs.Grid.refresh();
+                    console.log(grid.state.records);
+                    //grid.refs.Grid.updatebounddata(); //server?
                 }
             },
             {

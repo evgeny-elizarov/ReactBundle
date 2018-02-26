@@ -34,7 +34,9 @@ class Grid extends Component
     function setRecords(array $records, int $recordsTotal){
         $this->setState([
             'records' => $records,
-            'recordstotal' => $recordsTotal
+            'recordstotal' => $recordsTotal,
+            'pagesize' => $recordsTotal,
+            'recordendindex' => $recordsTotal
         ]);
     }
 
