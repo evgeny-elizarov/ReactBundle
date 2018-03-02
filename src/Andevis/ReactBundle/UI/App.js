@@ -9,6 +9,7 @@ import { appState } from '@AndevisReactBundle/UI/Stores';
 import { getLocaleMessages } from './Translation';
 import { CookiesProvider } from 'react-cookie';
 import UserProvider from "@AndevisAuthReactBundle/UI/Views/UserProvider/UserProvider";
+import WindowsContainer from "@AndevisReactBundle/UI/Components/Windows/WindowsContainer";
 //import registerServiceWorker from './Services/registerServiceWorker';
 
 
@@ -74,7 +75,11 @@ export default class App extends React.Component
                 <ApolloProvider client={GraphQLClient}>
                     <CookiesProvider>
                         <BrowserRouter basename={basename}>
-                            <UserProvider>{ this.props.children }</UserProvider>
+                            <UserProvider>
+                                <WindowsContainer>
+                                    { this.props.children }
+                                </WindowsContainer>
+                            </UserProvider>
                         </BrowserRouter>
                     </CookiesProvider>
                 </ApolloProvider>

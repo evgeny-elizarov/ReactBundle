@@ -1,0 +1,32 @@
+.component-window{
+  position: absolute;
+  background-color: white;
+  -webkit-box-shadow: 5px 5px 45px -4px rgba(0,0,0,0.37);
+  -moz-box-shadow: 5px 5px 45px -4px rgba(0,0,0,0.37);
+  box-shadow: 5px 5px 45px -4px rgba(0,0,0,0.37);
+  .control-buttons{
+    margin-top: -4px;
+    margin-right: -4px;
+    margin-left: 8px;
+    .btn{
+      padding: 0;
+      margin: 0;
+      background: none;
+      line-height: 24px;
+    }
+    .fa-window-close{
+      line-height: 24px;
+      font-size: 24px;
+    }
+  }
+}
+
+.window-modal-layer{
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  background-color:rgba(0, 0, 0, 0.2);
+}
