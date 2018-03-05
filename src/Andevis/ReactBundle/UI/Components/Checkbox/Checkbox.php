@@ -9,9 +9,9 @@
 namespace Andevis\ReactBundle\UI\Components\Checkbox;
 
 
-use Andevis\ReactBundle\UI\ComponentBase\Component;
+use Andevis\ReactBundle\UI\Components\Form\FormInputBase;
 
-class Checkbox extends Component
+class Checkbox extends FormInputBase
 {
 
 }

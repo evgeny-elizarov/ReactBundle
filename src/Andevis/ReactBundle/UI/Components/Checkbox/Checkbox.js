@@ -3,6 +3,7 @@ import { FormField } from 'react-form';
 import { autobind } from 'core-decorators';
 import {FormInputBase, InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
 import classNames from 'classnames';
+import './Checkbox.scss';
 
 
 

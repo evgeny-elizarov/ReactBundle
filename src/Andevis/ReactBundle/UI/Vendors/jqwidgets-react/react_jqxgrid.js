@@ -37,8 +37,8 @@ export default class JqxGrid extends React.Component {
                   JQXLite(this.componentSelector).css(style, this.props.style[style]);
               }
         }
-        if(this.props.className !== undefined) {
-            let classes = this.props.className.split(' ');
+        if(this.props.classname !== undefined) {
+            let classes = this.props.classname.split(' ');
             for (let i = 0; i < classes.length; i++ ) {
                 JQXLite(this.componentSelector).addClass(classes[i]);
             }

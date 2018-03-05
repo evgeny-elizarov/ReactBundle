@@ -35,7 +35,7 @@ export default class Grid extends Component {
             pagenum: 0,
             pagesize: this.props.pageSize,
             recordendindex: 10,
-            recordstartindex: 0,
+            recordstartindex: 0
         };
     }
 
@@ -114,9 +114,10 @@ export default class Grid extends Component {
                     var records = grid.state.records;
                     var index = records.length - 1;
 
+                    //TODO: for contracts only
                     while (index >= 0) {
                         if (records[index].LPG_ID == "") {
-                          records.splice(index, 1);
+                            records.splice(index, 1);
                         }
 
                         index -= 1;
@@ -135,9 +136,7 @@ export default class Grid extends Component {
                     records.sortByKey(records, dataField, sortOrder);
                     
                     grid.state.records = records;
-                    console.log(grid.state.records);
                     grid.refs.Grid.refresh();
-                    console.log(grid.state.records);
                     //grid.refs.Grid.updatebounddata(); //server?
                 }
             },
@@ -163,7 +162,7 @@ export default class Grid extends Component {
                 }
             }
         }
-
+        
         return (
             <JqxGrid ref='Grid' {...props} />
         )
