@@ -51,7 +51,7 @@ export default class Button extends Component
     click(e) {
         this.setAttributeValue('isProcessing', true, ()=> {
             this.fireEvent('click').finally(() => {
-                if(!this._willUnmount){
+                if(!this.unmounted){
                     this.setAttributeValue('isProcessing', false);
                 }
             })
@@ -75,7 +75,9 @@ export default class Button extends Component
                 // id={this.id}
                 // name={this.name}
                 type={this.props.type}
-                className={ classNames(this.props.className, 'btn')}
+                className={ classNames('btn', this.props.className, {
+                    'btn-default': !this.props.className
+                })}
                 onClick={this.click}
                 disabled={!this.enabled || this.isProcessing}
             >{content}</button>

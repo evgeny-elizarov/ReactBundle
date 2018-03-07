@@ -5,7 +5,7 @@ import {gql} from 'react-apollo';
 import {BaseResolveConfig, QueryResolveConfig, MutationResolveConfig} from "../GraphQL";
 import View from "./../Components/View/View";
 import {ucfirst} from './../Helpers';
-import {ComponentDataToJsonString} from "../Helpers/base";
+import ComponentEvent from "@AndevisReactBundle/UI/ComponentBase/ComponentEvent";
 
 export default class Component extends React.Component {
 
@@ -14,15 +14,19 @@ export default class Component extends React.Component {
         index: PropTypes.number,
         enabled: PropTypes.bool
     };
+
     static defaultProps = {
         enabled: true
     };
+
     static contextTypes = {
         bundleName: PropTypes.string,
         viewsConfig: PropTypes.object.isRequired,
         view: PropTypes.object,
     };
+
     static childContextTypes = {};
+
 
     constructor(props, context) {
         super(props, context);
@@ -30,7 +34,10 @@ export default class Component extends React.Component {
         // Name variable
         this.name = null;
         this.index = this.props.index;
-        this._willUnmount = false;
+        this.unmounted = false;
+
+        this.processingEvents = [];
+
 
         // Load initial state
         let initialState = {};
@@ -178,7 +185,7 @@ export default class Component extends React.Component {
     setAttributeValue(attributeName, value, callback) {
         let state = {};
         state[this.getAttributeStateName(attributeName)] = value;
-        if(!this._willUnmount){
+        if(!this.unmounted){
             this.setState(state, callback);
         }
     }
@@ -274,7 +281,11 @@ export default class Component extends React.Component {
     }
 
     componentWillUnmount() {
-        this._willUnmount = true;
+        console.log("Component unmount" + this.getName());
+        this.processingEvents.forEach((event) => {
+            event.cancel();
+        });
+        this.unmounted = true;
         this.getView().unmountComponent(this);
     }
 
@@ -312,259 +323,22 @@ export default class Component extends React.Component {
     fireEvent() {
         if(arguments.length === 0)
             throw new Error('Event name not set!');
-        const eventName = arguments[0];
+
+
+        // Check if component exists in view
+        if(!this.getView().getComponentById(this.getId())){
+            console.warn('Component with id `' +this.getId()+ ' ` not exist in view ');
+            return;
+        }
+
+        let args = [];
+        Array.prototype.push.apply( args, arguments );
+
+        const eventName = args.shift();
         // console.log(this.getName(), 'fireEvent', eventName);
-        const eventComponent = this;
-        return new Promise((resolve, reject) => {
-            (async () => {
-                let eventResult = null;
-
-                // // Set component attribute event processing
-                // let newState = {};
-                // newState[this.getAttributeStateName('eventProcessing')] = true;
-                // await this.setState(newState);
-
-                //
-                // Prepare state
-                //
-                // let componentsUpdatedState = {};
-                // componentsUpdatedState[this.getId()] = {};
-                // componentsUpdatedState[this.getId()][this.getAttributeStateName('eventProcessing')] = false;
-                //
-                // // TODO: move it do didMount method
-                // if (eventName === 'didMount')
-                //     componentsUpdatedState[this.getId()][this.getAttributeStateName('mounted')] = true;
-                //
-                // let componentsUpdatesOrder = [];
-                // componentsUpdatesOrder.push(this.getId());
-
-                /** @var View **/
-                const view = this.getView();
-
-                //
-                // 1. Call frontend before user event handler
-                //
-                // console.log(this.getId(), this.getName(), eventName, "step 1 before");
-                const viewBeforeUserHandlerName = this.getName() + '_before' + ucfirst(eventName);
-                if (typeof this.getView()[viewBeforeUserHandlerName] === 'function') {
-                    arguments[0] = this;
-                    eventResult = await this.getView()[viewBeforeUserHandlerName].apply(this.getView(), arguments);
-                    if(eventResult === false) {
-                        //console.log("AA");
-                        resolve(eventResult);
-                        return false;
-                    }
-                    // needCallBackend = (ret !== false);
-                }
-
-                //
-                // 2. Call props user event handler
-                //
-                //console.log(this.getName(), eventName, "step 2 on:frontend");
-                const propsUserHandlerName  = 'on' + ucfirst(eventName);
-                if (this.props.hasOwnProperty(propsUserHandlerName)) {
-                    arguments[0] = this;
-                    eventResult = await this.props[propsUserHandlerName].apply(this.getView(), arguments);
-                    // needCallBackend = (ret !== false);
-                    // If backend return false, skip frontend event callbacks
-                    if(eventResult === false) {
-                        //console.log("DD");
-                        resolve(eventResult);
-                        return;
-                    }
-                }
-
-
-                //
-                // 2.1 Call frontend user event handler
-                //
-                const viewUserHandlerName = this.getName() + '_on' + ucfirst(eventName);
-                //console.log(this.getName(), eventName, "step 2 on:frontend");
-                if (typeof this.getView()[viewUserHandlerName] === 'function') {
-                    arguments[0] = this;
-                    eventResult = await this.getView()[viewUserHandlerName].apply(this.getView(), arguments);
-                    // needCallBackend = (ret !== false);
-                    // If backend return false, skip frontend event callbacks
-                    if(eventResult === false) {
-                        //console.log("DD");
-                        resolve(eventResult);
-                        return;
-                    }
-                }
-
-                //
-                // 3. Call backend user event handler (if exists)
-                //
-                // console.log(this.getName(), eventName, "step 3 on:backend");
-                if(this.allowCallEventBackend(eventName)) {
-
-
-                    let componentsUpdatedState = {};
-                    let componentsUpdatesOrder = [];
-                    componentsUpdatesOrder.push(this.getId());
-
-                    // Prepare event arguments
-                    let queryArgs = {
-                        event: {
-                            eventName: eventName,
-                            arguments: [],
-                            components: []
-                        }
-                    };
-
-                    // Prepare event arguments
-                    let args = [];
-                    for (let i in arguments){
-                        if(arguments.hasOwnProperty(i)){
-                            if(i > 0){
-                                args.push(arguments[i]);
-                            }
-                        }
-                    }
-                    queryArgs.event.arguments = ComponentDataToJsonString(args);
-
-                    // Prepare components status update for backend
-                    for (let i in view.componentMountStack) {
-
-
-
-                        const component = view.componentMountStack[i];
-
-                        let componentData = {
-                            id: component.getId()
-                        };
-
-                        // Prepare component props
-                        if (component.props) {
-                            componentData['props'] = [];
-                            for (let name in component.props) {
-                                if (component.props.hasOwnProperty(name)) {
-                                    // Skip REACT components
-                                    if (component.props[name] instanceof React.Component) continue;
-                                    if (name === 'children') continue;
-                                    componentData['props'].push({
-                                        name: name,
-                                        value: ComponentDataToJsonString(component.props[name])
-                                    });
-                                }
-                            }
-                        }
-
-                        // Prepare component state
-                        const state = component.prepareStateBeforeEvent();
-
-                        if (state) {
-                            componentData['state'] = [];
-                            for (let name in state) {
-                                if (state.hasOwnProperty(name)) {
-                                    // Skip REACT components
-                                    if (state[name] instanceof React.Component) {
-                                        continue;
-                                    }
-                                    componentData['state'].push({
-                                        name: name,
-                                        value: ComponentDataToJsonString(state[name])
-                                    });
-                                }
-                            }
-                        }
-                        queryArgs.event.components.push(componentData);
-                    }
-
-                    // Call backend event resolver
-                    let queryResult = null;
-                    try {
-                        //console.log(this.getName(), eventName, "B", queryArgs);
-                        queryResult = await this.backend.resolveEvent(queryArgs);
-                    } catch (e) {
-                        //console.log(this.getName(), eventName, "C");
-                        // TODO: create system critial message
-                        alert(e);
-                        reject(e);
-                        return;
-                    }
-                    //console.log(this.getName(), eventName, "D");
-
-                    if (queryResult) {
-
-                        // Convert string boolean to boolean
-                        eventResult = JSON.parse(queryResult.result);
-
-                        //
-                        // Update component state from backend
-                        //
-                        queryResult.componentsUpdate.forEach((componentUpdate) => {
-                            // const componentName = componentUpdate.id.split(":")[2];
-                            // const component = this.getView().getComponentByName(componentName);
-
-                            // Prepare new state object
-                            let newState = {};
-                            componentUpdate.state.forEach((state) => {
-                                newState[state.name] = JSON.parse(state.value);
-                            });
-
-                            const updateComponent = this.getView().getComponentById(componentUpdate.id);
-                            componentsUpdatedState[componentUpdate.id] = updateComponent.prepareStateAfterEvent(newState);
-                            if (componentUpdate.id !== eventComponent.getId())
-                                componentsUpdatesOrder.push(componentUpdate.id);
-
-                        });
-                    }
-
-                    // Update component state by one step
-                    for (let i in componentsUpdatesOrder) {
-                        const componentId = componentsUpdatesOrder[i];
-                        try {
-                            const component = this.getView().getComponentById(componentId);
-                            if(componentsUpdatedState[componentId]) {
-                                // console.log(this.getName(), "fireEvent", eventName, "Update component state", componentId);
-                                component.setState(componentsUpdatedState[componentId]);
-                            }
-                        } catch (e) {
-                            if (e.name === 'ComponentNotFound') {
-                                // Компонетн может быть уже отмонтирован событием на фронтенде
-                            } else {
-                                throw e;
-                            }
-                        }
-                    }
-
-
-                    // If backend return false, skip frontend event callbacks
-                    if(eventResult === false) {
-                        //console.log("CC");
-                        resolve(eventResult);
-                        return;
-                    }
-                }
-
-                //
-                // 4. Call frontend after user event handler
-                //
-                //console.log(this.getName(), eventName, "step 4 after:frontend");
-                const viewAfterUserHandlerName = this.getName() + '_after' + ucfirst(eventName);
-                if (typeof this.getView()[viewAfterUserHandlerName] === 'function') {
-                    let afterArguments = [this, eventResult];
-                    eventResult = await this.getView()[viewAfterUserHandlerName].apply(this.getView(), afterArguments);
-                    // needCallBackend = (ret !== false);
-                    // If backend return false, skip frontend event callbacks
-                    if(eventResult === false) {
-                        //console.log("EE");
-                        resolve(eventResult);
-                        return;
-                    }
-                }
-
-                // // Set component attribute event processing
-                // newState = {};
-                // newState[this.getAttributeStateName('eventProcessing')] = false;
-                // await this.setState(newState);
-
-                //console.log(this.getName(), eventName, "eventComplete");
-
-                (eventResult === false) ? reject(eventResult) : resolve(eventResult);
-            })();
-        });
+        const event = new ComponentEvent(this, eventName, args);
+        this.processingEvents.push(event);
+        return event.getPromise();
     }
 
 

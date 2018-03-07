@@ -1,0 +1,55 @@
+.component-window{
+
+  .msg-box{
+      .icon{
+        background: url('./MsgBoxIcons.png') no-repeat;
+        display: inline-block;
+        float: left;
+        margin-right: 5px;
+      }
+  }
+
+  &.critical{
+    .panel-heading{
+      background-color: #f05050;
+    }
+    .icon{
+      width: 24px;
+      height: 24px;
+      background-position-x: -4px;
+      background-position-y: -24px;
+    }
+  }
+
+  &.question{
+    .icon{
+      width: 24px;
+      height: 24px;
+      background-position-x: -208px;
+      background-position-y: -24px;
+    }
+  }
+
+
+  &.exclamation{
+    .panel-heading{
+      background-color: #ff902b;
+    }
+    .icon{
+      width: 24px;
+      height: 24px;
+      background-position-x: -275px;
+      background-position-y: -24px;
+    }
+  }
+
+  &.information{
+    .icon{
+      width: 24px;
+      height: 24px;
+      background-position-x: -139px;
+      background-position-y: -24px;
+    }
+  }
+
+}

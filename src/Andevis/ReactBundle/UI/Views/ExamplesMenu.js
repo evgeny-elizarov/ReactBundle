@@ -5,6 +5,7 @@ import ExampleGrid from "@AndevisReactBundle/UI/Views/ExampleGrid/ExampleGrid";
 import ExampleComponents from "@AndevisReactBundle/UI/Views/ExampleComponents/ExampleComponents";
 import Menu from "@AndevisReactBundle/UI/Components/Menu/Menu";
 import ExampleComponentsArray from "@AndevisReactBundle/UI/Views/ExampleComponentsArray/ExampleComponentsArray";
+import ExampleMsgBox from './ExampleMsgBox/ExampleMsgBox';
 
 export default (props) => (
     <div className="examples">
@@ -29,6 +30,10 @@ export default (props) => (
                             {
                                 label: 'Component array',
                                 link: '/react/example/component-array',
+                            },
+                            {
+                                label: 'MsgBox',
+                                link: '/react/example/msg-box',
                             }
                         ]}
                     />
@@ -41,6 +46,7 @@ export default (props) => (
                 <Route path='/react/example/grid' component={ExampleGrid}/>
                 <Route path='/react/example/component' component={ExampleComponents}/>
                 <Route path='/react/example/component-array' component={ExampleComponentsArray}/>
+                <Route path='/react/example/msg-box' component={ExampleMsgBox}/>
             </Switch>
         </div>
     </div>
