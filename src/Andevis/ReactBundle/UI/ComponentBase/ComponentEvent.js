@@ -19,7 +19,6 @@ export default class ComponentEvent {
         this.name = eventName;
         this.component = component;
         this.arguments = args;
-        console.log("create event", eventName, args);
         this.canceled = false;
         this.promise = this.createPromise();
 
@@ -32,7 +31,6 @@ export default class ComponentEvent {
     }
 
     cancel(){
-        console.log("Cancel event " + this.name + " " + this.component.getName());
         this.canceled = true;
     }
 

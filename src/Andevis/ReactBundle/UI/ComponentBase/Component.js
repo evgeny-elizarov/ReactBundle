@@ -281,7 +281,6 @@ export default class Component extends React.Component {
     }
 
     componentWillUnmount() {
-        console.log("Component unmount" + this.getName());
         this.processingEvents.forEach((event) => {
             event.cancel();
         });
