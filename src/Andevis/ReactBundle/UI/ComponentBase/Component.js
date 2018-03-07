@@ -418,8 +418,8 @@ export default class Component extends React.Component {
             let resolverConfig = this.getMethodResolverConfig(methodName);
 
             // Make arguments as array
-            args = Object.values(args);
-            let variables = args[0];
+            // args = Object.values(args);
+            let variables = args;
 
             if (variables === undefined || variables === null) variables = {};
             variables['id'] = this.getId();
