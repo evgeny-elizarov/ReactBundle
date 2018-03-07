@@ -218,7 +218,8 @@ export default class ComponentEvent {
                     try {
                         //console.log(this.getName(), eventName, "B", queryArgs);
                         // TODO move backend resolveEvent functionality to ComponentEvent class
-                        queryResult = await this.component.backend.resolveEvent(queryArgs);
+                        // queryResult = await this.component.backend.resolveEvent(queryArgs);
+                        queryResult = await this.component._requestBackend("resolveEvent", queryArgs);
                     } catch (e) {
                         //console.log(this.getName(), eventName, "C");
                         // TODO: create system critical message
@@ -291,7 +292,7 @@ export default class ComponentEvent {
                 //console.log(this.getName(), eventName, "step 4 after:frontend");
                 const viewAfterUserHandlerName = this.component.getName() + '_after' + ucfirst(eventName);
                 if (typeof view[viewAfterUserHandlerName] === 'function') {
-                    let afterArguments = [this, eventResult];
+                    let afterArguments = [this.component, eventResult];
                     eventResult = await view[viewAfterUserHandlerName].apply(view, afterArguments);
                     // needCallBackend = (ret !== false);
                     // If backend return false, skip frontend event callbacks
