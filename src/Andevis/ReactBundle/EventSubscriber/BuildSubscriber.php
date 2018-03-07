@@ -24,16 +24,14 @@ class BuildSubscriber implements EventSubscriberInterface
     }
 
     public function onKernelController(){
-        $env =  $this->container->get( 'kernel' )->getEnvironment();
+//        $env =  $this->container->get( 'kernel' )->getEnvironment();
 
         /**
          * Rebuild config in dev mode
          */
-        if ($env == 'dev') {
-            /** @var ComponentSet $componentSet */
-            $componentSet = $this->container->get("andevis_react.component_set");
-            $componentSet->onKernelController();
-        }
+        /** @var ComponentSet $componentSet */
+        $componentSet = $this->container->get("andevis_react.component_set");
+        $componentSet->onKernelController();
         return;
     }
 

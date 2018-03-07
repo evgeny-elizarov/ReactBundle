@@ -83,6 +83,7 @@ class ComponentSet
         return $this->viewUserHandlers;
     }
 
+    // TODO: cache this result for production
     public function loadViewsUserHandlers(){
         $viewsUserHandlers = [];
         /** @var Component $component */
