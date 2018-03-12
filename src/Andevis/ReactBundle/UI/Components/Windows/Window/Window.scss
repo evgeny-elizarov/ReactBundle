@@ -4,6 +4,11 @@
   -webkit-box-shadow: 5px 5px 45px -4px rgba(0,0,0,0.37);
   -moz-box-shadow: 5px 5px 45px -4px rgba(0,0,0,0.37);
   box-shadow: 5px 5px 45px -4px rgba(0,0,0,0.37);
+
+  > .content{
+    overflow: auto;
+  }
+
   .control-buttons{
     margin-top: -4px;
     margin-right: -4px;

@@ -1,23 +1,66 @@
 import { observable, computed, action, extendObservable } from "mobx";
+import { guid } from '@AndevisReactBundle/UI/Helpers';
 
-// function guid() {
-//     function s4() {
-//         return Math.floor((1 + Math.random()) * 0x10000)
-//             .toString(16)
-//             .substring(1);
-//     }
-//     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-// }
-//
+
+class WindowModel {
+    id = null;
+
+    @observable content;
+    @observable refreshCount = 0;
+    @observable title = null;
+    @observable left = 0;
+    @observable top = 0;
+    @observable width = 'auto';
+    @observable height = 'auto';
+    @observable modal = false;
+    @observable zIndex = WindowsStore.MAX_Z_INDEX;
+    @observable closable = true;
+    customClose = null;
+
+
+    constructor(content, props) {
+
+        let finalProps = Object.assign({}, {
+            left: 0,
+            top: 0,
+            width: 'auto',
+            height: 'auto',
+            zIndex: WindowsStore.MAX_Z_INDEX,
+            modal: false,
+            content: content,
+            closable: true
+        }, props);
+
+        finalProps.id = guid();
+        extendObservable(this, finalProps);
+    }
+
+    @action('window move')
+    move(left, top){
+        this.left = left;
+        this.top = top;
+        this.bringToFront();
+    }
+
+    @action('brint to top')
+    bringToFront(){
+        if(this.zIndex <= WindowsStore.MAX_Z_INDEX){
+            this.zIndex = WindowsStore.MAX_Z_INDEX + 1;
+            WindowsStore.MAX_Z_INDEX = this.zIndex;
+        }
+    }
+}
+
 
 class WindowsStore {
 
-    static maxZIndex = 10000;
+    static NEXT_WINDOW_OFFSET = 50;
+    static MAX_Z_INDEX = 10000;
 
     @observable poll = [];
 
-    @computed get lastWindow() {
-        return this.poll[this.poll.length-1];
+    get windowsCount(){
+        return this.poll.length;
     }
 
     getPoll(){
@@ -33,16 +76,24 @@ class WindowsStore {
     }
 
     @action('new window')
-    newWindow(component) {
-        const windowStore = new WindowStore(component, this.poll.length);
-        this.poll.push(windowStore);
-        return windowStore;
+    addWindow(content, props) {
+        if(!props.hasOwnProperty('left') && !props.hasOwnProperty('top')){
+            props.left = 50 * WindowsStore.NEXT_WINDOW_OFFSET;
+            props.top = 50 * WindowsStore.NEXT_WINDOW_OFFSET;
+        }
+        const windowModel = new WindowModel(content, props);
+        this.poll.push(windowModel);
+        return windowModel;
     }
 
     @action('remove window')
-    removeWindow(window) {
-        const i = this.poll.indexOf(window);
+    removeWindow(windowModel) {
+        const i = this.poll.indexOf(windowModel);
         this.poll.splice(i, 1);
+    }
+
+    @computed get lastWindow() {
+        return this.poll[this.poll.length-1];
     }
 
     @action('remove last window')
@@ -52,69 +103,8 @@ class WindowsStore {
 
 }
 
-class WindowStore {
-    id = "";
-    component = null;
-    modal = false;
-
-    @observable refreshCount = 0;
-    @observable title = "";
-    @observable left = 0;
-    @observable top = 0;
-    @observable width = 'auto';
-    @observable height = 'auto';
-    @observable zIndex = WindowsStore.maxZIndex;
-    @observable visible = true;
-
-    constructor(component, index) {
-        const { left, top, width, height, zIndex, visible, modal } = component.props;
-        console.log(component.title);
-        extendObservable(this, {
-            component: component,
-            id: component.id,
-            title: component.title,
-            left: left ? left : 50 * index,
-            top: top ? top : 50 * index,
-            width: width ? width : 'auto',
-            height: height ? width : 'auto',
-            zIndex: zIndex ? zIndex : WindowsStore.maxZIndex,
-            visible: visible ? visible : true,
-            modal: modal ? modal : false
-        });
-        console.log("Window create", this);
-    }
-
-    @action('refresh')
-    refresh(){
-        // Fix refresh
-        this.refreshCount += 1;
-    }
-
-    setState(state){
-        extendObservable(this, state);
-    }
-
-    @action('window move')
-    move(left, top){
-        console.log("Move ", left, top);
-        this.left = left;
-        this.top = top;
-        this.setMaxZIndex();
-
-    }
-
-    @action('set max index')
-    setMaxZIndex(){
-        if(this.zIndex <= WindowsStore.maxZIndex){
-            this.zIndex = WindowsStore.maxZIndex + 1;
-            WindowsStore.maxZIndex = this.zIndex;
-        }
-    }
-}
-
-
 
 export {
     WindowsStore,
-    WindowStore
+    WindowModel
 }

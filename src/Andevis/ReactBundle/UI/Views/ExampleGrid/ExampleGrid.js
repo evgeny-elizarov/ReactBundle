@@ -37,7 +37,6 @@ export default class ExampleGrid extends View {
                             text: 'Actions',
                             width: '150px',
                             cellsrenderer: (row) => {
-                                console.log(row);
                                 return ReactDOMServer.renderToString(
                                     <button className="btn-edit btn btn-sm" data-row={row}>Edit</button>
                                 );
