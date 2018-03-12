@@ -14,6 +14,8 @@ class MenuItem extends React.Component {
         index: PropTypes.number.isRequired,
         icon: PropTypes.string,
         link: PropTypes.string,
+        target: PropTypes.string,
+        onClick: PropTypes.func,
         label: PropTypes.string,
         level: PropTypes.number.isRequired,
         items: PropTypes.array,
@@ -21,7 +23,8 @@ class MenuItem extends React.Component {
     };
 
     static defaultProps = {
-        divider: false
+        divider: false,
+        target: ""
     };
 
     static contextTypes = {
@@ -203,9 +206,20 @@ export default class Menu extends Component {
     }
 
     itemClick(item){
+        const basename = (window.location.pathname.startsWith('/app_dev.php')) ? '/app_dev.php' : '';
         return this.fireEvent('itemClick', item).then(() => {
-            if(item.link){
-                this.props.history.push(item.link);
+            if(item.onClick){
+                if(this.refs.MenuList.selectedMenuItem)
+                    this.refs.MenuList.selectedMenuItem.close();
+                item.onClick(item);
+            } else if(item.link){
+                if(item.target){
+                    // Use window open
+                    window.open(basename + item.link, item.target);
+                } else {
+                    // Use react history API
+                    this.props.history.push(item.link);
+                }
             }
         });
     }
