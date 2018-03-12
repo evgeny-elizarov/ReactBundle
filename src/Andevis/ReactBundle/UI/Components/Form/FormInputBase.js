@@ -89,9 +89,9 @@ class FormInputBase extends Component {
     set value(value) {
         if(this.props.fieldApi){
             this.props.fieldApi.setValue(value);
-        } else {
-            this.setAttributeValue('value', value);
         }
+        // Fixed for select (TODO: optimize render when state change by form Api and state
+        this.setAttributeValue('value', value);
     }
 
     componentWillUpdate(nextProps, nextState){
@@ -145,7 +145,6 @@ class FormInputBase extends Component {
     }
 
     render() {
-
         return (
             <InputWrapper hasFocus={this.hasFocus} {...this.props}>
                 <input

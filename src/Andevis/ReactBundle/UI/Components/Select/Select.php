@@ -17,7 +17,8 @@ class Select extends FormInputBase
      * Options attribute getter
      */
     function getOptions(){
-        return $this->getAttributeValue('options', []);
+        $defaultOptions = $this->getProperty('options') ? $this->getProperty('options') : [];
+        return $this->getAttributeValue('options', $defaultOptions);
     }
 
     /**
@@ -57,6 +58,14 @@ class Select extends FormInputBase
         $this->setState([
             'options' => $options
         ]);
+    }
+
+    /**
+     * Value attribute getter
+     */
+    function getValue(){
+        $options = $this->getOptions();
+        return $this->getAttributeValue('value', sizeof($options) > 0 ? $options[0]['value'] : '');
     }
 
     /**
