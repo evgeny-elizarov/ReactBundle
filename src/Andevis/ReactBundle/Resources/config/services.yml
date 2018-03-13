@@ -1,4 +1,10 @@
 services:
+    andevis_react.twig.react_extension:
+        class: Andevis\ReactBundle\Twig\ReactExtension
+        public: false
+        tags: [twig.extension]
+        arguments: ['@service_container']
+
     # Auto-builder
     Andevis\ReactBundle\EventSubscriber\BuildSubscriber:
         arguments: ['@service_container']
