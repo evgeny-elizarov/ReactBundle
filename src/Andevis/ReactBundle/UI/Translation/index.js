@@ -1,20 +1,19 @@
 import { addLocaleData, IntlProvider } from 'react-intl';
 import { appState } from './../Stores';
 
+
 /**
  * Get locale messages
  * @param locale
  */
 const getLocaleMessages = (locale) => {
-    let messages = {};
+    let messages = appState.getMessages(locale);
     try {
         const localeData = require('react-intl/locale-data/' + locale);
         addLocaleData([ ...localeData ]);
-        // messages = require('@app/i18n/lang/' + locale + '.json');
     } catch (e) {
         const localeData = require('react-intl/locale-data/en');
         addLocaleData([ ...localeData ]);
-        // messages = require('@app/i18n/lang/en.json');
     }
     return messages;
 };

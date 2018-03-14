@@ -6,6 +6,7 @@ export default class AppState {
     @observable userPermissions = [];
     @observable userRoles = [];
     @observable locale = 'en'; // Default locale
+    @observable messages = {}; // Default locale
     @observable intlProvider = null;
     @observable pendingRequestCount = 0;
     @observable fatalExceptionMessage = '';
@@ -14,6 +15,18 @@ export default class AppState {
     constructor(initialState, graphQLClient) {
         assignClassProps(this, initialState);
         this.client = graphQLClient;
+    }
+
+    @action('set messages')
+    setMessages(messages, locale) {
+        this.messages[locale] = messages;
+    }
+
+    getMessages(locale){
+        if(this.messages.hasOwnProperty(locale)){
+            return this.messages[locale];
+        }
+        return null;
     }
 
     @action('set locale')

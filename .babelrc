@@ -6,6 +6,19 @@
   "plugins": [
     "transform-object-rest-spread",
     "transform-decorators-legacy",
-    "transform-class-properties"
+    "transform-class-properties",
+    [
+      "react-intl-auto",
+      {
+        "removePrefix": "src/",
+        "filebase": false
+      }
+    ],
+    [
+      "react-intl",
+      {
+        "messagesDir": "./app/Resources/assets/i18n/messages"
+      }
+    ]
   ]
 }

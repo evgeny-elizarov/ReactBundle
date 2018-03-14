@@ -9,8 +9,11 @@
 namespace Andevis\ReactBundle\Twig;
 
 
+use Andevis\ReactBundle\UI\ComponentBase\ComponentSet;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Twig_SimpleFunction as SimpleFunction;
+
 
 
 class ReactExtension extends \Twig_Extension
@@ -34,7 +37,7 @@ class ReactExtension extends \Twig_Extension
                 self::FUNCTION_NAME,
                 array($this, 'generateInitStateScript'),
                 array('is_safe' => array('html'))
-                ),
+            ),
         );
     }
 
@@ -43,9 +46,20 @@ class ReactExtension extends \Twig_Extension
         return 'andevis_react';
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
     public function generateInitStateScript(){
+
+        /** @var ComponentSet $componentSet */
         $componentSet = $this->container->get("andevis_react.component_set");
+
+        /** @var Request $request */
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+
         $state = json_encode([
+            'locale' => $request->getLocale(),
             'viewsUserHandlers' => $componentSet->getViewsUserHandlers(),
             'viewsInitialState' => $componentSet->getViewsInitialState(),
         ]);

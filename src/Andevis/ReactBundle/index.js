@@ -1,21 +1,27 @@
-import React from 'react';
-import {observable, action} from 'mobx';
-import {observer} from 'mobx-react';
-import {render} from "react-dom";
-import {Switch, Route} from 'react-router-dom';
-import PropTypes from 'prop-types'
-import $ from 'jquery';
+import React, { Component } from 'react';
+import ReactDOM, {render} from "react-dom";
+import ReactDOMServer from "react-dom/server";
 import App from './UI/App';
+
+import { Switch, Route } from 'react-router-dom';
+import { setBundle } from "./UI/Helpers";
+import ExamplesMenu from "./UI/Views/ExamplesMenu";
+
+setBundle('React', () => (
+    <Switch>
+        { process.env.NODE_ENV !== 'production' &&
+        <Route path='/react/example' component={ExamplesMenu}/>
+        }
+    </Switch>
+));
+
 
 export default React;
 export {
     React,
+    Component,
+    ReactDOM,
+    ReactDOMServer,
     render,
-    PropTypes,
-    Switch, Route,
-    observable,
-    observer,
-    action,
-    $,
     App
 }

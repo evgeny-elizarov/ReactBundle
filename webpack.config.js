@@ -26,7 +26,7 @@ module.exports = function makeWebpackConfig(options) {
     ALIAS[LIBRARY_ALIAS] = __dirname + '/src/'+ NAMESPACE +'/' + LIBRARY_SHORT_NAME;
     ALIAS['@AndevisGraphQLBundle'] = __dirname + '/../graph-ql-bundle/src/'+ NAMESPACE +'/GraphQLBundle';
 
-    var OUTPUT_PATH = __dirname + '/src/'+ NAMESPACE +'/' + LIBRARY_SHORT_NAME + '/';
+    var OUTPUT_PATH = __dirname + '/dist/';
 
     /**
      * Whether we are running inside webpack-dashboard

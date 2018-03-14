@@ -10,6 +10,8 @@ import Checkbox from './Checkbox/Checkbox';
 import { RadioGroup, Radio } from 'react-form';
 import Grid from './Grid/Grid';
 import Menu from './Menu/Menu';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import './../../../../../node_modules/react-tabs/style/react-tabs.scss';
 
 export {
     View,
@@ -24,5 +26,9 @@ export {
     Checkbox,
     Button,
     Grid,
-    Menu
+    Menu,
+    Tab,
+    Tabs,
+    TabList,
+    TabPanel
 }

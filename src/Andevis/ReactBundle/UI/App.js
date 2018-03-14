@@ -26,8 +26,8 @@ export default class App extends React.Component
 
     static propTypes = {
         bundleName: PropTypes.string.isRequired,
+        messages: PropTypes.object.isRequired,
         // stateStore: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
         basename: PropTypes.string.isRequired,
         // GraphQL: PropTypes.object,
         // afterLoginPath: PropTypes.string,
@@ -36,7 +36,6 @@ export default class App extends React.Component
 
     static defaultProps = {
         basename: '/',
-        locale: 'en'
     };
 
     static childContextTypes = {
@@ -47,9 +46,9 @@ export default class App extends React.Component
         //aliasConfig: PropTypes.object
     };
 
-    constructor(props){
-        super(props);
-        appState.setLocale(props.locale);
+    constructor(props, context){
+        super(props, context);
+        appState.setMessages(this.props.messages, appState.getLocale());
     }
 
     getChildContext() {
@@ -58,19 +57,19 @@ export default class App extends React.Component
             bundleName: this.props.bundleName,
             viewsConfig: window.AndevisReactBundle.viewsUserHandlers, // TODO: generate viewsConfig to json
             //aliasConfig: require('@app/UI/aliasConfig.json'),
-            locale: this.props.locale,
+            locale: appState.getLocale(),
             appState: appState
         };
     }
 
     render (){
-        const localeMessages = getLocaleMessages(appState.getLocale());
+        // const localeMessages = getLocaleMessages(appState.getLocale());
         // Detect dev mode
         const basename = (window.location.pathname.startsWith('/app_dev.php')) ? '/app_dev.php' : '/';
         return (
             <IntlProvider
                 locale={appState.getLocale()}
-                messages={localeMessages}
+                messages={this.props.messages}
                 ref={(provider) => { appState.setIntlProvider(provider); }} >
                 <ApolloProvider client={GraphQLClient}>
                     <CookiesProvider>
