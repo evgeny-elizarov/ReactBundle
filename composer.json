@@ -24,8 +24,14 @@
     }
   },
   "scripts": {
-    "post-install-cmd": [
+    "install_node_modules": [
       "npm install"
+    ],
+    "post-install-cmd": [
+      "@install_node_modules"
+    ],
+    "post-update-cmd": [
+      "@install_node_modules"
     ]
   }
 }
