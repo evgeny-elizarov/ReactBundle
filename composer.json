@@ -22,5 +22,10 @@
     "psr-0" : {
       "Andevis\\ReactBundle" : "src"
     }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "npm install"
+    ]
   }
 }

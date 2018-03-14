@@ -1,5 +1,5 @@
 import React from 'react';
-import GraphQL from '@AndevisGraphQLBundle/UI/GraphQL';
+import { GraphQLClient } from './../GraphQL';
 import PropTypes from 'prop-types';
 import {gql} from 'react-apollo';
 import {BaseResolveConfig, QueryResolveConfig, MutationResolveConfig} from "../GraphQL";
@@ -62,6 +62,10 @@ export default class Component extends React.Component {
                 };
             },
         });
+    }
+
+    getChildContext() {
+        return {};
     }
 
     getIndex(){
@@ -433,7 +437,7 @@ export default class Component extends React.Component {
 
             if (resolverConfig instanceof QueryResolveConfig) {
                 // Execute query
-                GraphQL.query({
+                GraphQLClient.query({
                     query: gql`
                         query ${queryName}(${queryArgs}){
                             ${queryName}(${fieldArgs}) ${returnType}
@@ -449,7 +453,7 @@ export default class Component extends React.Component {
 
             } else if (resolverConfig instanceof MutationResolveConfig) {
                 // Execute mutation
-                GraphQL.mutate({
+                GraphQLClient.mutate({
                     mutation: gql`
                     mutation ${queryName}(${queryArgs}){
                         ${queryName}(${fieldArgs}) ${returnType}

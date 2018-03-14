@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { IntlProvider } from 'react-intl';
 import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter } from "react-router-dom";
-import GraphQLClient from '@AndevisGraphQLBundle/UI/GraphQL';
+import { GraphQLClient } from './GraphQL';
 import { appState } from '@AndevisReactBundle/UI/Stores';
 import { getLocaleMessages } from './Translation';
 import { CookiesProvider } from 'react-cookie';
@@ -24,9 +24,9 @@ import WindowsContainer from "@AndevisReactBundle/UI/Components/Windows/WindowsC
 export default class App extends React.Component
 {
 
-    static PropTypes = {
+    static propTypes = {
         bundleName: PropTypes.string.isRequired,
-        stateStore: PropTypes.object.isRequired,
+        // stateStore: PropTypes.object.isRequired,
         locale: PropTypes.string.isRequired,
         basename: PropTypes.string.isRequired,
         // GraphQL: PropTypes.object,
@@ -59,7 +59,7 @@ export default class App extends React.Component
             viewsConfig: window.AndevisReactBundle.viewsUserHandlers, // TODO: generate viewsConfig to json
             //aliasConfig: require('@app/UI/aliasConfig.json'),
             locale: this.props.locale,
-            appState: this.props.stateStore
+            appState: appState
         };
     }
 
