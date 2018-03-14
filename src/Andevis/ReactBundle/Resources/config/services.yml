@@ -43,4 +43,3 @@ services:
       public: true
       tags: [react.components]
       arguments: ['@?']
-

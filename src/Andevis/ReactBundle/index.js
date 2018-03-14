@@ -5,12 +5,12 @@ import App from './UI/App';
 
 import { Switch, Route } from 'react-router-dom';
 import { setBundle } from "./UI/Helpers";
-import ExamplesMenu from "./UI/Views/ExamplesMenu";
+import Examples from "./UI/Views/Examples";
 
 setBundle('React', () => (
     <Switch>
         { process.env.NODE_ENV !== 'production' &&
-        <Route path='/react/example' component={ExamplesMenu}/>
+        <Route path='/react/example' component={Examples}/>
         }
     </Switch>
 ));

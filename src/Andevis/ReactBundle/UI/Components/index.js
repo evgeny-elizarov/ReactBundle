@@ -6,6 +6,7 @@ import Button from './Button/Button';
 import Select from './Select/Select';
 import AutoComplete from './AutoComplete/AutoComplete';
 import TextArea from './TextArea/TextArea';
+import DataTable from './DataTable/DataTable';
 import Checkbox from './Checkbox/Checkbox';
 import { RadioGroup, Radio } from 'react-form';
 import Grid from './Grid/Grid';
@@ -30,5 +31,6 @@ export {
     Tab,
     Tabs,
     TabList,
-    TabPanel
+    TabPanel,
+    DataTable
 }

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import ExampleForm from "@AndevisReactBundle/UI/Views/ExampleForm/ExampleForm";
-import ExampleGrid from "@AndevisReactBundle/UI/Views/ExampleGrid/ExampleGrid";
-import ExampleComponents from "@AndevisReactBundle/UI/Views/ExampleComponents/ExampleComponents";
-import Menu from "@AndevisReactBundle/UI/Components/Menu/Menu";
-import ExampleComponentsArray from "@AndevisReactBundle/UI/Views/ExampleComponentsArray/ExampleComponentsArray";
+import ExampleForm from "./ExampleForm/ExampleForm";
+import ExampleGrid from "./ExampleGrid/ExampleGrid";
+import ExampleComponents from "./ExampleComponents/ExampleComponents";
+import ExampleComponentsArray from "./ExampleComponentsArray/ExampleComponentsArray";
 import ExampleMsgBox from './ExampleMsgBox/ExampleMsgBox';
+import ExampleDataTable from './ExampleDataTable/ExampleDataTable';
+import Menu from "@AndevisReactBundle/UI/Components/Menu/Menu";
 
-export default (props) => (
+export default () => (
     <div className="examples">
         <nav className="navbar navbar-inverse">
             <div className="container">
@@ -34,6 +35,10 @@ export default (props) => (
                             {
                                 label: 'MsgBox',
                                 link: '/react/example/msg-box',
+                            },
+                            {
+                                label: 'Data Table',
+                                link: '/react/example/data-table',
                             }
                         ]}
                     />
@@ -47,6 +52,7 @@ export default (props) => (
                 <Route path='/react/example/component' component={ExampleComponents}/>
                 <Route path='/react/example/component-array' component={ExampleComponentsArray}/>
                 <Route path='/react/example/msg-box' component={ExampleMsgBox}/>
+                <Route path='/react/example/data-table' component={ExampleDataTable}/>
             </Switch>
         </div>
     </div>
