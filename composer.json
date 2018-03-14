@@ -27,10 +27,10 @@
     "install_node_modules": [
       "npm install"
     ],
-    "post-install-cmd": [
+    "post-package-install": [
       "@install_node_modules"
     ],
-    "post-update-cmd": [
+    "post-package-update": [
       "@install_node_modules"
     ]
   }
