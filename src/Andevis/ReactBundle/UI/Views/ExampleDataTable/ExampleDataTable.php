@@ -61,6 +61,7 @@ class ExampleDataTable extends View
                                 return strnatcasecmp($a[$sort['id']], $b[$sort['id']]);
                             }
                         }
+                        return 0;
                     }
                 );
             }
