@@ -10,11 +10,11 @@ const getLocaleMessages = (locale) => {
     try {
         const localeData = require('react-intl/locale-data/' + locale);
         addLocaleData([ ...localeData ]);
-        messages = require('@app/i18n/lang/' + locale + '.json');
+        // messages = require('@app/i18n/lang/' + locale + '.json');
     } catch (e) {
         const localeData = require('react-intl/locale-data/en');
         addLocaleData([ ...localeData ]);
-        messages = require('@app/i18n/lang/en.json');
+        // messages = require('@app/i18n/lang/en.json');
     }
     return messages;
 };
