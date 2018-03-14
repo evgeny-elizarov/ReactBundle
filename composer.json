@@ -22,16 +22,5 @@
     "psr-0" : {
       "Andevis\\ReactBundle" : "src"
     }
-  },
-  "scripts": {
-    "install_node_modules": [
-      "npm install"
-    ],
-    "post-package-install": [
-      "@install_node_modules"
-    ],
-    "post-package-update": [
-      "@install_node_modules"
-    ]
   }
 }
