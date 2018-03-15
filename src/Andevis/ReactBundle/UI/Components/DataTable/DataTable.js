@@ -1,10 +1,15 @@
 import React from 'react';
 import Component from "@AndevisReactBundle/UI/ComponentBase/Component";
+import PropTypes from "@AndevisReactBundle/prop-types";
 import { autobind } from "@AndevisReactBundle/decorators";
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
 export default class DataTable extends Component{
+
+    static propTypes = Object.assign({}, Component.propTypes, {
+        pageSize: PropTypes.number,
+    });
 
     getBundleName(){
         return 'React';
@@ -38,7 +43,7 @@ export default class DataTable extends Component{
 
     // Attribute: pagesSize
     get pageSize() {
-        return this.getAttributeValue('pageSize', 20);
+        return this.getAttributeValue('pageSize', this.props.pageSize);
     }
     set pageSize(value) {
         this.setAttributeValue('pageSize', value);
