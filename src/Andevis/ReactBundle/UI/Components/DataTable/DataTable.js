@@ -36,6 +36,14 @@ export default class DataTable extends Component{
         this.setAttributeValue('pages', value);
     }
 
+    // Attribute: pagesSize
+    get pageSize() {
+        return this.getAttributeValue('pageSize', 20);
+    }
+    set pageSize(value) {
+        this.setAttributeValue('pageSize', value);
+    }
+
     /**
      * Fetch data
      * @param pageSize
@@ -78,12 +86,17 @@ export default class DataTable extends Component{
         let { name, ...tableProps } = this.props;
         return (
             <ReactTable
+                ref={(table) => {
+                    this.table = table;
+                }}
                 {...tableProps}
                 onFetchData={this.handleFetchData} // Request new data when things change
                 loading={this.isLoading} // Display the loading overlay when we need it
-                manual // Forces table not to paginate or sort automatically, so we can handle it server-side
+                // Forces table not to paginate or sort automatically, so we can handle it server-side
+                manual
                 data={this.state.data}
                 pages={this.pages} // Display the total number of pages
+                pageSize={this.pageSize}
             />
         )
     }

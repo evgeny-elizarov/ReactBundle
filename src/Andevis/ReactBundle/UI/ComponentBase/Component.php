@@ -478,4 +478,6 @@ abstract class Component implements ComponentInterface
         return $this->container->get('andevis.helper.normalized_entity_manager');
     }
 
+
+
 }

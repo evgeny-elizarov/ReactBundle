@@ -9,7 +9,7 @@ import './FormInputBase.scss';
 export default class Form extends Component {
 
     static propTypes = Object.assign({}, Component.propTypes, {
-        defaultValues: PropTypes.object,
+        defaultValues: PropTypes.any,
         onFormUpdate: PropTypes.func,
     });
 

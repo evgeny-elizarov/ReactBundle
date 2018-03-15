@@ -6,6 +6,7 @@ import ExampleComponents from "./ExampleComponents/ExampleComponents";
 import ExampleComponentsArray from "./ExampleComponentsArray/ExampleComponentsArray";
 import ExampleMsgBox from './ExampleMsgBox/ExampleMsgBox';
 import ExampleDataTable from './ExampleDataTable/ExampleDataTable';
+import ExampleTabs from './ExampleTabs/ExampleTabs';
 import Menu from "@AndevisReactBundle/UI/Components/Menu/Menu";
 
 export default () => (
@@ -17,13 +18,25 @@ export default () => (
                         className="nav navbar-nav"
                         items={[
                             {
+                                label: 'Data Table',
+                                link: '/react/example/data-table',
+                            },
+                            {
+                                label: 'MsgBox',
+                                link: '/react/example/msg-box',
+                            },
+                            {
                                 label: 'Form',
                                 link: '/react/example/form',
                             },
                             {
-                                label: 'Grid',
-                                link: '/react/example/grid',
+                                label: 'Tabs',
+                                link: '/react/example/tabs',
                             },
+                            // {
+                            //     label: 'Grid',
+                            //     link: '/react/example/grid',
+                            // },
                             {
                                 label: 'Custom component',
                                 link: '/react/example/component',
@@ -31,14 +44,6 @@ export default () => (
                             {
                                 label: 'Component array',
                                 link: '/react/example/component-array',
-                            },
-                            {
-                                label: 'MsgBox',
-                                link: '/react/example/msg-box',
-                            },
-                            {
-                                label: 'Data Table',
-                                link: '/react/example/data-table',
                             }
                         ]}
                     />
@@ -47,12 +52,13 @@ export default () => (
         </nav>
         <div className="container">
             <Switch>
+                <Route path='/react/example/data-table' component={ExampleDataTable}/>
                 <Route path='/react/example/form' component={ExampleForm}/>
-                <Route path='/react/example/grid' component={ExampleGrid}/>
+                <Route path='/react/example/tabs' component={ExampleTabs}/>
+                {/*<Route path='/react/example/grid' component={ExampleGrid}/>*/}
                 <Route path='/react/example/component' component={ExampleComponents}/>
                 <Route path='/react/example/component-array' component={ExampleComponentsArray}/>
                 <Route path='/react/example/msg-box' component={ExampleMsgBox}/>
-                <Route path='/react/example/data-table' component={ExampleDataTable}/>
             </Switch>
         </div>
     </div>
