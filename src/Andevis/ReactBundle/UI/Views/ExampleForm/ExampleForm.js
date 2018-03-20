@@ -13,6 +13,7 @@ import {
     Checkbox,
     AutoComplete
 } from "@AndevisReactBundle/UI/Components";
+import classNames from "classnames";
 
 export default class ExampleForm extends View {
 
@@ -75,6 +76,23 @@ export default class ExampleForm extends View {
         this.setState({ eventLog: '' });
     }
 
+    // selMyAutoComplete_onFetchOptions(autocomplete, query){
+    //     console.log("selMyAutoComplete_onFetchOptions", query);
+    //     return [
+    //         {text: 'aaa', value:1},
+    //         {text: 'bbb', value:2},
+    //         {text: 'ccc', value:3},
+    //         {text: 'ddd', value:4},
+    //         {text: 'eee', value:5},
+    //         {text: 'fff', value:6},
+    //         {text: 'ggg', value:7},
+    //     ];
+    // }
+
+    selMyAutoComplete_onSelectOption(autocomplete, option){
+        console.log("selMyAutoComplete_onSelectOption", option);
+    }
+
     render() {
         return (
             <div className="container">
@@ -107,18 +125,47 @@ export default class ExampleForm extends View {
                                 <label>Select</label>
                                 <Select name="selManual" field="choiceManual" />
                             </div>
-
+                            <div className="form-group">
+                                Autcomplete search source
+                                <pre>
+                                    {this.state.autoCompleteText}
+                                </pre>
+                            </div>
                             <div className="form-group">
                                 <label>Auto complete</label>
                                 <AutoComplete
-                                    field="choiceAuto"
-                                    name="lstAuto"
+                                    field="autoComplete1"
+                                    name="selMyAutoComplete"
+                                    index={0}
                                     placeholder="Type your search request"
-                                    helpText="Type part of example text below"/>
+                                    helpText="Type part of example text above"/>
                             </div>
-                            <pre>
-                                {this.state.autoCompleteText}
-                            </pre>
+                            <div className="form-group">
+                                <label>Auto complete (fetch on enter)</label>
+                                <AutoComplete
+                                    field="autoComplete2"
+                                    name="selMyAutoComplete"
+                                    index={1}
+                                    fetchOnEnter={true}
+                                    placeholder="Type your search request"
+                                    helpText="Type part of example text above"/>
+                            </div>
+                            <div className="form-group">
+                                <label>Auto complete (cutstom render)</label>
+                                <AutoComplete
+                                    field="autoComplete2"
+                                    name="selMyAutoComplete"
+                                    index={3}
+                                    placeholder="Type your search request"
+                                    helpText="Type part of example text above"
+                                    renderItem={
+                                        (item, isHighlighted) => (
+                                            <span key={item.value} style={{padding: '3px'}}>{ isHighlighted ? (<b>{item.text}</b>) : (item.text)}</span>
+                                        )
+                                    }
+                                />
+                            </div>
+
 
                         </div>
                         <div className="col-md-4">

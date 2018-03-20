@@ -1,35 +1,38 @@
 import React from 'react';
-import { FormField } from 'react-form';
+import Autocomplete from 'react-autocomplete';
 import { autobind } from 'core-decorators';
-import {FormInputBase, InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
+import { FormField } from 'react-form';
 import { SelectBase } from "@AndevisReactBundle/UI/Components/Select/Select";
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import LoadingSpinner from "../../Widgets/LoadingSpinner/LoadingSpinner";
+import { InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
+import {filterObjectByKeys} from "@AndevisReactBundle/UI/Helpers";
 import './AutoComplete.scss';
 
 class AutoCompleteBase extends SelectBase {
 
     static propTypes = Object.assign({}, SelectBase.propTypes, {
-        delay: PropTypes.number.isRequired
+        renderItem: PropTypes.func,
+        dataFetchDelay: PropTypes.number.isRequired,
+        minLength: PropTypes.number,
+        className: PropTypes.any,
+        fetchOnEnter: PropTypes.bool,
+        useCache: PropTypes.bool
     });
 
     static defaultProps = Object.assign({}, SelectBase.defaultProps, {
-        delay: 500
+        dataFetchDelay: 250,
+        minLength: 2,
+        fetchOnEnter: false,
+        useCache: true
     });
 
-    eventList() {
-        return super.eventList.concat(['search','selectOption']);
-    }
 
     getBundleName() {
         return 'React';
     }
 
-    /**
-     * Attribute: text
-     * @returns {*}
-     */
+    // Attribute: text
     get text() {
         return this.getAttributeValue('text', '');
     }
@@ -38,149 +41,195 @@ class AutoCompleteBase extends SelectBase {
         this.setAttributeValue('text', value);
     }
 
-    /**
-     * Attribute: isLoading
-     * @returns {*}
-     */
+    // Attribute: isProcessing
     get isLoading() {
         return this.getAttributeValue('isLoading', false);
     }
-
     set isLoading(value) {
         this.setAttributeValue('isLoading', value);
     }
 
+    eventList() {
+        return super.eventList.concat(['fetchOptions', 'selectOption']);
+    }
+
+    componentDidMount(){
+        super.componentDidMount();
+        this.optionsCache = {};
+    }
+
     /**
-     * Attribute: expanded
-     * @returns {*}
+     * Fetch options
+     * @param input
+     * @returns {*|Promise<any>}
      */
-    get expanded() {
-        return this.getAttributeValue('expanded', false);
-    }
-
-    set expanded(value) {
-        this.setAttributeValue('expanded', value);
-    }
-
-    // TODO: перенести эту логику в Select
-    @autobind
-    selectOption(option) {
-        this.props.fieldApi.setValue(option.value);
-
-        const attrText = this.getAttributeStateName('text');
-        const attrValue = this.getAttributeStateName('value');
-        const attrExpanded = this.getAttributeStateName('expanded');
-        const attrIsLoading = this.getAttributeStateName('isLoading');
-        let newState = {};
-        newState[attrText] = option.text;
-        newState[attrValue] = option.value;
-        newState[attrExpanded] = false;
-
-        this.setState(newState, () => {
-            (async () => {
-                await this.fireEvent('selectOption');
-            })();
-            let newState = {};
-            newState[attrIsLoading] = true;
-
-            this.setState(newState, () => {
-                (async () => {
-                    await this.fireEvent('input');
-
-                    let newState = {};
-                    newState[attrIsLoading] = false;
-                    newState[attrExpanded] = false;
-                    this.setState(newState);
-                })();
+    fetchOptions(input){
+        let internalRepeat = 0;
+        const inputText = input;
+        this.autoComplete.setState({ isOpen: true });
+        if(this.props.useCache && this.optionsCache.hasOwnProperty(input))
+        {
+            this.setAttributes({
+                text: input,
+                options: this.optionsCache[input].slice(0) // clone cached options
             });
-        });
-    }
+        } else {
+            this.setAttributes({
+                    text: input,
+                    isLoading: true },
+                () => {
+                    this.fireEvent('fetchOptions', input)
+                        .then((options) => {
+                            internalRepeat += 1;
+                            if (!Array.isArray(options)) {
+                                throw new Error('fetchOptions event must return array of options!');
+                            }
+                            // if input text not changed when loading
+                            if (inputText === this.text) {
+                                this.optionsCache[inputText] = options;
+                                this.autoComplete.setState({ isOpen: true});
+                                this.setAttributes({
+                                    isLoading: false,
+                                    options: options
+                                }, () => {
+                                    clearTimeout(this.inputInterval);
+                                    this.inputInterval = null;
+                                });
 
-    search(newText) {
-        // const attrValue = this.getAttributeStateName('value');
-        const attrText = this.getAttributeStateName('text');
-        const attrExpanded = this.getAttributeStateName('expanded');
-        const attrIsLoading = this.getAttributeStateName('isLoading');
-        let newState = {};
-        newState[attrText] = newText;
-        newState[attrExpanded] = this.options.length > 0;
-
-        this.setState(newState, () => {
-            if (!this._searchTimer && !this.getAttributeValue('isLoading')) {
-                this._searchTimer = setTimeout(() => {
-                    clearTimeout(this._searchTimer);
-                    this._searchTimer = null;
-                    let newState = {};
-                    newState[attrIsLoading] = true;
-                    this.setState(newState, () => {
-                        (async () => {
-                            await this.fireEvent('change', newText);
-                            let newState = {};
-                            newState[attrIsLoading] = true;
-                            newState[attrExpanded] = this.options.length > 0;
-                            this.setState(newState);
-                        })();
+                            } else {
+                                clearTimeout(this.inputInterval);
+                                this.inputInterval = null;
+                                if (internalRepeat <= 10) {
+                                    this.fetchOptions(this.text);
+                                } else {
+                                    throw new Error('Recursion detected!');
+                                }
+                            }
+                            return options;
+                        }).catch((e) => {
+                            delete this.optionsCache[inputText];
+                            this.setAttributes({ isLoading: false }, () => {
+                                clearTimeout(this.inputInterval);
+                                this.inputInterval = null;
+                            });
                     });
-                }, this.props.delay);
-            }
+                });
+        }
+    }
+
+    /**
+     * Select option
+     * @param option
+     */
+    selectOption(option) {
+        return this.fireEvent('selectOption', option).then(() => {
+            this.change(option.value);
         });
     }
 
     @autobind
-    handleOnInputEvent(event) {
-        this.search(event.target.value);
+    handleSelectOption(text, option){
+        this.autoComplete.setState({ isOpen: false });
+        this.setAttributes({ text: text });
+        this.selectOption(option);
     }
 
     @autobind
-    handleOnFocusEvent(event) {
-        if (this.options.length > 0) this.expanded = true;
-    }
+    handleRenderMenu(items, value, style){
+        const menuStyle = Object.assign(style, {
+            borderRadius: '3px',
+            boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
+            background: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '90%',
+            position: 'fixed',
+            overflow: 'auto',
+            maxHeight: '50%' });
 
-    @autobind
-    handleOnBlurEvent(event) {
-        if (this.props.fieldApi) this.props.fieldApi.setTouched();
-    }
-
-    render() {
-        let props = Object.assign({}, this.props);
-        if (!props.placeholder)
-            props.placeholder = this.getValueFormat();
-
-        props.className = classNames(props.className, "form-input-autoComplete");
         return (
-            <InputWrapper hasFocus={this.hasFocus} {...props}>
-                <LoadingSpinner show={this.isLoading} />
-                <input
-                    ref="inputElement"
-                    className={classNames('form-control', this.props.inputClassName )}
-                    placeholder={this.props.placeholder}
-                    autoComplete={this.props.autoComplete}
-                    required={this.props.required}
-                    readOnly={this.props.readOnly}
-                    onInput={this.handleOnInputEvent}
-                    onBlur={this.handleOnBlurEvent}
-                    onClick={this.handleOnClickEvent}
-                    onFocus={this.handleOnFocusEvent}
-                    // onChange={this.handleOnChangeEvent}
-                    disabled={!this.enabled}
-                    value={this.text} />
-                <div className={"options-container"}>
-                    <div className={"options"} style={{ display: this.expanded ? 'block' : 'none' }}>
-                        {this.options.map((opt, i) =>
-                            <div
-                                key={i}
-                                className="option"
-                                onFocus={this.handleOnFocusEvent}
-                                onClick={(event) => {
-                                    this.selectOption(opt, i, event);
-                                }}>
-                                {opt.text}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </InputWrapper>
+            <div className="autoComplete-component-options-menu" style={menuStyle}>
+                {this.isLoading ?
+                    ('...loading'):
+                    (items)
+                }
+            </div>
         );
+    }
+
+    @autobind
+    handleRenderItem(item, isHighlighted){
+        if(this.props.renderItem){
+            return this.props.renderItem(item, isHighlighted);
+        } else {
+            return (
+                <div
+                    key={item.value}
+                    className={classNames('option', {"highlighted" : isHighlighted })}>
+                    {item.text}
+                </div>
+            )
+        }
+    }
+
+    @autobind
+    handleChangeEvent(e){
+        const inputText = e.target.value;
+        if(inputText.length >= this.props.minLength)
+        {
+            this.setAttributes({ text: inputText });
+
+            if(!this.props.fetchOnEnter)
+            {
+                if (!this.inputInterval) {
+                    this.inputInterval = setTimeout(() => {
+                        this.fetchOptions(this.text);
+                    }, this.props.dataFetchDelay);
+                }
+            }
+
+        } else {
+            this.autoComplete.setState({ isOpen: false });
+            this.setAttributes({
+                options: [],
+                text: inputText
+            });
+        }
+    }
+
+    @autobind
+    handleKeyDown(e){
+        if(this.props.fetchOnEnter && e.key === 'Enter'){
+            e.preventDefault();
+            this.fetchOptions(this.text);
+            console.log("KeyDown", e.key);
+        }
+    }
+
+    render(){
+        // InputWrapper
+        let wrapperProps = filterObjectByKeys(this.props, ['className', 'helpText']);
+        return (
+            <InputWrapper {...wrapperProps}>
+                <Autocomplete
+                    ref={(autoComplete) => { this.autoComplete = autoComplete; }}
+                    getItemValue={(item) => item.text}
+                    autoHighlight={false}
+                    items={this.options}
+                    renderItem={this.handleRenderItem}
+                    renderMenu={this.handleRenderMenu}
+                    value={this.text}
+                    wrapperProps={{
+                        className: null,
+                        style: null
+                    }}
+                    inputProps={{
+                        className: classNames('form-control', this.props.className ),
+                        onKeyDown: this.handleKeyDown
+                    }}
+                    onChange={this.handleChangeEvent}
+                    onSelect={this.handleSelectOption}
+                />
+            </InputWrapper>
+        )
     }
 }
 

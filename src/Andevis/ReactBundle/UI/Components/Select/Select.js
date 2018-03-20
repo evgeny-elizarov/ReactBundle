@@ -12,6 +12,10 @@ class SelectBase extends FormInputBase {
         options: PropTypes.array,
     });
 
+    static defaultProps = Object.assign({}, FormInputBase.defaultProps, {
+        options: [],
+    });
+
     getBundleName() {
         return 'React';
     }

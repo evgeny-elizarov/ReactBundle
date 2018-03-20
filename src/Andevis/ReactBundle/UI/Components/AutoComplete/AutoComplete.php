@@ -13,45 +13,23 @@ use Andevis\ReactBundle\UI\Components\Select\Select;
 
 class AutoComplete extends Select
 {
-
     function eventList(){
-        return array_merge(parent::eventList(), ['search', 'selectOption']);
+        return array_merge(parent::eventList(), ['fetchOptions', 'selectOption']);
     }
 
     /**
-     * Text attribute getter
-     */
-    function getText(){
-        return $this->getAttributeValue('text', '');
-    }
-
-    /**
-     * Text attribute setter
-     * @param string $value
-     */
-    function setText(string $value){
-        $this->setAttributeValue('text', $value);
-    }
-
-    /**
-     * Search event
-     * @param $text
-     * @return mixed
-     * @throws \Exception
-     * @internal param $value
-     */
-    function search($text){
-        return $this->fireEvent('search', $text);
-    }
-
-    /**
-     * Change event
-     * @param array $option
+     * Fetch options
+     * @param string $input
      * @return mixed
      * @throws \Exception
      */
-    function selectOption(array $option){
-        return $this->fireEvent('selectOption', $option);
+    function fetchOptions(string $input) {
+        $options = $this->fireEvent('fetchOptions', $input);
+        if(!is_array($options)) {
+            throw new \Exception('fetchOptions event must return array of options!');
+        }
+        return $options;
     }
-
 }
+
+

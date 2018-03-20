@@ -194,6 +194,20 @@ export default class Component extends React.Component {
         }
     }
 
+    /**
+     * Set attributes
+     * @param values
+     * @param callback
+     */
+    setAttributes(values, callback)
+    {
+        const newState = {};
+        Object.keys(values).forEach((key) => {
+            const attributeName = this.getAttributeStateName(key);
+            newState[attributeName] = values[key];
+        });
+        this.setState(newState, callback);
+    }
 
     // /**
     //  * Attribute: mounted

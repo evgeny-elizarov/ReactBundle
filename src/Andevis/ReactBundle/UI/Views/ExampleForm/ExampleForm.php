@@ -114,22 +114,24 @@ class ExampleForm extends View
         return $options;
     }
 
+
     /**
-     * Auto-complete filter example on backend
+     * Autocomplete fetch options
      * @param AutoComplete $autoComplete
-     * @param $value
+     * @param string $input
+     * @return array
      */
-    function lstAuto_onChange(AutoComplete $autoComplete, $value){
+    function selMyAutoComplete_onFetchOptions(Autocomplete $autoComplete, string $input){
         $options = $this->generateOptionsFromText();
         $maxOptionCount = 10;
         $filteredOptions = [];
         // Filter options if got any input
-        if(strlen($autoComplete->getText()) > 1)
+        if(strlen($input) > 1)
         {
             $filteredOptions = [];
             foreach ($options as $opt){
                 // Filter options by input
-                if(strpos(strtolower($opt['text']), strtolower($autoComplete->getText())) !== false)
+                if(strpos(strtolower($opt['text']), strtolower($input)) !== false)
                 {
                     $filteredOptions[] = $opt;
                 }
@@ -143,7 +145,9 @@ class ExampleForm extends View
                 if(sizeof($filteredOptions) == $maxOptionCount) break;
             }
         }
-        $autoComplete->setOptions($filteredOptions);
+        return $filteredOptions;
     }
+
+
 
 }

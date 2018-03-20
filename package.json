@@ -35,6 +35,7 @@
     "raw-loader": "^0.5.1",
     "react": "^15.6.1",
     "react-apollo": "^1.4.2",
+    "react-autocomplete": "^1.8.1",
     "react-bootstrap": "^0.31.3",
     "react-cookie": "^2.1.2",
     "react-datetime": "^2.12.0",
@@ -59,5 +60,6 @@
     "webpack": "^2.7.0",
     "webpack-dashboard": "^0.3.0",
     "webpack-dev-server": "^2.4.1"
-  }
+  },
+  "dependencies": {}
 }
