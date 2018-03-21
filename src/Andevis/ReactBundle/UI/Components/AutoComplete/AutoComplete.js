@@ -24,12 +24,26 @@ class AutoCompleteBase extends SelectBase {
         dataFetchDelay: 250,
         minLength: 2,
         fetchOnEnter: false,
-        useCache: true
+        useCache: false
     });
 
 
     getBundleName() {
         return 'React';
+    }
+
+    getInitialState(){
+        return {
+            ingnoreFetch: false
+        }
+    }
+    // Attribute: selectedOption
+    get selectedOption() {
+        return this.getAttributeValue('selectedOption', null);
+    }
+
+    set selectedOption(value) {
+        this.setAttributeValue('selectedOption', value);
     }
 
     // Attribute: text
@@ -122,16 +136,39 @@ class AutoCompleteBase extends SelectBase {
      * @param option
      */
     selectOption(option) {
+        this.autoComplete.setState({ isOpen: false });
         return this.fireEvent('selectOption', option).then(() => {
-            this.change(option.value);
+            this.setAttributes({
+                selectedOption: option
+            });
         });
+    }
+
+    /**
+     * Reset selected option
+     */
+    resetSelectedOption(){
+        this.setAttributes({
+            text: ''
+        });
+        this.change('');
+        this.selectOption(null);
+    }
+
+    /**
+     * Reset loaded options
+     */
+    resetOptions(){
+        this.setAttributes({ options: [] })
     }
 
     @autobind
     handleSelectOption(text, option){
         this.autoComplete.setState({ isOpen: false });
-        this.setAttributes({ text: text });
-        this.selectOption(option);
+        this.setAttributes({ text: option.text });
+        this.change(option.value).then(() => {
+            this.selectOption(option);
+        });
     }
 
     @autobind
@@ -173,10 +210,15 @@ class AutoCompleteBase extends SelectBase {
     @autobind
     handleChangeEvent(e){
         const inputText = e.target.value;
+
+        // Reset selected option when text changed
+        if(this.selectedOption && this.selectedOption.text !== inputText){
+            this.resetSelectedOption();
+        }
+
         if(inputText.length >= this.props.minLength)
         {
             this.setAttributes({ text: inputText });
-
             if(!this.props.fetchOnEnter)
             {
                 if (!this.inputInterval) {
@@ -199,8 +241,14 @@ class AutoCompleteBase extends SelectBase {
     handleKeyDown(e){
         if(this.props.fetchOnEnter && e.key === 'Enter'){
             e.preventDefault();
-            this.fetchOptions(this.text);
-            console.log("KeyDown", e.key);
+            if(this.autoComplete.state.highlightedIndex !== null) return;
+            // const needFetch = (this.value !== '' || this.text !== e.target.value);
+            // console.log("handleKeyDown", this.autoComplete.state.highlightedIndex, needFetch, this.value, this.text, e.target.value);
+            // this.autoComplete.setIgnoreBlur(false);
+
+            if(e.target.value.length >= this.props.minLength){
+                this.fetchOptions(this.text);
+            }
         }
     }
 
@@ -223,7 +271,8 @@ class AutoCompleteBase extends SelectBase {
                     }}
                     inputProps={{
                         className: classNames('form-control', this.props.className ),
-                        onKeyDown: this.handleKeyDown
+                        onKeyDown: this.handleKeyDown,
+                        disabled: !this.enabled
                     }}
                     onChange={this.handleChangeEvent}
                     onSelect={this.handleSelectOption}

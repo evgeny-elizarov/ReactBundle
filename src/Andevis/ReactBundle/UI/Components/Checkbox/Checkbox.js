@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FormField } from 'react-form';
 import { autobind } from 'core-decorators';
 import {FormInputBase, InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
@@ -6,10 +7,18 @@ import classNames from 'classnames';
 import './Checkbox.scss';
 
 
-
 @FormField
 export default class Checkbox extends FormInputBase
 {
+    static propTypes = Object.assign({}, FormInputBase.propTypes, {
+        checked: PropTypes.bool,
+    });
+
+    static defaultProps = Object.assign({}, FormInputBase.defaultProps, {
+        checked: false
+    });
+
+
     // static propTypes = Object.assign({}, Component.propTypes, {
     //     field: PropTypes.string.isRequired
     // });

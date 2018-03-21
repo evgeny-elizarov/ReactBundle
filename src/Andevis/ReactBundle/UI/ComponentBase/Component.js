@@ -239,7 +239,7 @@ export default class Component extends React.Component {
      * @returns {*}
      */
     get hasFocus() {
-        return this.getAttributeValue('hasFocus', true);
+        return this.getAttributeValue('hasFocus', false);
     }
 
     set hasFocus(value) {

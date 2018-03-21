@@ -112,6 +112,7 @@ class FormInputBase extends Component {
     }
 
     change(newValue) {
+        this.value = newValue;
         return this.fireEvent('change', newValue);
     }
 
@@ -122,7 +123,6 @@ class FormInputBase extends Component {
 
     @autobind
     handleOnInputEvent(event) {
-        this.value = event.target.value;
         this.change(event.target.value);
     }
 

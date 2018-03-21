@@ -13,5 +13,18 @@ use Andevis\ReactBundle\UI\Components\Form\FormInputBase;
 
 class Checkbox extends FormInputBase
 {
+    /**
+     * Checked attribute getter
+     */
+    function getChecked(){
+        return $this->getValue();
+    }
 
+    /**
+     * Checked attribute setter
+     * @param string $value
+     */
+    function setChecked(string $value){
+        $this->setValue($value);
+    }
 }
