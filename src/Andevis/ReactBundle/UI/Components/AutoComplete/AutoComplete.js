@@ -7,7 +7,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { InputWrapper } from "@AndevisReactBundle/UI/Components/Form/FormInputBase";
 import {filterObjectByKeys} from "@AndevisReactBundle/UI/Helpers";
+import { i18n } from "@AndevisReactBundle/UI/Translation";
+import messages from './messages';
 import './AutoComplete.scss';
+
 
 class AutoCompleteBase extends SelectBase {
 
@@ -17,7 +20,8 @@ class AutoCompleteBase extends SelectBase {
         minLength: PropTypes.number,
         className: PropTypes.any,
         fetchOnEnter: PropTypes.bool,
-        useCache: PropTypes.bool
+        useCache: PropTypes.bool,
+        inputProps: PropTypes.object
     });
 
     static defaultProps = Object.assign({}, SelectBase.defaultProps, {
@@ -148,11 +152,10 @@ class AutoCompleteBase extends SelectBase {
      * Reset selected option
      */
     resetSelectedOption(){
-        this.setAttributes({
-            text: ''
+        this.setAttributes({ text: '' });
+        this.change('').then(() => {
+            this.selectOption(null);
         });
-        this.change('');
-        this.selectOption(null);
     }
 
     /**
@@ -185,7 +188,7 @@ class AutoCompleteBase extends SelectBase {
         return (
             <div className="autoComplete-component-options-menu" style={menuStyle}>
                 {this.isLoading ?
-                    ('...loading'):
+                    ('...' + i18n(messages.loading)):
                     (items)
                 }
             </div>
@@ -255,6 +258,14 @@ class AutoCompleteBase extends SelectBase {
     render(){
         // InputWrapper
         let wrapperProps = filterObjectByKeys(this.props, ['className', 'helpText']);
+
+        const inputProps = Object.assign({
+            className: 'form-control',
+            onKeyDown: this.handleKeyDown,
+            disabled: !this.enabled,
+            placeholder: this.props.placeholder
+        }, this.props.inputProps);
+
         return (
             <InputWrapper {...wrapperProps}>
                 <Autocomplete
@@ -269,11 +280,7 @@ class AutoCompleteBase extends SelectBase {
                         className: null,
                         style: null
                     }}
-                    inputProps={{
-                        className: classNames('form-control', this.props.className ),
-                        onKeyDown: this.handleKeyDown,
-                        disabled: !this.enabled
-                    }}
+                    inputProps={inputProps}
                     onChange={this.handleChangeEvent}
                     onSelect={this.handleSelectOption}
                 />

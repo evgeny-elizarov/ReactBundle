@@ -8,13 +8,14 @@ import PropTypes from 'prop-types';
 import {filterObjectByKeys} from "@AndevisReactBundle/UI/Helpers";
 import './DateTime.scss';
 
-
+// TODO: Сделать дату рабочей с Формами
 class DateTimeBase extends FormInputBase {
 
     static propTypes = Object.assign({}, FormInputBase.propTypes, {
         dateFormat: PropTypes.any,
         valueDateTimeFormat: PropTypes.string,
         timeFormat: PropTypes.any,
+        inputProps: PropTypes.object
     });
 
     static defaultProps = Object.assign({}, FormInputBase.defaultProps, {
@@ -82,7 +83,7 @@ class DateTimeBase extends FormInputBase {
 
         props.className = classNames(props.className, "form-input-datetime");
 
-        const inputProps = filterObjectByKeys(props, ['readOnly', 'placeholder']);
+        const inputProps = Object.assign({}, filterObjectByKeys(props, ['readOnly', 'placeholder']), this.props.inputProps);
 
         return (
             <InputWrapper hasFocus={this.hasFocus} {...props}>
@@ -93,7 +94,7 @@ class DateTimeBase extends FormInputBase {
                     locale={locale}
                     inputProps={inputProps}
                     /* onBlur={() => setTouched()} Disabled setTouched calls onChange event for whole form */
-                    /*{...dateProps}*/
+                    {...dateProps}
                     />
             </InputWrapper>
         );

@@ -37,7 +37,7 @@ export default class Checkbox extends FormInputBase
 
     // Attribute: checked
     get checked() {
-        return this.value;
+        return (this.value === null || this.value === undefined) ? false : this.value;
     }
 
     set checked(value) {

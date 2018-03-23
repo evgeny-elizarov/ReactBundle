@@ -30,6 +30,17 @@ class AutoComplete extends Select
         }
         return $options;
     }
+
+
+    /**
+     * Select option
+     * @param array|null $option
+     * @return mixed
+     * @throws \Exception
+     */
+    function selectOption(?array $option){
+        return $this->fireEvent('selectOption', $option);
+    }
 }
 
 

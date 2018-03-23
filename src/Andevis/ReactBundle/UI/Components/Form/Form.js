@@ -150,6 +150,14 @@ export default class Form extends Component {
         }
     }
 
+    setValues(values) {
+        if (this.formApi) {
+            this.formApi.setAllValues(values);
+        } else {
+            throw new Error('formApi not set!');
+        }
+    }
+
     getStateForEvent(){
         let state = Object.assign({}, this.state);
 
@@ -303,6 +311,8 @@ export default class Form extends Component {
                     form.formApi = formApi;
                     return (
                         <form
+                            className={this.props.className}
+                            style={this.props.style}
                             onSubmit={form.handleFormSubmitEvent}>
                             {form.getCommonError() &&
                              <div className="alert alert-warning">

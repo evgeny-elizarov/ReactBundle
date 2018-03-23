@@ -6,10 +6,11 @@ import {FormInputBase, InputWrapper } from "@AndevisReactBundle/UI/Components/Fo
 import { Component } from "@AndevisReactBundle/UI/ComponentBase";
 import PropTypes from "prop-types";
 
-
+// TODO: remove attribute inputClassName from PropTypes
 class SelectBase extends FormInputBase {
     static propTypes = Object.assign({}, FormInputBase.propTypes, {
         options: PropTypes.array,
+        selectProps: PropTypes.object
     });
 
     static defaultProps = Object.assign({}, FormInputBase.defaultProps, {
@@ -72,29 +73,33 @@ class SelectBase extends FormInputBase {
 
     @autobind
     handleOnChangeEvent(event) {
-        this.value = event.target.value;
         this.change(event.target.value);
     }
 
     render() {
         let props = Object.assign({}, this.props);
         props.className = classNames(props.className, "form-input-select");
+
         // Convert value to string
         const value = typeof this.value === 'undefined' || this.value === null ?
             '' : String(this.value);
+
+        const selectProps = Object.assign({
+            className: 'form-control',
+            required: this.props.required,
+            disabled: this.props.readOnly || this.backendEventProcessing || !this.enabled,
+            value: value,
+        }, this.props.selectProps);
+
         return (
             <InputWrapper hasFocus={this.hasFocus} {...props}>
                 <select
-                    className={classNames('form-control', this.props.inputClassName )}
-                    placeholder={this.props.placeholder}
+                    {...selectProps}
                     autoComplete={this.props.autoComplete}
-                    required={this.props.required}
-                    // readOnly={this.props.readOnly}
                     onChange={this.handleOnChangeEvent}
                     onBlur={this.handleOnBlurEvent}
-                    onClick={this.handleOnClickEvent}
-                    disabled={this.props.readOnly || !this.enabled}
-                    value={value}>
+                    value={this.props.defaultValue}
+                    onClick={this.handleOnClickEvent}>
                      {this.options.map((option, i) =>
                          <option key={i} value={option.value}>{option.text}</option>
                      )}

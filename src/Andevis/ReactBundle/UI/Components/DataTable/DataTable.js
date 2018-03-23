@@ -3,7 +3,9 @@ import Component from "@AndevisReactBundle/UI/ComponentBase/Component";
 import PropTypes from "@AndevisReactBundle/prop-types";
 import { autobind } from "@AndevisReactBundle/decorators";
 import ReactTable from 'react-table';
+import messages from './messages';
 import 'react-table/react-table.css';
+import { i18n } from "@AndevisReactBundle/UI/Translation";
 
 export default class DataTable extends Component{
 
@@ -102,6 +104,14 @@ export default class DataTable extends Component{
                 data={this.state.data}
                 pages={this.pages} // Display the total number of pages
                 pageSize={this.pageSize}
+                // Text
+                previousText={i18n(messages.previousText)}
+                nextText={i18n(messages.nextText)}
+                loadingText={i18n(messages.loadingText)}
+                noDataText={i18n(messages.noDataText)}
+                pageText={i18n(messages.pageText)}
+                ofText={i18n(messages.ofText)}
+                rowsText={i18n(messages.rowsText)}
             />
         )
     }

@@ -12,6 +12,7 @@ use Andevis\HelperBundle\Service\NormalizedEntityManager;
 use Andevis\ReactBundle\GraphQL\InputType\EventInputType;
 use Andevis\ReactBundle\GraphQL\Type\EventResponseType;
 use Andevis\ReactBundle\GraphQL\MutationResolveConfig;
+use Andevis\ReactBundle\UI\Exceptions\UserException;
 use Andevis\ReactBundle\UI\Translation\TranslationTrait;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\Container;
@@ -417,8 +418,15 @@ abstract class Component implements ComponentInterface
         // 1. Call event handler
         //
         $eventHandler = array($this, $args['event']['eventName']);
+        $result = null;
+        $userError = null;
         if(is_callable($eventHandler)){
-            $result = call_user_func_array($eventHandler, $args['event']['arguments']);
+            try{
+                $result = call_user_func_array($eventHandler, $args['event']['arguments']);
+            } catch ( UserException $e){
+                $userError = $e->getMessage();
+            }
+
         } else {
             throw new \Exception(
                 sprintf('Event handler `%s` not implemented in component `%s`',
@@ -458,6 +466,7 @@ abstract class Component implements ComponentInterface
 
         return [
             'result' => $result, // Fix Json converions error php null converts to false
+            'userError' => $userError,
             'componentsUpdate' => $componentsUpdate
         ];
     }

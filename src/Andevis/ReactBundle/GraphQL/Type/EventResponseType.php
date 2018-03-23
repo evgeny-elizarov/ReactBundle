@@ -21,6 +21,7 @@ class EventResponseType extends AbstractObjectType
     {
         $config
             ->addField('result', new JsonStringType())
+            ->addField('userError', new StringType())
             ->addField('componentsUpdate', new ListType(new ComponentUpdateType()))
         ;
     }

@@ -1,6 +1,6 @@
 import React from 'react';
-import {ucfirst} from './../Helpers';
-import {ComponentDataToJsonString} from "../Helpers/base";
+import { ucfirst } from './../Helpers';
+import { ComponentDataToJsonString } from "../Helpers/base";
 import MsgBox from "@AndevisReactBundle/UI/Components/MsgBox";
 import { i18n } from "@AndevisReactBundle/UI/Translation";
 import exceptionMessages from "@AndevisReactBundle/UI/Exceptions/messages";
@@ -12,7 +12,7 @@ import exceptionMessages from "@AndevisReactBundle/UI/Exceptions/messages";
 // import { ucfirst } from "@AndevisReactBundle/UI/Helpers";
 // import { i18n } from "@AndevisReactBundle/UI/Translation";
 
-
+// TODO: Event refactor: Заменить первый аргумент на событие.Т.к. событие может возвращать все что угодно и false в том числе.
 export default class ComponentEvent {
 
     constructor(component, eventName, args){
@@ -33,7 +33,6 @@ export default class ComponentEvent {
     cancel(){
         this.canceled = true;
     }
-
 
     getPromise(){
         return this.promise;
@@ -138,6 +137,7 @@ export default class ComponentEvent {
                 if(this.component.allowCallEventBackend(eventName)) {
 
 
+
                     let componentsUpdatedState = {};
                     let componentsUpdatesOrder = [];
                     componentsUpdatesOrder.push(this.component.getId());
@@ -219,8 +219,14 @@ export default class ComponentEvent {
                         //console.log(this.getName(), eventName, "B", queryArgs);
                         // TODO move backend resolveEvent functionality to ComponentEvent class
                         // queryResult = await this.component.backend.resolveEvent(queryArgs);
+                        await this.component.setAttributes({ backendEventProcessing: true });
                         queryResult = await this.component._requestBackend("resolveEvent", queryArgs);
+                        await this.component.setAttributes({ backendEventProcessing: false });
+                        if(queryResult['userError']){
+                            MsgBox(queryResult['userError'], MsgBox.Type.OKOnly | MsgBox.Type.Exclamation | MsgBox.Type.SystemModal, i18n(exceptionMessages.userError));
+                        }
                     } catch (e) {
+                        await this.component.setAttributes({ backendEventProcessing: false });
                         //console.log(this.getName(), eventName, "C");
                         // TODO: create system critical message
                         MsgBox(e.message, MsgBox.Type.OKOnly | MsgBox.Type.Critical | MsgBox.Type.SystemModal, i18n(exceptionMessages.criticalError));
@@ -228,6 +234,9 @@ export default class ComponentEvent {
                         if(!this.canceled) reject(e);
                         return;
                     }
+
+
+
                     //console.log(this.getName(), eventName, "D");
 
                     if (queryResult) {
@@ -314,9 +323,11 @@ export default class ComponentEvent {
                 } else {
                     if(!this.canceled) resolve(eventResult);
                 }
-            })();
-        });
 
+
+            })();
+
+        });
     }
 
     //

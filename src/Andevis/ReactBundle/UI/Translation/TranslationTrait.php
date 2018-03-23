@@ -11,6 +11,8 @@ namespace Andevis\ReactBundle\UI\Translation;
 
 //use ReflectionClass;
 
+use Andevis\ReactBundle\Service\UITranslator;
+
 trait TranslationTrait
 {
 //    protected $translationMessages;
@@ -69,7 +71,7 @@ trait TranslationTrait
      * @return string
      * @throws \Exception
      */
-    function i18n($localKey = null, array $parameters = [], $locale = null, $messageFile = null)
+    function i18n($localKey = null, ?array $parameters = null, $locale = null, $messageFile = null)
     {
         if(!$messageFile) $messageFile = "./messages.js";
 
@@ -108,13 +110,17 @@ trait TranslationTrait
 
 
         $request = $this->container->get('request_stack')->getCurrentRequest();
+        /** @var UITranslator $translator */
         $translator = $this->container->get('andevis_react.ui_translator');
 
         // Add quotes to parameters
         $parametersWithQuotes = [];
-        foreach ($parameters as $k => $parameter){
-            $parametersWithQuotes['{'.$k.'}'] = $parameter;
+        if($parameters){
+            foreach ($parameters as $k => $parameter){
+                $parametersWithQuotes['{'.$k.'}'] = $parameter;
+            }
         }
+
 
         if(!isset($translationMessages[$localKey])){
             throw new \Exception(sprintf('Key `%s` not set in translation message file `%s`', $localKey, $translationMessageFile));

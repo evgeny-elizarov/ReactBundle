@@ -12,7 +12,9 @@ export default class Component extends React.Component {
     static propTypes = {
         name: PropTypes.string,
         index: PropTypes.number,
-        enabled: PropTypes.bool
+        enabled: PropTypes.bool,
+        className: PropTypes.any,
+        style: PropTypes.object
     };
 
     static defaultProps = {
@@ -194,6 +196,7 @@ export default class Component extends React.Component {
         }
     }
 
+    // TODO: Refactor setAttributes: Эта функция возвращает Promise соотвественно callback не нужен, можно использовать конструкцию .then()
     /**
      * Set attributes
      * @param values
@@ -206,7 +209,22 @@ export default class Component extends React.Component {
             const attributeName = this.getAttributeStateName(key);
             newState[attributeName] = values[key];
         });
-        this.setState(newState, callback);
+        return this.promisedSetState(newState).finally(() => {
+            if(callback) callback();
+        });
+    }
+
+    /**
+     * Promised set state
+     * @param newState
+     */
+    promisedSetState(newState)
+    {
+        return new Promise((resolve) => {
+            this.setState(newState, () => {
+                resolve();
+            });
+        });
     }
 
     // /**
@@ -220,7 +238,6 @@ export default class Component extends React.Component {
     // set mounted(value) {
     //     this.setAttributeValue('mounted', value);
     // }
-
 
     /**
      * Attribute: enabled
@@ -246,7 +263,17 @@ export default class Component extends React.Component {
         this.setAttributeValue('hasFocus', value);
     }
 
+    /**
+     * Attribute: backendEventProcessing
+     * @returns {*}
+     */
+    get backendEventProcessing() {
+        return this.getAttributeValue('backendEventProcessing', false);
+    }
 
+    set backendEventProcessing(value) {
+        this.setAttributeValue('backendEventProcessing', value);
+    }
 
     /**
      * Get schema name
@@ -266,7 +293,7 @@ export default class Component extends React.Component {
                 'resolveEvent',
                 'event',
                 'event: EventInput!',
-                'result, componentsUpdate { id, state { name, value } }'
+                'result, userError, componentsUpdate { id, state { name, value } }'
             )
         ];
     }
@@ -352,7 +379,7 @@ export default class Component extends React.Component {
         Array.prototype.push.apply( args, arguments );
 
         const eventName = args.shift();
-        // console.log(this.getName(), 'fireEvent', eventName);
+
         const event = new ComponentEvent(this, eventName, args);
         this.processingEvents.push(event);
         return event.getPromise();

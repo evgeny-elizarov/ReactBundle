@@ -25,7 +25,7 @@ const InputWrapper = (props) => {
     const hasSuccess = (!error && !warning && success);
 
     return (
-        <div className={classNames("form-input", props.className, {
+        <div className={classNames("form-input form-component", props.className, {
             "has-error": hasError,
             "has-warning": hasWarning,
             "has-success": hasSuccess,
@@ -44,6 +44,7 @@ class FormInputBase extends Component {
     static propTypes = Object.assign({}, Component.propTypes, {
         required: PropTypes.bool,
         placeholder: PropTypes.string,
+        defaultValue: PropTypes.any,
         readOnly: PropTypes.any,
         helpText: PropTypes.string,
         type: PropTypes.string,
@@ -111,9 +112,15 @@ class FormInputBase extends Component {
         return this.fireEvent('click');
     }
 
+    /**
+     * Change event
+     * @param newValue
+     * @returns {*|Promise<any>}
+     */
     change(newValue) {
-        this.value = newValue;
-        return this.fireEvent('change', newValue);
+        return this.fireEvent('change', newValue).then(() => {
+            this.setAttributes({ value: newValue });
+        });
     }
 
     @autobind
@@ -159,7 +166,7 @@ class FormInputBase extends Component {
                     onFocus={this.handleOnFocusEvent}
                     onClick={this.handleOnClickEvent}
                     value={this.value}
-                    disabled={!this.mounted || !this.enabled || !this.context.form.mounted}
+                    disabled={this.backendEventProcessing || !this.enabled || this.context.form.backendEventProcessing}
                 />
             </InputWrapper>
         );

@@ -75,10 +75,10 @@ export default class Button extends Component
                 // id={this.id}
                 // name={this.name}
                 type={this.props.type}
+                style={this.props.style}
                 className={ classNames('btn', this.props.className, {
                     'btn-default': !this.props.className
-                })}
-                onClick={this.click}
+                })}                onClick={this.click}
                 disabled={!this.enabled || this.isProcessing}
             >{content}</button>
         );

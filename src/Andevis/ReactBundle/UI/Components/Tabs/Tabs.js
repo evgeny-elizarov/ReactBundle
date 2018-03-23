@@ -3,7 +3,7 @@ import { Tab, Tabs as ReactTabs, TabList, TabPanel } from 'react-tabs';
 import Component from "@AndevisReactBundle/UI/ComponentBase/Component";
 import PropTypes from "@AndevisReactBundle/prop-types";
 import { autobind } from "@AndevisReactBundle/decorators";
-
+import {filterObjectByKeys} from "@AndevisReactBundle/UI/Helpers";
 
 export default class Tabs extends Component {
 
@@ -78,10 +78,24 @@ export default class Tabs extends Component {
     }
 
     render(){
+        const tabProps = Object.assign({
+            defaultIndex: this.selectedTabIndex,
+            onSelect: this.handleSelectTab
+        }, filterObjectByKeys(this.props, [
+            'className',
+            'defaultFocus',
+            'defaultIndex',
+            'disabledTabClassName',
+            'domRef',
+            'forceRenderTabPanel',
+            'onSelect',
+            'selectedIndex',
+            'selectedTabClassName',
+            'selectedTabPanelClassName'
+        ]));
+
         return (
-            <ReactTabs
-                defaultIndex={this.selectedTabIndex}
-                onSelect={this.handleSelectTab}>{this.props.children}</ReactTabs>
+            <ReactTabs {...tabProps}>{this.props.children}</ReactTabs>
         )
     }
 }

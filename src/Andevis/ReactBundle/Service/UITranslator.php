@@ -52,12 +52,12 @@ class UITranslator implements ContainerAwareInterface
      * @return string
      * @throws \Exception
      */
-    public function trans(string $key, array $parameters, string $locale){
+    public function trans(string $key, ?array $parameters = null, string $locale){
         if(!isset($this->loadedLocales[$locale])){
             $this->addLocaleTranslation($locale);
             $this->loadedLocales[$locale] = true;
         }
-
+        if(is_null($parameters)) $parameters = [];
         return $this->translator->trans($key, $parameters, null, $locale);
     }
 
