@@ -41,14 +41,14 @@ class DataTable extends Component
     /**
      * Fetch data
      * @param null $pageSize
-     * @param null $page
+     * @param null $pageIndex
      * @param null $sorted
      * @param null $filtered
      * @return mixed
      * @throws \Exception
      */
-    function fetchData($pageSize = null, $page = null, $sorted = null, $filtered = null){
-        $result = $this->fireEvent('fetchData', $pageSize, $page, $sorted, $filtered);
+    function fetchData($pageSize = null, $pageIndex = null, $sorted = null, $filtered = null){
+        $result = $this->fireEvent('fetchData', $pageSize, $pageIndex, $sorted, $filtered);
         if(!is_array($result)){
             throw new \Exception('fetchData event must return array!');
         }

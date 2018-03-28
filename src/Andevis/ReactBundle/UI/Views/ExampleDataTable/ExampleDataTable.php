@@ -36,12 +36,12 @@ class ExampleDataTable extends View
      * Fetch data
      * @param $table DataTable
      * @param $pageSize
-     * @param $page
+     * @param $pageIndex
      * @param $sorted
      * @param $filtered
      * @return array
      */
-    function tableTest_onFetchData($table, $pageSize, $page, $sorted, $filtered)
+    function tableTest_onFetchData($table, $pageSize, $pageIndex, $sorted, $filtered)
     {
         $dataCount = 1000;
         $data = $this->generateData($dataCount);
@@ -68,7 +68,7 @@ class ExampleDataTable extends View
         }
 
         // Pagination
-        $pagedData = array_slice($data, $page * $pageSize, $pageSize);
+        $pagedData = array_slice($data, $pageIndex * $pageSize, $pageSize);
         $table->setPages(floor($dataCount / $pageSize));
 
         return $pagedData;

@@ -61,16 +61,16 @@ export default class DataTable extends Component{
     /**
      * Fetch data
      * @param pageSize
-     * @param page
+     * @param pageIndex
      * @param sorted
      * @param filtered
      */
-    fetchData(pageSize, page, sorted, filtered){
-        if(!isNaN(page)) {
+    fetchData(pageSize, pageIndex, sorted, filtered){
+        if(!isNaN(pageIndex)) {
             // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
             // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
             this.isLoading = true;
-            this.fireEvent('fetchData', pageSize, page, sorted, filtered)
+            this.fireEvent('fetchData', pageSize, pageIndex, sorted, filtered)
                 .then((data) => {
                     if(!data){
                         data = [];
@@ -126,7 +126,6 @@ export default class DataTable extends Component{
             'defaultExpanded'
         ]);
 
-        console.log("render", this.props);
         return (
             <ReactTable
                 ref={(table) => {
