@@ -6,11 +6,18 @@ import ReactTable from 'react-table';
 import messages from './messages';
 import 'react-table/react-table.css';
 import { i18n } from "@AndevisReactBundle/UI/Translation";
+import { filterObjectByKeys } from "@AndevisReactBundle/UI/Helpers";
 
 export default class DataTable extends Component{
 
     static propTypes = Object.assign({}, Component.propTypes, {
-        pageSize: PropTypes.number,
+        defaultPageSize: PropTypes.number,
+        sortable: PropTypes.bool,
+    });
+
+    static defaultProps = Object.assign({}, Component.defaultProps, {
+        defaultPageSize: 25,
+        sortable: false
     });
 
     getBundleName(){
@@ -45,7 +52,7 @@ export default class DataTable extends Component{
 
     // Attribute: pagesSize
     get pageSize() {
-        return this.getAttributeValue('pageSize', this.props.pageSize);
+        return this.getAttributeValue('pageSize', this.props.defaultPageSize);
     }
     set pageSize(value) {
         this.setAttributeValue('pageSize', value);
@@ -81,29 +88,58 @@ export default class DataTable extends Component{
 
     @autobind
     handleFetchData(state, instance){
-        this.fetchData(
-            state.pageSize,
-            state.page,
-            state.sorted,
-            state.filtered
-        );
+        this.setAttributes({
+            'pageSize': state.pageSize
+        }, () => {
+            this.fetchData(
+                state.pageSize,
+                state.page,
+                state.sorted,
+                state.filtered
+            );
+        });
     }
 
     render(){
-        let { name, ...tableProps } = this.props;
+        // https://react-table.js.org/#/story/readme
+        let tableProps = filterObjectByKeys(this.props, [
+            'columns',
+            'showPagination',
+            'showPaginationTop',
+            'showPaginationBottom',
+            'showPageSizeOptions',
+            'pageSizeOptions',
+            'defaultPageSize',
+            'showPageJump',
+            'collapseOnSortingChange',
+            'collapseOnPageChange',
+            'collapseOnDataChange',
+            'freezeWhenExpanded',
+            'sortable',
+            'multiSort',
+            'resizable',
+            'filterable',
+            'defaultSortDesc',
+            'defaultSorted',
+            'defaultFiltered',
+            'defaultResized',
+            'defaultExpanded'
+        ]);
+
+        console.log("render", this.props);
         return (
             <ReactTable
                 ref={(table) => {
                     this.table = table;
                 }}
                 {...tableProps}
-                onFetchData={this.handleFetchData} // Request new data when things change
-                loading={this.isLoading} // Display the loading overlay when we need it
                 // Forces table not to paginate or sort automatically, so we can handle it server-side
                 manual
+                onFetchData={this.handleFetchData} // Request new data when things change
+                loading={this.isLoading} // Display the loading overlay when we need it
                 data={this.state.data}
                 pages={this.pages} // Display the total number of pages
-                pageSize={this.pageSize}
+
                 // Text
                 previousText={i18n(messages.previousText)}
                 nextText={i18n(messages.nextText)}
