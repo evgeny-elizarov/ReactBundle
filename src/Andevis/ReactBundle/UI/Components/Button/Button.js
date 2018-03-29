@@ -31,6 +31,10 @@ export default class Button extends Component
     getBundleName() {
         return 'React';
     }
+    // TODO: для всех встроеных компонентов прописать класс вручную, это позволяет расширять базовые компоненты на фронте
+    getShortClassName() {
+        return 'Button';
+    }
 
     // Attribute: title
     get title() {
@@ -41,7 +45,7 @@ export default class Button extends Component
     }
 
     eventList(){
-        return super.eventList().concat(['click']);
+        return super.eventList().concat(['click', 'doubleClick']);
     }
 
     /**
@@ -49,13 +53,27 @@ export default class Button extends Component
      */
     @autobind
     click(e) {
-        this.setAttributeValue('isProcessing', true, ()=> {
+        this.setAttributeValue('isProcessing', true, () =>
             this.fireEvent('click').finally(() => {
                 if(!this.unmounted){
                     this.setAttributeValue('isProcessing', false);
                 }
             })
-        });
+        );
+    }
+
+    /**
+     * Double click event
+     */
+    @autobind
+    doubleClick(e) {
+        this.setAttributeValue('isProcessing', true, () =>
+            this.fireEvent('doubleClick').finally(() => {
+                if(!this.unmounted){
+                    this.setAttributeValue('isProcessing', false);
+                }
+            })
+        );
     }
 
     /**
@@ -78,7 +96,9 @@ export default class Button extends Component
                 style={this.props.style}
                 className={ classNames('btn', this.props.className, {
                     'btn-default': !this.props.className
-                })}                onClick={this.click}
+                })}
+                onClick={this.click}
+                onDoubleClick={this.doubleClick}
                 disabled={!this.enabled || this.isProcessing}
             >{content}</button>
         );

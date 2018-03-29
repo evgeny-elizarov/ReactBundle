@@ -15,7 +15,7 @@ class Button extends Component
 {
 
     function eventList(){
-        return array_merge(parent::eventList(), ['click']);
+        return array_merge(parent::eventList(), ['click', 'doubleClick']);
     }
 
     /**
@@ -23,5 +23,12 @@ class Button extends Component
      */
     function click(){
         return $this->fireEvent('click');
+    }
+
+    /**
+     * Double click event
+     */
+    function doubleClick(){
+        return $this->fireEvent('doubleClick');
     }
 }
