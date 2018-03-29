@@ -44,7 +44,7 @@ export default class DataTable extends Component{
 
     // Attribute: pages
     get pages() {
-        return this.getAttributeValue('pages', null);
+        return this.getAttributeValue('pages', 1);
     }
     set pages(value) {
         this.setAttributeValue('pages', value);
@@ -65,39 +65,42 @@ export default class DataTable extends Component{
      * @param sorted
      * @param filtered
      */
-    fetchData(pageSize, pageIndex, sorted, filtered){
-        if(!isNaN(pageIndex)) {
-            // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
-            // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
-            this.isLoading = true;
-            this.fireEvent('fetchData', pageSize, pageIndex, sorted, filtered)
-                .then((data) => {
-                    if(!data){
-                        data = [];
-                    }
-                    let newState = {
-                        data: data
-                    };
-                    newState[this.getAttributeStateName('isLoading')] = false;
+    fetchData(pageSize = null, pageIndex = 0, sorted, filtered){
+        if(pageSize === null)
+            pageSize = this.pageSize;
 
-                    // Change state by one step
-                    this.setState(newState);
-                });
+        if(isNaN(pageIndex)) {
+            throw new Error('pageIndex is null!');
         }
+        // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
+        // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
+        this.isLoading = true;
+        return this.fireEvent('fetchData', pageSize, pageIndex, sorted, filtered)
+            .then((data) => {
+                if(!data) data = [];
+
+                if(!data){
+                    data = [];
+                }
+                let newState = {
+                    data: data
+                };
+                newState[this.getAttributeStateName('isLoading')] = false;
+                newState[this.getAttributeStateName('pageSize')] = pageSize;
+
+                // Change state by one step
+                this.setState(newState);
+            });
     }
 
     @autobind
     handleFetchData(state, instance){
-        this.setAttributes({
-            'pageSize': state.pageSize
-        }, () => {
-            this.fetchData(
-                state.pageSize,
-                state.page,
-                state.sorted,
-                state.filtered
-            );
-        });
+        this.fetchData(
+            state.pageSize,
+            state.page,
+            state.sorted,
+            state.filtered
+        );
     }
 
     render(){
