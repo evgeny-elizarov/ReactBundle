@@ -45,7 +45,6 @@ export default class View extends Component
 
     getBundleName(){
         if(!this.context || !this.context.hasOwnProperty('bundleName')) {
-            debugger;
             throw new Error('Bundle context not set for this component. Wrap the component in a Bundle tag');
         }
         return this.context.bundleName;

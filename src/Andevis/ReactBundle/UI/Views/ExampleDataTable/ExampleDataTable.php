@@ -41,7 +41,7 @@ class ExampleDataTable extends View
      * @param $filtered
      * @return array
      */
-    function tableTest_onFetchData($table, $pageSize, $pageIndex, $sorted, $filtered)
+    function tableTest2_onFetchData($table, $pageSize, $pageIndex, $sorted, $filtered)
     {
         $dataCount = 1000;
         $data = $this->generateData($dataCount);

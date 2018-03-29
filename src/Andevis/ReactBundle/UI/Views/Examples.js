@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import ExampleForm from "./ExampleForm/ExampleForm";
 import ExampleGrid from "./ExampleGrid/ExampleGrid";
 import ExampleComponents from "./ExampleComponents/ExampleComponents";
+import ExampleContainer from "./ExampleContainer/ExampleContainer";
 import ExampleComponentsArray from "./ExampleComponentsArray/ExampleComponentsArray";
 import ExampleMsgBox from './ExampleMsgBox/ExampleMsgBox';
 import ExampleDataTable from './ExampleDataTable/ExampleDataTable';
@@ -17,6 +18,10 @@ export default () => (
                     <Menu
                         className="nav navbar-nav"
                         items={[
+                            {
+                                label: 'Container',
+                                link: '/react/example/container',
+                            },
                             {
                                 label: 'Data Table',
                                 link: '/react/example/data-table',
@@ -52,6 +57,7 @@ export default () => (
         </nav>
         <div className="container">
             <Switch>
+                <Route path='/react/example/container' component={ExampleContainer}/>
                 <Route path='/react/example/data-table' component={ExampleDataTable}/>
                 <Route path='/react/example/form' component={ExampleForm}/>
                 <Route path='/react/example/tabs' component={ExampleTabs}/>

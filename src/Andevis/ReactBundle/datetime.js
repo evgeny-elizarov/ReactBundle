@@ -1,8 +1,5 @@
-import Moment from 'react-moment';
-import monent from 'moment';
-
-export default monent;
+import Moment from 'moment';
+export default Moment;
 export {
-    Moment,
-    monent
+    Moment
 }

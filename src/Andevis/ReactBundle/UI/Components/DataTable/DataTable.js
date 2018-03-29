@@ -12,6 +12,7 @@ export default class DataTable extends Component{
 
     static propTypes = Object.assign({}, Component.propTypes, {
         defaultPageSize: PropTypes.number,
+        filtered: PropTypes.array,
         sortable: PropTypes.bool,
     });
 
@@ -41,6 +42,7 @@ export default class DataTable extends Component{
     set isLoading(value) {
         this.setAttributeValue('isLoading', value);
     }
+
 
     // Attribute: pages
     get pages() {
@@ -150,6 +152,9 @@ export default class DataTable extends Component{
                 pageText={i18n(messages.pageText)}
                 ofText={i18n(messages.ofText)}
                 rowsText={i18n(messages.rowsText)}
+
+                // Fully controlled
+                filtered={this.props.filtered}
             />
         )
     }

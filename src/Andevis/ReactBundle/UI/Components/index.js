@@ -1,4 +1,5 @@
 import View from './View';
+import Container from './Container/Container';
 import Form from './Form/Form';
 import Text from './Text/Text';
 import DateTime from './DateTime/DateTime';
@@ -16,6 +17,7 @@ import './../../../../../node_modules/react-tabs/style/react-tabs.scss';
 
 export {
     View,
+    Container,
     Form,
     Text,
     TextArea,
