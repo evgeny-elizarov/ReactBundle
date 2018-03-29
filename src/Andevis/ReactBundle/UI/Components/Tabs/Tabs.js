@@ -15,21 +15,22 @@ export default class Tabs extends Component {
         return 'React';
     }
 
-    // Attribute: selectedTabIndex
-    get selectedTabIndex() {
-        return this.getAttributeValue('selectedTabIndex', this.getSelectedTabIndexFromUrl());
-    }
-    set selectedTabIndex(value) {
-        this.setAttributeValue('selectedTabIndex', value);
-    }
+    // // Attribute: selectedTabIndex
+    // get selectedTabIndex() {
+    //     return this.getAttributeValue('selectedTabIndex', this.getSelectedTabIndexFromUrl());
+    // }
+    // set selectedTabIndex(value) {
+    //     this.setAttributeValue('selectedTabIndex', value);
+    // }
 
     eventList(){
         return super.eventList().concat(['selectTab']);
     }
 
     selectTab(index){
-        if(this.selectedTabIndex !== index)
-            this.selectedTabIndex = index;
+        // Отключил. т.к. это перерисовывет табы и опция forceRenderTabPanel становится бессмысленной
+        // if(this.selectedTabIndex !== index)
+        //     this.selectedTabIndex = index;
         return this.fireEvent('selectTab', index);
     }
 
@@ -73,13 +74,13 @@ export default class Tabs extends Component {
 
     @autobind
     handleSelectTab(index){
-        this.selectTab(index);
         window.history.pushState(null, null, "#"+this.prepareUrlHash(index));
+        this.selectTab(index);
     }
 
     render(){
         const tabProps = Object.assign({
-            defaultIndex: this.selectedTabIndex,
+            defaultIndex: this.getSelectedTabIndexFromUrl(),
             onSelect: this.handleSelectTab
         }, filterObjectByKeys(this.props, [
             'className',
