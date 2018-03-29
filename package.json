@@ -50,6 +50,7 @@
     "react-intl-webpack-plugin": "0.0.3",
     "react-loader-advanced": "^1.7.1",
     "react-modal": "^2.3.2",
+    "react-moment": "^0.7.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-select": "^1.0.0-rc.10",
