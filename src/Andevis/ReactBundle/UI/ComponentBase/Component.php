@@ -319,7 +319,9 @@ abstract class Component implements ComponentInterface
         return [
 //            'init',
             'didMount',
-            'refresh',
+            'didUpdate',
+            'willReceiveProps',
+            'refresh', // TODO: remove it, use willReceiveProps
             'focus',
             'blur'
         ];
@@ -333,11 +335,29 @@ abstract class Component implements ComponentInterface
 //    }
 
     /**
+     * Component did update event handler
+     */
+    function didUpdate(){
+        $this->fireEvent('didUpdate');
+    }
+
+    /**
      * Component did mount event handler
      */
     function didMount(){
         $this->fireEvent('didMount');
     }
+
+    /**
+     * Component willReceiveProps event handler
+     * @param array $nextProps
+     * @throws \Exception
+     */
+    function willReceiveProps(array $nextProps){
+        $this->fireEvent('willReceiveProps', $nextProps);
+    }
+
+
 
     /**
      * Refresh event handler

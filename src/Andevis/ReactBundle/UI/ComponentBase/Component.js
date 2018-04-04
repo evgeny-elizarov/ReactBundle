@@ -305,6 +305,8 @@ export default class Component extends React.Component {
     eventList() {
         return [
             'didMount',
+            'willReceiveProps',
+            'didUpdate',
             'refresh',
             'focus',
             'blur'
@@ -337,8 +339,29 @@ export default class Component extends React.Component {
         this.didMount();
     }
 
+    componentDidUpdate() {
+        this.didUpdate();
+    }
+
+    componentWillReceiveProps(nextProps){
+        this.willReceiveProps(nextProps);
+    }
+
     didMount() {
         return this.fireEvent('didMount');
+    }
+
+    didUpdate() {
+        return this.fireEvent('didUpdate');
+    }
+
+    /**
+     * Will receive props event
+     * @param nextProps
+     * @returns {Promise}
+     */
+    willReceiveProps(nextProps) {
+        return this.fireEvent('willReceiveProps', nextProps);
     }
 
     /**

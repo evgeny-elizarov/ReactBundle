@@ -13,6 +13,6 @@ export default class Container extends Component {
     }
 
     render(){
-        return (typeof this.props.content === 'function') ? this.props.content(this.state) : this.props.content;
+        return (typeof this.props.content === 'function') ? this.props.content(this.props, this.state) : this.props.content;
     }
 }
