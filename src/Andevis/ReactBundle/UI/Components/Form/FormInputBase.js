@@ -3,7 +3,7 @@ import { Component } from './../../ComponentBase';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import './FormInputBase.scss';
+// import './FormInputBase.scss';
 
 const Tooltip = ({ styleClass, message, show }) => (
     <div
@@ -39,6 +39,7 @@ const InputWrapper = (props) => {
     );
 };
 
+// TODO: rename to Field
 class FormInputBase extends Component {
 
     static propTypes = Object.assign({}, Component.propTypes, {
@@ -60,7 +61,9 @@ class FormInputBase extends Component {
 
 
     static contextTypes = Object.assign({}, Component.contextTypes, {
-        form: PropTypes.object
+        form: PropTypes.object,
+        formApi: PropTypes.object,
+        fieldApi: PropTypes.object
     });
 
     constructor(props, context) {
@@ -79,13 +82,14 @@ class FormInputBase extends Component {
 
     // Attribute: value
     get value() {
-        if (this.props.fieldApi) {
-            return this.props.fieldApi.getValue();
-            // return formValue;
-            // return typeof formValue === 'string' ? formValue : '';
-        } else {
-            this.getAttributeValue('value', null);
-        }
+        this.getAttributeValue('value', this.props.value);
+        // if (this.props.fieldApi) {
+        //     return this.props.fieldApi.getValue();
+        //     // return formValue;
+        //     // return typeof formValue === 'string' ? formValue : '';
+        // } else {
+        //
+        // }
     }
     set value(value) {
         if(this.props.fieldApi){

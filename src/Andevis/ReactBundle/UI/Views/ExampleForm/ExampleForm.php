@@ -8,15 +8,15 @@
 
 namespace Andevis\ReactBundle\UI\Views\ExampleForm;
 
-use Andevis\ReactBundle\UI\Components\AutoComplete\AutoComplete;
+use Andevis\ReactBundle\UI\Components\Container\Container;
 use Andevis\ReactBundle\UI\Components\Form\Form;
-use Andevis\ReactBundle\UI\Components\Select\Select;
-use Andevis\ReactBundle\UI\Components\TextArea\TextArea;
 use Andevis\ReactBundle\UI\Components\View\View;
-
-
-// Sample constant with text for autocomplete
-const AUTO_COMPLETE_TEXT = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
+use Andevis\ReactBundle\UI\Components\Form\Field;
+use Andevis\ReactBundle\UI\Components\Form\Fields\AutoComplete\AutoComplete;
+use Andevis\ReactBundle\UI\Components\Form\Fields\Checkbox\Checkbox;
+use Andevis\ReactBundle\UI\Components\Form\Fields\DateTime\DateTime;
+use Andevis\ReactBundle\UI\Components\Form\Fields\Select\Select;
+use Andevis\ReactBundle\UI\Components\Form\Fields\TextArea\TextArea;
 
 
 class ExampleForm extends View
@@ -24,130 +24,122 @@ class ExampleForm extends View
     /**
      * Logger to view debug info
      * @param $message
+     * @throws \Exception
      */
-    function log($message){
-        //$view = $this->getComponentByName('Example');
-        $state = $this->getState();
-        $eventLog = isset($state['eventLog']) ? $state['eventLog'] : '';
-        $this->setState([
-            'eventLog' => $eventLog . "Backend:\t".$message . "\r\n"
-        ]);
-    }
-
-    /**
-     * User event handler for current view triggered when component mount on page
-     */
-    function ExampleForm_onDidMount()
+    function log($message)
     {
-        $this->log('ExampleForm_onDidMount');
-
-        /** @var TextArea $text */
-        $this->setState([
-            'autoCompleteText' => AUTO_COMPLETE_TEXT
-        ]);
-
-        /** @var Select $select */
-        $select = $this->getComponentByName('selManual');
-        $select->addOption('a', 'AAA');
-        $select->addOption('b', 'BBB');
+        /** @var Container $debugLog */
+        $debugLog = $this->getComponentByName('debugLog');
+        $messages = $debugLog->getState('messages');
+        $messages = array_slice($messages, 0, 10);
+        array_unshift($messages, "Backend:\t" . $message);
+        $debugLog->setState(['messages' => $messages]);
     }
 
-    /**
-     * Click event handler for Text:txtName component triggered when clicked
-     */
-    function txtName_onClick(){
-        $this->log('txtName_onClick');
-    }
-
-    /**
-     * Change event on backend
-     * @param $value
-     */
-    function txtName_onChange($txt, $value){
-        $this->log('txtName_onChange'.json_encode($value));
-    }
 
     /**
      * Backend submit example
      * @param Form $form
      * @param $values
+     * @throws \Exception
      */
-    function frmExample_onSubmit(Form $form, $values){
-        $this->log("frmExample_onSubmit ".json_encode($values));
-
-        $this->setState([
-            'backendFormValues' => $values
-        ]);
-        $form->setError("name", "Validation error");
-        $form->setWarning("email", "Validation warning");
-        $form->setSuccess("password", "Validation success");
-
-    }
-
-
-    function lstManual_init(Select $select){
-        $select->addOption('','-- Select --');
-        $select->addOption('a','AAA');
-        $select->addOption('b','BBB');
-    }
-
-    function lstManual_onChange(Select $select) {
-        $this->setState([
-            'backedn_lstManualSelectedOptionOnChange' => $select->getSelectedOption()
-        ]);
+    function frmExample_onSubmit(Form $form, $values)
+    {
+        $this->log("frmExample_onSubmit " . json_encode($values));
+//
+//        $form->setError("name", "Validation error");
+//        $form->setWarning("email", "Validation warning");
+//        $form->setSuccess("password", "Validation success");
     }
 
     /**
-     * Helper backend function to generate sample options from text
+     * Load values from server
+     * @throws \Exception
      */
-    function generateOptionsFromText(){
-        $fullText = AUTO_COMPLETE_TEXT;
-        $options = [];
-        $words = explode(" ", $fullText);
-        foreach ($words as $index => $word)
-        {
-            $options[] = [
-                'value' => $index,
-                'text' => $word
-            ];
+    function btnLoadValuesFromServer_onClick()
+    {
+        foreach ($this->getComponentByName('formCtrl') as $ctrl) {
+            $this->setControlNewValue($ctrl);
+
         }
-        return $options;
+
+        foreach ($this->getComponentByName('outCtrl') as $ctrl) {
+            $this->setControlNewValue($ctrl);
+        }
     }
 
+    /**
+     * Set control new value
+     * @param $ctrl
+     */
+    function setControlNewValue($ctrl)
+    {
+        switch (get_class($ctrl))
+        {
+            case DateTime::class:
+                $ctrl->setValue(date('Y-m-d H:i:s'));
+                break;
+
+            case Select::class:
+                $ctrl->setValue('a');
+                break;
+
+            case AutoComplete::class:
+                $ctrl->setValue('A');
+                break;
+
+            default:
+                $ctrl->setValue('server value');
+        }
+    }
 
     /**
-     * Autocomplete fetch options
-     * @param AutoComplete $autoComplete
-     * @param string $input
+     * Get autoComplete data
+     * @param $filter
      * @return array
      */
-    function selMyAutoComplete_onFetchOptions(Autocomplete $autoComplete, string $input){
-        $options = $this->generateOptionsFromText();
-        $maxOptionCount = 10;
-        $filteredOptions = [];
-        // Filter options if got any input
-        if(strlen($input) > 1)
-        {
-            $filteredOptions = [];
-            foreach ($options as $opt){
-                // Filter options by input
-                if(strpos(strtolower($opt['text']), strtolower($input)) !== false)
-                {
-                    $filteredOptions[] = $opt;
+    function getAutoCompleteData($filter){
+        $data = [
+            ["abbr" => 'AL', "name" => 'Alabama'], ["abbr" => 'AK', "name" => 'Alaska'], ["abbr" => 'AZ', "name" => 'Arizona'], ["abbr" => 'AR', "name" => 'Arkansas'], ["abbr" => 'CA', "name" => 'California'], ["abbr" => 'CO', "name" => 'Colorado'], ["abbr" => 'CT', "name" => 'Connecticut'], ["abbr" => 'DE', "name" => 'Delaware'], ["abbr" => 'FL', "name" => 'Florida'], ["abbr" => 'GA', "name" => 'Georgia'], ["abbr" => 'HI', "name" => 'Hawaii'], ["abbr" => 'ID', "name" => 'Idaho'], ["abbr" => 'IL', "name" => 'Illinois'], ["abbr" => 'IN', "name" => 'Indiana'], ["abbr" => 'IA', "name" => 'Iowa'], ["abbr" => 'KS', "name" => 'Kansas'], ["abbr" => 'KY', "name" => 'Kentucky'], ["abbr" => 'LA', "name" => 'Louisiana'], ["abbr" => 'ME', "name" => 'Maine'], ["abbr" => 'MD', "name" => 'Maryland'], ["abbr" => 'MA', "name" => 'Massachusetts'], ["abbr" => 'MI', "name" => 'Michigan'], ["abbr" => 'MN', "name" => 'Minnesota'], ["abbr" => 'MS', "name" => 'Mississippi'], ["abbr" => 'MO', "name" => 'Missouri'], ["abbr" => 'MT', "name" => 'Montana'], ["abbr" => 'NE', "name" => 'Nebraska'], ["abbr" => 'NV', "name" => 'Nevada'], ["abbr" => 'NH', "name" => 'New Hampshire'], ["abbr" => 'NJ', "name" => 'New Jersey'], ["abbr" => 'NM', "name" => 'New Mexico'], ["abbr" => 'NY', "name" => 'New York'], ["abbr" => 'NC', "name" => 'North Carolina'], ["abbr" => 'ND', "name" => 'North Dakota'], ["abbr" => 'OH', "name" => 'Ohio'], ["abbr" => 'OK', "name" => 'Oklahoma'], ["abbr" => 'OR', "name" => 'Oregon'], ["abbr" => 'PA', "name" => 'Pennsylvania'], ["abbr" => 'RI', "name" => 'Rhode Island'], ["abbr" => 'SC', "name" => 'South Carolina'], ["abbr" => 'SD', "name" => 'South Dakota'], ["abbr" => 'TN', "name" => 'Tennessee'], ["abbr" => 'TX', "name" => 'Texas'], ["abbr" => 'UT', "name" => 'Utah'], ["abbr" => 'VT', "name" => 'Vermont'], ["abbr" => 'VA', "name" => 'Virginia'], ["abbr" => 'WA', "name" => 'Washington'], ["abbr" => 'WV', "name" => 'West Virginia'], ["abbr" => 'WI', "name" => 'Wisconsin'], ["abbr" => 'WY', "name" => 'Wyoming']
+        ];
+        $result = [];
+        if ($filter) {
+            foreach ($data as $item) {
+                if (strpos($item['name'], $filter) !== false) {
+                    $result[] = $item;
                 }
-                // Max. return options
-                if(sizeof($filteredOptions) == $maxOptionCount) break;
             }
         } else {
-            // ... put first ten
-            foreach ($options as $opt){
-                $filteredOptions[] = $opt;
-                if(sizeof($filteredOptions) == $maxOptionCount) break;
-            }
+            $result = $data;
         }
-        return $filteredOptions;
+        return $data;
     }
 
+    /**
+     * AutoComplete fetch data
+     */
+    function formCtrl_onFetchData($ctrl, $input)
+    {
+        if(get_class($ctrl) == AutoComplete::class){
+            if($ctrl->getProperty('field') == 'backendAutocomplete')
+            {
+                return $this->getAutoCompleteData($input);
+            }
+        }
+    }
+
+    /**
+     * AutoComplete fetch data
+     */
+    function outCtrl_onFetchData($ctrl, $input)
+    {
+        if(get_class($ctrl) == AutoComplete::class){
+            if($ctrl->getProperty('field') == 'backendAutocomplete')
+            {
+                return $this->getAutoCompleteData($input);
+            }
+        }
+    }
 
 
 }

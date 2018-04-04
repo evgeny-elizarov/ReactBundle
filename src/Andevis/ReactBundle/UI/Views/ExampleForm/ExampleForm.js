@@ -1,8 +1,12 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
+import { Text as TextTest, Field as ReacField } from 'react-form';
 import { autobind } from 'core-decorators';
 import {
     View,
     Form,
+    Field,
     Button,
     DateTime,
     Text,
@@ -14,6 +18,337 @@ import {
     AutoComplete
 } from "@AndevisReactBundle/UI/Components";
 import classNames from "classnames";
+import Container from "@AndevisReactBundle/UI/Components/Container/Container";
+
+//
+// const Message = ({ color, message }) => (
+//     <div className="mb-4" style={{ color }}>
+//         <small>{message}</small>
+//     </div>
+// );
+//
+//
+// const validate = value => ({
+//     error: !value || !/Hello World/.test(value) ? "Input must contain 'Hello World'" : null,
+//     warning: !value || !/^Hello World$/.test(value) ? "Input should equal just 'Hello World'" : null,
+//     success: value && /Hello World/.test(value) ? "Thanks for entering 'Hello World'!" : null
+// });
+//
+//
+// class CustomText extends React.Component {
+//
+//     static contextTypes = {
+//         formApi: React.PropTypes.object
+//     };
+//
+//     render() {
+//         console.log('Custom text', this.context);
+//         return (
+//             // Use the form field and your custom input together to create your very own input!
+//             <ReacField validate={validate} field={this.props.field}>
+//                 {fieldApi => {
+//
+//                     // Remember to pull off everything you dont want ending up on the <input>
+//                     // thats why we pull off onChange, onBlur, and field
+//                     // Note, the ...rest is important because it allows you to pass any
+//                     // additional fields to the internal <input>.
+//                     const { onChange, onBlur, field, ...rest } = this.props;
+//
+//                     const { value, error, warning, success, setValue, setTouched } = fieldApi
+//
+//                     return (
+//                         <div>
+//                             <input
+//                                 {...rest}
+//                                 value={value || ''}
+//                                 onChange={e => {
+//                                     setValue(e.target.value)
+//                                     if (onChange) {
+//                                         onChange(e.target.value, e)
+//                                     }
+//                                 }}
+//                                 onBlur={e => {
+//                                     setTouched()
+//                                     if (onBlur) {
+//                                         onBlur(e)
+//                                     }
+//                                 }}
+//                             />
+//                             {error ? <Message color="red" message={error}/> : null}
+//                             {!error && warning ? <Message color="orange" message={warning}/> : null}
+//                             {!error && !warning && success ? <Message color="green" message={success}/> : null}
+//                         </div>
+//                     )
+//                 }}
+//             </ReacField>
+//         )
+//     }
+// }
+
+
+class LogContainer extends Container {
+
+    getInitialState() {
+        return {
+            messages: []
+        }
+    }
+
+    render() {
+        const text = this.state.messages.join('\r\n');
+        return (
+            <pre>{text}</pre>
+        )
+    }
+
+}
+
+
+class ControlsList extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            required: true,
+            enabled: true,
+            readOnly: false
+        }
+    }
+
+    setCommonAttributes(attrs) {
+        this.setState(attrs);
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState(props);
+    }
+
+    render() {
+        return (
+            <div>
+                <div className="form-group">
+                    <label>Name</label>
+                    <Text
+                        name={this.props.name}
+                        index={0}
+                        field="name"
+                        placeholder="Name"
+                        required={this.state.required}
+                        enabled={this.state.enabled}
+                        readOnly={this.state.readOnly}
+                        inputProps={
+                            {
+                                style: {
+                                    color: 'red'
+                                }
+                            }
+                        }
+                        helpText="Example block-level help text here."/>
+                </div>
+
+                <div className="form-group">
+                    <label>Email</label>
+                    <Text
+                        name={this.props.name}
+                        index={1}
+                        field="email"
+                        type="email"
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                        placeholder="Email"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Password</label>
+                    <Text
+                        name={this.props.name}
+                        index={2}
+                        field="password"
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                        type="password"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Select</label>
+                    <Select
+                        name={this.props.name}
+                        index={3}
+                        field="select"
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                        selectProps={
+                            {
+                                style: {
+                                    color: 'red'
+                                }
+                            }
+                        }
+                        options={[
+                            { value: '', text: '-- Select char --' },
+                            { value: 'a', text: 'A' },
+                            { value: 'b', text: 'B' },
+                            { value: 'c', text: 'C' },
+                        ]}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Auto complete</label>
+                    <AutoComplete
+                        name={this.props.name}
+                        index={4}
+                        field="autoComplete1"
+                        dataSource={[
+                            'A', 'B', 'C'
+                        ]}
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                        placeholder="Type your search request"
+                        helpText="Type part of example text above"/>
+                </div>
+
+                <div className="form-group">
+                    <label>Auto complete (custom data)</label>
+                    <AutoComplete
+                        name={this.props.name}
+                        index={5}
+                        field="autoComplete2"
+                        dataSource={[
+                            { id: 'a', value: 'A' },
+                            { id: 'b', value: 'B' },
+                            { id: 'c', value: 'C' },
+                        ]}
+                        dataFields={{
+                            value: 'id',
+                            text: 'value'
+                        }}
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                        placeholder="Type your search request"
+                        helpText="Type part of example text above"/>
+                </div>
+
+                <div className="form-group">
+                    <label>Auto complete server data</label>
+                    <AutoComplete
+                        name={this.props.name}
+                        index={6}
+                        field="backendAutocomplete"
+                        minLength={1}
+                        dataFields={{
+                            value: 'name'
+                        }}
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                        placeholder="Type your search request"
+                        helpText="Type part of example text above"/>
+                </div>
+                <div className="form-group">
+                    <label>Color</label>
+                    <Text
+                        field="color"
+                        name={this.props.name}
+                        index={7}
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                        type="color"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Date</label>
+                    <DateTime
+                        field="date"
+                        name={this.props.name}
+                        index={8}
+                        timeFormat={false}
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Date time</label>
+                    <DateTime
+                        field="dateTime"
+                        name={this.props.name}
+                        index={9}
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Time</label>
+                    <DateTime
+                        field="time"
+                        name={this.props.name}
+                        index={10}
+                        dateFormat={false}
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                    />
+                </div>
+                {/* TODO: Сделать компонент контролируемым */}
+                {/*<RadioGroup field="gender">*/}
+                {/*<div className="radio">*/}
+                {/*<label htmlFor="male" className="mr-2">*/}
+                {/*<Radio*/}
+                {/*value="male"*/}
+                {/*id="male"*/}
+                {/*className="mr-3 d-inline-block"*/}
+                {/*/>*/}
+                {/*Male*/}
+                {/*</label>*/}
+                {/*<label htmlFor="female" className="mr-2">*/}
+                {/*<Radio*/}
+                {/*value="female"*/}
+                {/*id="female"*/}
+                {/*className="d-inline-block"*/}
+                {/*/>*/}
+                {/*Female*/}
+                {/*</label>*/}
+                {/*</div>*/}
+                {/*</RadioGroup>*/}
+                <div className="checkbox">
+                    <label>
+                        <Checkbox
+                            field="checkbox"
+                            name={this.props.name}
+                            index={11}
+                            required={this.state.required}
+                            readOnly={this.state.readOnly}
+                            enabled={this.state.enabled}
+                        />
+                        Checkbox
+                    </label>
+                </div>
+
+                <div className="form-group">
+                    <label>Big text</label>
+                    <TextArea
+                        name={this.props.name}
+                        index={12}
+                        field="bit_text"
+                        required={this.state.required}
+                        readOnly={this.state.readOnly}
+                        enabled={this.state.enabled}
+                    />
+                </div>
+            </div>
+        )
+    }
+}
 
 export default class ExampleForm extends View {
 
@@ -21,14 +356,13 @@ export default class ExampleForm extends View {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            eventLog: '',
-            autoCompleteText: '',
-            frontendFormValues: {},
-            backendFormValues: {}
+            ctrlStateRequired: true,
+            ctrlStateEnabled: true,
+            ctrlStateReadOnly: false
         };
     }
 
-    getBundleName(){
+    getBundleName() {
         return 'React';
     }
 
@@ -37,60 +371,189 @@ export default class ExampleForm extends View {
      */
     @autobind
     log(message, callback) {
-        this.setState({ eventLog: this.state.eventLog + "Frontend:\t" + message + '\r\n' }, callback);
+        const debugLog = this.getComponentByName('debugLog');
+        let messages = debugLog.state.messages.slice(0, 32);
+        messages.unshift("Frontend:\t" + message);
+        debugLog.setState({ messages: messages }, callback);
     }
 
-    /**
-     * View event when component mount on page
-     */
+    //
+    // Log controls events:
+    //
+
     ExampleForm_onDidMount() {
         this.log('ExampleForm_onDidMount');
     }
 
-    /**
-     * Click event handler for Text:txtName component triggered when clicked
-     */
-    txtName_onClick(txt) {
-        this.log('txtName_onClick');
+    formCtrl_onClick(ctrl) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : clicked");
     }
 
-    btnSubmitExample2_onClick(btn)
-    {
-        return this.getComponentByName('frmExample').submit();
+    formCtrl_onDoubleClick(ctrl) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : double clicked");
+    }
+
+    formCtrl_onInput(ctrl, value) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : input : " + value);
+    }
+
+    formCtrl_onChange(ctrl, value) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : change : " + value);
+    }
+
+    outCtrl_onClick(ctrl) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : clicked");
+    }
+
+    outCtrl_onDoubleClick(ctrl) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : double clicked");
+    }
+
+    outCtrl_onInput(ctrl, value) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : input : " + value);
+
+        this.updateOutCtrlValueState();
+    }
+
+    outCtrl_onChange(ctrl, value) {
+        this.log(ctrl.getName() + "(" + ctrl.getIndex() + ") : change : " + value);
+
+        this.updateOutCtrlValueState();
+    }
+
+
+    updateOutCtrlValueState(){
+        let values = {}
+        this.getComponentByName('outCtrl').forEach((ctrl) => {
+            values[ctrl.props.field] = ctrl.getValue();
+        });
+        this.getComponentByName('outControlState').setState({
+            values: values
+        });
+    }
+
+    //
+    // Test actions:
+    //
+    getTestButtons() {
+        return [
+            {
+                name: 'btnSubmitForm',
+                title: 'Submit form',
+                onClick: () => {
+                    this.getComponentByName('frmExample').submit();
+                }
+            },
+            {
+                name: 'btnResetForm',
+                title: 'Reset form',
+                onClick: () => {
+                    this.getComponentByName('frmExample').resetAll();
+                }
+            },
+            {
+                name: 'btnClearCtrl',
+                title: 'Clear out controls',
+                onClick: () => {
+                    this.getComponentByName('formCtrl').forEach((ctrl) => {
+                        ctrl.value = null;
+                    });
+                    this.getComponentByName('outCtrl').forEach((ctrl) => {
+                        ctrl.value = null;
+                    });
+                    this.updateOutCtrlValueState();
+                }
+            },
+            {
+                name: 'btnLoadValuesFromServer',
+                title: 'Load values from server'
+            },
+            {
+                name: 'btnSetValuesOnClient',
+                title: 'Set values on client',
+                onClick: () => {
+                    this.getComponentByName('formCtrl').forEach((ctrl) => {
+                        ctrl.value = 'a';
+                    });
+                    this.getComponentByName('outCtrl').forEach((ctrl) => {
+                        ctrl.value = 'a';
+                    });
+                    this.updateOutCtrlValueState();
+                }
+            },
+            {
+                name: 'btnSwitchEnabled',
+                title: 'enabled: ' + this.state.ctrlStateEnabled.toString(),
+                onClick: () => {
+                    this.setState({ ctrlStateEnabled: !this.state.ctrlStateEnabled });
+                }
+            },
+            {
+                name: 'btnSwitchReadOnly',
+                title: 'readOnly: ' + this.state.ctrlStateReadOnly.toString(),
+                onClick: () => {
+                    this.setState({ ctrlStateReadOnly: !this.state.ctrlStateReadOnly })
+                }
+            },
+            {
+                name: 'btnSwitchRequired',
+                title: 'required: ' + this.state.ctrlStateRequired.toString(),
+                onClick: () => {
+                    this.setState({ ctrlStateRequired: !this.state.ctrlStateRequired })
+                }
+            },
+            {
+                name: 'btnSwitchIsChecked',
+                title: 'Switch is checked',
+                onClick: () => {
+                    this.getComponentByName('formCtrl').forEach((ctrl) => {
+                        if(ctrl.constructor.name === 'Checkbox')
+                        {
+                            ctrl.isChecked(!ctrl.isChecked());
+                        }
+                    });
+                    this.getComponentByName('outCtrl').forEach((ctrl) => {
+                        if(ctrl.constructor.name === 'Checkbox')
+                        {
+                            ctrl.isChecked(!ctrl.isChecked());
+                        }
+                    });
+                }
+            },
+            {
+                name: 'btnClearDebugLog',
+                title: 'Clear debug log',
+                onClick: () => {
+                    this.getComponentByName('debugLog').setState({ messages: [] });
+                }
+            }
+        ];
+    }
+
+
+    /**
+     * Form state
+     * @param form
+     * @param formState
+     */
+    frmExample_onChange(form, formState) {
+        this.getComponentByName('formState').setState({
+            values: formState.values
+        });
     }
 
     /**
      * Set form values to views state on form submit
      */
     frmExample_onSubmit(form, values) {
-        this.log('frmExample_onSubmit '+JSON.stringify(values));
-        this.setState({
-            frontendFormValues: values
-        });
+        this.log('frmExample_onSubmit ' + JSON.stringify(values));
     }
 
     /**
-     * On click clear debug log
+     *  After load data from server
      */
-    btnClearLog_onClick(){
-        this.setState({ eventLog: '' });
-    }
-
-    // selMyAutoComplete_onFetchOptions(autocomplete, query){
-    //     console.log("selMyAutoComplete_onFetchOptions", query);
-    //     return [
-    //         {text: 'aaa', value:1},
-    //         {text: 'bbb', value:2},
-    //         {text: 'ccc', value:3},
-    //         {text: 'ddd', value:4},
-    //         {text: 'eee', value:5},
-    //         {text: 'fff', value:6},
-    //         {text: 'ggg', value:7},
-    //     ];
-    // }
-
-    selMyAutoComplete_onSelectOption(autocomplete, option){
-        console.log("selMyAutoComplete_onSelectOption", option);
+    btnLoadValuesFromServer_afterClick(){
+        this.updateOutCtrlValueState();
     }
 
     render() {
@@ -99,169 +562,74 @@ export default class ExampleForm extends View {
                 <div className="page-header">
                     <h1>Form example</h1>
                 </div>
-                <Form name="frmExample">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label>Name</label>
-                                <Text
-                                    field="name"
-                                    name="txtName"
-                                    placeholder="Name"
-                                    required={true}
-                                    helpText="Example block-level help text here."/>
-                            </div>
 
-                            <div className="form-group">
-                                <label>Email</label>
-                                <Text field="email" type="email" name="txtEmail" placeholder="Email"/>
-                            </div>
+                <div className="row">
 
-                            <div className="form-group">
-                                <label>Password</label>
-                                <Text field="password" type="password" name="txtPassword"/>
-                            </div>
-                            <div className="form-group">
-                                <label>Select</label>
-                                <Select name="selManual" field="choiceManual" />
-                            </div>
-                            <div className="form-group">
-                                Autcomplete search source
-                                <pre>
-                                    {this.state.autoCompleteText}
-                                </pre>
-                            </div>
-                            <div className="form-group">
-                                <label>Auto complete</label>
-                                <AutoComplete
-                                    field="autoComplete1"
-                                    name="selMyAutoComplete"
-                                    index={0}
-                                    placeholder="Type your search request"
-                                    helpText="Type part of example text above"/>
-                            </div>
-                            <div className="form-group">
-                                <label>Auto complete (fetch on enter)</label>
-                                <AutoComplete
-                                    field="autoComplete2"
-                                    name="selMyAutoComplete"
-                                    index={1}
-                                    fetchOnEnter={true}
-                                    placeholder="Type your search request"
-                                    helpText="Type part of example text above"/>
-                            </div>
-                            <div className="form-group">
-                                <label>Auto complete (cutstom render)</label>
-                                <AutoComplete
-                                    field="autoComplete2"
-                                    name="selMyAutoComplete"
-                                    index={3}
-                                    placeholder="Type your search request"
-                                    helpText="Type part of example text above"
-                                    renderItem={
-                                        (item, isHighlighted) => (
-                                            <span key={item.value} style={{padding: '3px'}}>{ isHighlighted ? (<b>{item.text}</b>) : (item.text)}</span>
-                                        )
-                                    }
-                                />
-                            </div>
+                    {/* Controls inside form */}
+                    <div className="col-md-3">
+                        <h3>Controls inside form</h3>
+                        <Form name="frmExample">
+                            <ControlsList
+                                name="formCtrl"
+                                required={this.state.ctrlStateRequired}
+                                enabled={this.state.ctrlStateEnabled}
+                                readOnly={this.state.ctrlStateReadOnly}
+                            />
+                            <Button
+                                name="btnSubmit"
+                                type="submit"
+                                title="Test simple submit button"
+                                className="btn-success"/>
+                            <Button
+                                name="btnReset"
+                                type="reset"
+                                title="Test simple reset button"/>
+                        </Form>
+                    </div>
 
+                    {/* Controls outside form */}
+                    <div className="col-md-3">
+                        <h3>Controls outside form</h3>
+                        <ControlsList
+                            name="outCtrl"
+                            required={this.state.ctrlStateRequired}
+                            enabled={this.state.ctrlStateEnabled}
+                            readOnly={this.state.ctrlStateReadOnly}
+                        />
+                    </div>
 
-                        </div>
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label>Color</label>
-                                <Text field="color" type="color" name="txtColor"/>
-                            </div>
-
-                            <div className="form-group">
-                                <label>Date</label>
-                                <DateTime field="date" timeFormat={false} />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Date time</label>
-                                <DateTime field="dateTime" />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Time</label>
-                                <DateTime field="time" dateFormat={false} />
-                            </div>
-
-                            <RadioGroup field="gender">
-                                {group => (
-                                    <div className="radio">
-                                        <label htmlFor="male" className="mr-2">
-                                            <Radio
-                                                group={group}
-                                                value="male"
-                                                id="male"
-                                                className="mr-3 d-inline-block"/>
-                                            Male
-                                        </label><br/>
-                                        <label htmlFor="female" className="mr-2">
-                                            <Radio
-                                                group={group}
-                                                value="female"
-                                                id="female"
-                                                className="d-inline-block"/>
-                                            Female
-                                        </label>
-                                    </div>
-                                )}
-                            </RadioGroup>
-
-                            <div className="checkbox">
-                                <label>
-                                    <Checkbox field="checkbox" className="d-inline-block"/>
-                                    Checkbox
-                                </label>
-                            </div>
-
-                            <div className="form-group">
-                                <label>Big text</label>
-                                <TextArea field="bit_text" name="txtBigText"/>
-                            </div>
-
-                            <br/>
-                            <div className="form-group">
-                                <Button
-                                    name="btnSubmitExample"
-                                    type="submit"
-                                    title="Submit"
-                                    className="btn-success"/>
-
-                                <Button
-                                    name="btnSubmitExample2"
-                                    title="Submit by click"
-                                    className="btn-success"/>
-
-                                <Button name="btnClearLog" title="Clear log" className="btn-default"/>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <fieldset>
-                                <legend>Frontend submitted values:</legend>
-                                <pre>
-                                    {JSON.stringify(this.state.frontendFormValues, null, 4)}
-                                </pre>
-                            </fieldset>
-                            <fieldset>
-                                <legend>Backend submitted values:</legend>
-                                <pre>
-                                    {JSON.stringify(this.state.backendFormValues, null, 4)}
-                                </pre>
-                            </fieldset>
-                            <fieldset>
-                                <legend>Debug log:</legend>
-                                <pre>
-                                    {this.state.eventLog}
-                                </pre>
-                            </fieldset>
+                    {/* Test buttons */}
+                    <div className="col-md-2">
+                        <h3>Tests</h3>
+                        <div className="form-group">
+                            {this.getTestButtons().map((test, i) => (
+                                <Button key={i} className="btn-success" {...test} />
+                            ))}
                         </div>
                     </div>
-                </Form>
+
+                    {/* Debug info */}
+                    <div className="col-md-4">
+                        <fieldset>
+                            <legend>Debug log:</legend>
+                            <LogContainer name="debugLog"/>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Form values:</legend>
+                            <Container name="formState" content={(state) => (
+                                <pre>{state.values && JSON.stringify(state.values, null, 4)}</pre>
+                            )}/>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Out controls values:</legend>
+                            <Container name="outControlState" content={(state) => (
+                                <pre>{state.values && JSON.stringify(state.values, null, 4)}</pre>
+                            )}/>
+                        </fieldset>
+
+                    </div>
+                </div>
+
             </div>
         );
 

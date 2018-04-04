@@ -220,7 +220,7 @@ abstract class Component implements ComponentInterface
      * @return string
      */
     private function getAttributeStateName(string $attributeName){
-        return '_attribute'.ucfirst(strtolower($attributeName));
+        return '_attribute'.ucfirst($attributeName);
     }
 
     /**

@@ -6,10 +6,10 @@
  * Time: 14:56
  */
 
-namespace Andevis\ReactBundle\UI\Components\DateTime;
+namespace Andevis\ReactBundle\UI\Components\Form\Fields\DateTime;
 
 
-use Andevis\ReactBundle\UI\Components\Text\Text;
+use Andevis\ReactBundle\UI\Components\Form\Fields\Text\Text;
 
 class DateTime extends Text
 {

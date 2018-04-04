@@ -102,7 +102,7 @@ trait ComponentIdTrait
      * @return string
      */
     static function getComponentId($viewClassName, $componentClassName, $componentName, ?int $componentIndex){
-        return ($componentIndex) ?
+        return (is_numeric($componentIndex)) ?
             self::getComponentGlobalName($viewClassName, $componentClassName, $componentName).":".$componentIndex :
             self::getComponentGlobalName($viewClassName, $componentClassName, $componentName);
     }
