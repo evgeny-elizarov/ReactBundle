@@ -272,6 +272,7 @@ export default class ComponentEvent {
                             const component = view.getComponentById(componentId);
                             if(componentsUpdatedState[componentId]) {
                                 // console.log(this.getName(), "fireEvent", eventName, "Update component state", componentId);
+                                component.componentWillReceiveBackendState(componentsUpdatedState[componentId]);
                                 component.setState(componentsUpdatedState[componentId]);
                             }
                         } catch (e) {

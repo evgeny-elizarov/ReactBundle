@@ -4,7 +4,7 @@ import {Form as ReactForm} from 'react-form';
 import {autobind} from 'core-decorators';
 import PropTypes from 'prop-types';
 import Loader from 'react-loader-advanced';
-import './FormInputBase.scss';
+import './Field.scss';
 
 export default class Form extends Component {
 
@@ -86,26 +86,24 @@ export default class Form extends Component {
         this.setAttributeValue('successes', value);
     }
 
-
     eventList() {
-        return super.eventList().concat(['submit', 'clean', 'validateErrors', 'reset']);
+        return super.eventList().concat(['change', 'submit', 'clean', 'validateErrors', 'reset']);
     }
 
     /**
-     * Did mount event
-     * @returns {Promise}
+     * Change event
      */
-    didMount() {
-        return this.fireEvent('didMount');
+    @autobind
+    change(formState) {
+        return this.fireEvent('change', formState);
     }
-
 
     /**
      * Submit event
      */
     @autobind
     submit() {
-       return this.fireEvent('submit', this.getValues());
+        return this.fireEvent('submit', this.getValues());
     }
 
     @autobind
@@ -137,8 +135,12 @@ export default class Form extends Component {
         return (this.formApi) ? this.formApi.values : this.values;
     }
 
+    /**
+     * Reset all
+     */
     resetAll() {
-        this.formApi.resetAll()
+        this.formApi.resetAll();
+        // this.formApi.setAllValues(this.props.defaultValues);
     }
 
     // TODO: rename to setValues
@@ -297,12 +299,18 @@ export default class Form extends Component {
         this.setState(newState);
     }
 
+    @autobind
+    handleFormChange(formState, formApi){
+        this.change(formState);
+    }
+
     render() {
         const form = this
         return (
             <ReactForm
                 ref="reactForm"
                 dontValidateOnMount={true}
+                onChange={this.handleFormChange}
                 formDidUpdate={form.handleFormDidUpdate}
                 validateOnSubmit={true}
                 defaultValues={this.props.defaultValues}

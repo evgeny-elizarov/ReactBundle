@@ -6,8 +6,7 @@
  * Time: 14:12
  */
 
-namespace Andevis\ReactBundle\UI\Components\Select;
-
+namespace Andevis\ReactBundle\UI\Components\Form\Fields\Select;
 
 use Andevis\ReactBundle\UI\Components\Form\FormInputBase;
 

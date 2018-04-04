@@ -12,6 +12,10 @@ export default class Container extends Component {
         return 'React';
     }
 
+    getShortClassName(){
+        return 'Container';
+    }
+
     render(){
         return (typeof this.props.content === 'function') ? this.props.content(this.props, this.state) : this.props.content;
     }

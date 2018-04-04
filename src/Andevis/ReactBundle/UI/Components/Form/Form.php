@@ -16,7 +16,39 @@ class Form extends Component
 {
 
     function eventList(){
-        return array_merge(parent::eventList(), ['submit', 'clean', 'reset']);
+        return array_merge(parent::eventList(), ['change', 'submit', 'clean', 'reset']);
+    }
+
+    /**
+     * Change event
+     * @param $formState
+     * @return mixed
+     * @throws \Exception
+     */
+    function change(array $formState){
+        return $this->fireEvent('change', $formState);
+    }
+
+
+    /**
+     * Submit method
+     * @param array $values
+     * @return mixed|null
+     * @throws \Exception
+     */
+    function submit($values){
+        try{
+            // Reset errors before submit
+            $this->clearErrors();
+            $return = $this->fireEvent('submit', $values);
+            if($this->hasErrors()) {
+                throw new ValidationError($this->i18n('errorFixFormErrors'));
+            }
+            return $return;
+        } catch (ValidationError $e ){
+            $this->setError(null, $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -161,24 +193,5 @@ class Form extends Component
         $this->setErrors([]);
     }
 
-    /**
-     * Submit method
-     * @param array $values
-     * @return mixed|null
-     * @throws \Exception
-     */
-    function submit($values){
-        try{
-            // Reset errors before submit
-            $this->clearErrors();
-            $return = $this->fireEvent('submit', $values);
-            if($this->hasErrors()) {
-                throw new ValidationError($this->i18n('errorFixFormErrors'));
-            }
-            return $return;
-        } catch (ValidationError $e ){
-            $this->setError(null, $e->getMessage());
-            return false;
-        }
-    }
+
 }

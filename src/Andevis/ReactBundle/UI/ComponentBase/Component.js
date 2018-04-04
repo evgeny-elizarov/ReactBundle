@@ -5,6 +5,7 @@ import {gql} from 'react-apollo';
 import {BaseResolveConfig, QueryResolveConfig, MutationResolveConfig} from "../GraphQL";
 import View from "./../Components/View/View";
 import {ucfirst} from './../Helpers';
+import { autobind } from 'core-decorators';
 import ComponentEvent from "@AndevisReactBundle/UI/ComponentBase/ComponentEvent";
 
 export default class Component extends React.Component {
@@ -14,7 +15,9 @@ export default class Component extends React.Component {
         index: PropTypes.number,
         enabled: PropTypes.bool,
         className: PropTypes.any,
-        style: PropTypes.object
+        style: PropTypes.object,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func
     };
 
     static defaultProps = {
@@ -36,7 +39,8 @@ export default class Component extends React.Component {
         // Name variable
         this.name = null;
         this.index = this.props.index;
-        this.unmounted = false;
+        // Private can change state flag
+        this._canChangeState = true;
 
         this.processingEvents = [];
 
@@ -182,6 +186,7 @@ export default class Component extends React.Component {
         return defaultValue;
     }
 
+    // TODO: Refactor setAttribute: Эта функция возвращает Promise соотвественно callback не нужен, можно использовать конструкцию .then()
     /**
      * Set attribute value
      * @param attributeName
@@ -189,30 +194,89 @@ export default class Component extends React.Component {
      * @param callback
      */
     setAttributeValue(attributeName, value, callback) {
-        let state = {};
-        state[this.getAttributeStateName(attributeName)] = value;
-        if(!this.unmounted){
-            this.setState(state, callback);
-        }
+        let attributes = {};
+        attributes[attributeName] = value;
+        return this.setAttributes(attributes, callback);
     }
 
     // TODO: Refactor setAttributes: Эта функция возвращает Promise соотвественно callback не нужен, можно использовать конструкцию .then()
     /**
      * Set attributes
-     * @param values
+     * @param attributes
      * @param callback
      */
-    setAttributes(values, callback)
+    setAttributes(attributes, callback)
     {
         const newState = {};
-        Object.keys(values).forEach((key) => {
+        Object.keys(attributes).forEach((key) => {
             const attributeName = this.getAttributeStateName(key);
-            newState[attributeName] = values[key];
+            if(this.getAttributeValue(key) !== attributes[key]) {
+                newState[attributeName] = attributes[key];
+            }
         });
         return this.promisedSetState(newState).finally(() => {
             if(callback) callback();
         });
     }
+
+    /**
+     * Called before set new state from backend
+     * @param nextState
+     */
+    componentWillReceiveBackendState(nextState){
+
+    }
+
+    getAttributesLinkedToProps(){
+        return [
+            'enabled'
+        ]
+    }
+
+    // componentDidUpdate(prevProps){
+    //     const linkedAttributes = this.getAttributesLinkedToProps();
+    //
+    //     let updateAttributes = {};
+    //     linkedAttributes.forEach((attr) => {
+    //         if (prevProps.hasOwnProperty(attr) &&
+    //             // typeof nextProps[attr] !== 'undefined'
+    //             // &&
+    //             (
+    //                 // !this.props.hasOwnProperty(attr) ||
+    //                 this.getAttributeValue(attr) !== this.props[attr]
+    //             )
+    //         ) {
+    //             updateAttributes[attr] = this.props[attr];
+    //         }
+    //     });
+    //
+    //     if(Object.keys(updateAttributes).length > 0){
+    //         this.setAttributes(updateAttributes);
+    //     }
+    //     // console.log("componentDidUpdate", prevProps, this.props);
+    // }
+
+    componentWillReceiveProps(nextProps) {
+        this.willReceiveProps(nextProps).then(() => {
+            const linkedAttributes = this.getAttributesLinkedToProps();
+
+            let updateAttributes = {};
+            linkedAttributes.forEach((attr) => {
+                if (
+                    nextProps.hasOwnProperty(attr) &&
+                    this.props.hasOwnProperty(attr) &&
+                    this.props[attr] !== nextProps[attr]
+                ) {
+                    updateAttributes[attr] = nextProps[attr];
+                }
+            });
+
+            if(Object.keys(updateAttributes).length > 0){
+                this.setAttributes(updateAttributes);
+            }
+        });
+    }
+
 
     /**
      * Promised set state
@@ -221,9 +285,11 @@ export default class Component extends React.Component {
     promisedSetState(newState)
     {
         return new Promise((resolve) => {
-            this.setState(newState, () => {
-                resolve();
-            });
+            if(this._canChangeState) {
+                this.setState(newState, () => {
+                    resolve(newState);
+                });
+            }
         });
     }
 
@@ -331,7 +397,7 @@ export default class Component extends React.Component {
         this.processingEvents.forEach((event) => {
             event.cancel();
         });
-        this.unmounted = true;
+        this._canChangeState = false;
         this.getView().unmountComponent(this);
     }
 
@@ -343,10 +409,11 @@ export default class Component extends React.Component {
         this.didUpdate();
     }
 
-    componentWillReceiveProps(nextProps){
-        this.willReceiveProps(nextProps);
-    }
-
+    /**
+     * Did mount event
+     * @returns {Promise}
+     */
+    @autobind
     didMount() {
         return this.fireEvent('didMount');
     }
@@ -362,6 +429,30 @@ export default class Component extends React.Component {
      */
     willReceiveProps(nextProps) {
         return this.fireEvent('willReceiveProps', nextProps);
+    }
+
+    /**
+     * Refresh event
+     */
+    @autobind
+    refresh() {
+        return this.fireEvent('refresh');
+    }
+
+    /**
+     * Focus event
+     */
+    @autobind
+    focus() {
+        return this.fireEvent('focus').then(() => this.setAttributes({hasFocus: true }) );
+    }
+
+    /**
+     * Blur event
+     */
+    @autobind
+    blur() {
+        return this.fireEvent('blur').then(() => this.setAttributes({hasFocus: false}));
     }
 
     /**
@@ -383,6 +474,7 @@ export default class Component extends React.Component {
     prepareStateAfterEvent(nextState){
         return nextState;
     }
+
     /**
      * Fire component event
      * @returns {Promise}
@@ -405,6 +497,7 @@ export default class Component extends React.Component {
 
         const event = new ComponentEvent(this, eventName, args);
         this.processingEvents.push(event);
+        const promise = event.getPromise();
         return event.getPromise();
     }
 
@@ -535,35 +628,6 @@ export default class Component extends React.Component {
         });
     }
 
-    /**
-     * Refresh event handler
-     */
-    refresh() {
-        return this.fireEvent('refresh');
-    }
 
-    /**
-     * Focus event handler
-     */
-    focus() {
-        const attrHasFocus = this.getAttributeStateName('hasFocus');
-        const newState = {};
-        newState[attrHasFocus] = true;
-        this.setState(newState, () => {
-            this.fireEvent('focus');
-        });
-    }
-
-    /**
-     * Blur event handler
-     */
-    blur() {
-        const attrHasFocus = this.getAttributeStateName('hasFocus');
-        const newState = {};
-        newState[attrHasFocus] = false;
-        this.setState(newState, () => {
-            this.fireEvent('blur');
-        });
-    }
 
 }
