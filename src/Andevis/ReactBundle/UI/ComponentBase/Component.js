@@ -370,10 +370,11 @@ export default class Component extends React.Component {
      */
     eventList() {
         return [
-            'didMount',
             'willReceiveProps',
+            'willUpdate',
+            'didMount',
             'didUpdate',
-            'refresh',
+            'bindData',
             'focus',
             'blur'
         ];
@@ -401,6 +402,10 @@ export default class Component extends React.Component {
         this.getView().unmountComponent(this);
     }
 
+    componentWillUpdate(nextProps, nextState) {
+        this.willUpdate(nextProps, nextState);
+    }
+
     componentDidMount() {
         this.didMount();
     }
@@ -423,6 +428,16 @@ export default class Component extends React.Component {
     }
 
     /**
+     * Component will update
+     * @param nextProps
+     * @param nextState
+     * @returns {Promise}
+     */
+    willUpdate(nextProps, nextState) {
+        return this.fireEvent('willUpdate', nextProps, nextState);
+    }
+
+    /**
      * Will receive props event
      * @param nextProps
      * @returns {Promise}
@@ -432,11 +447,13 @@ export default class Component extends React.Component {
     }
 
     /**
-     * Refresh event
+     * Bind data event
      */
     @autobind
-    refresh() {
-        return this.fireEvent('refresh');
+    bindData() {
+        var args = [].slice.call(arguments);
+        args.unshift('bindData');
+        return this.fireEvent.apply(this, args);
     }
 
     /**

@@ -317,11 +317,11 @@ abstract class Component implements ComponentInterface
      */
     function eventList(){
         return [
-//            'init',
+            'willReceiveProps',
+            'willUpdate',
             'didMount',
             'didUpdate',
-            'willReceiveProps',
-            'refresh', // TODO: remove it, use willReceiveProps
+            'bindData',
             'focus',
             'blur'
         ];
@@ -357,13 +357,23 @@ abstract class Component implements ComponentInterface
         $this->fireEvent('willReceiveProps', $nextProps);
     }
 
-
+    /**
+     * Component willUpdate event handler
+     * @param array $nextProps
+     * @param array $nextState
+     * @throws \Exception
+     */
+    function willUpdate(array $nextProps, array $nextState){
+        $this->fireEvent('willUpdate', $nextProps, $nextState);
+    }
 
     /**
-     * Refresh event handler
+     * Bind data event handler
      */
-    function refresh(){
-        $this->fireEvent('refresh');
+    function bindData(){
+        $args = func_get_args();
+        array_unshift($args, 'bindData');
+        return call_user_func_array([$this, 'fireEvent'], $args);
     }
 
     /**

@@ -38,7 +38,7 @@ class FormInputBase extends Component
      * Value attribute getter
      */
     function getValue(){
-        return $this->getAttributeValue('value', '');
+        return $this->getAttributeValue('value', $this->getProperty('value'));
     }
 
     /**

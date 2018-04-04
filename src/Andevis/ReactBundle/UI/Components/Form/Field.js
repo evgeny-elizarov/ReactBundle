@@ -14,7 +14,6 @@ const fieldTypes = {
     enabled: PropTypes.bool,
     index: PropTypes.number,
     required: PropTypes.bool,
-    defaultValue: PropTypes.string,
     placeholder: PropTypes.string,
     defaultValue: PropTypes.any,
     readOnly: PropTypes.any,
@@ -148,9 +147,9 @@ class FieldBase extends Component {
             // this.setAttributes({ value: newValue });
         } else {
             this.setAttributes({ value: newValue });
-            if( !this._inputProcess){
-                this.change(newValue);
-            }
+            // if( !this._inputProcess){
+            //     this.change(newValue);
+            // }
         }
 
         // return this.setAttributeValue('value', value).then(() => {
@@ -193,11 +192,11 @@ class FieldBase extends Component {
             currentValue = this.state.hasOwnProperty(valueAttrName) && this.state[valueAttrName];
         }
         super.componentWillReceiveProps(nextProps);
-        if (nextProps.hasOwnProperty('value') && !this._inputProcess) {
-            if (currentValue !== nextProps['value']) {
-                this.change(nextProps['value']);
-            }
-        }
+        // if (nextProps.hasOwnProperty('value') && !this._inputProcess) {
+        //     if (currentValue !== nextProps['value']) {
+        //         this.change(nextProps['value']);
+        //     }
+        // }
     }
 
     componentWillReceiveBackendState(nextState) {
