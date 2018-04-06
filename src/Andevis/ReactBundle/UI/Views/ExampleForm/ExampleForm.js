@@ -20,71 +20,6 @@ import {
 import classNames from "classnames";
 import Container from "@AndevisReactBundle/UI/Components/Container/Container";
 
-//
-// const Message = ({ color, message }) => (
-//     <div className="mb-4" style={{ color }}>
-//         <small>{message}</small>
-//     </div>
-// );
-//
-//
-// const validate = value => ({
-//     error: !value || !/Hello World/.test(value) ? "Input must contain 'Hello World'" : null,
-//     warning: !value || !/^Hello World$/.test(value) ? "Input should equal just 'Hello World'" : null,
-//     success: value && /Hello World/.test(value) ? "Thanks for entering 'Hello World'!" : null
-// });
-//
-//
-// class CustomText extends React.Component {
-//
-//     static contextTypes = {
-//         formApi: React.PropTypes.object
-//     };
-//
-//     render() {
-//         console.log('Custom text', this.context);
-//         return (
-//             // Use the form field and your custom input together to create your very own input!
-//             <ReacField validate={validate} field={this.props.field}>
-//                 {fieldApi => {
-//
-//                     // Remember to pull off everything you dont want ending up on the <input>
-//                     // thats why we pull off onChange, onBlur, and field
-//                     // Note, the ...rest is important because it allows you to pass any
-//                     // additional fields to the internal <input>.
-//                     const { onChange, onBlur, field, ...rest } = this.props;
-//
-//                     const { value, error, warning, success, setValue, setTouched } = fieldApi
-//
-//                     return (
-//                         <div>
-//                             <input
-//                                 {...rest}
-//                                 value={value || ''}
-//                                 onChange={e => {
-//                                     setValue(e.target.value)
-//                                     if (onChange) {
-//                                         onChange(e.target.value, e)
-//                                     }
-//                                 }}
-//                                 onBlur={e => {
-//                                     setTouched()
-//                                     if (onBlur) {
-//                                         onBlur(e)
-//                                     }
-//                                 }}
-//                             />
-//                             {error ? <Message color="red" message={error}/> : null}
-//                             {!error && warning ? <Message color="orange" message={warning}/> : null}
-//                             {!error && !warning && success ? <Message color="green" message={success}/> : null}
-//                         </div>
-//                     )
-//                 }}
-//             </ReacField>
-//         )
-//     }
-// }
-
 
 class LogContainer extends Container {
 
@@ -372,7 +307,7 @@ export default class ExampleForm extends View {
     @autobind
     log(message, callback) {
         const debugLog = this.getComponentByName('debugLog');
-        let messages = debugLog.state.messages.slice(0, 32);
+        let messages = debugLog.state.messages.slice(0, 24);
         messages.unshift("Frontend:\t" + message);
         debugLog.setState({ messages: messages }, callback);
     }
@@ -463,6 +398,17 @@ export default class ExampleForm extends View {
                     });
                     this.updateOutCtrlValueState();
                 }
+            },
+            {
+                name: 'btnSetValidationErrorsOnClient',
+                title: 'Set validation errors on client',
+                onClick: () => {
+                    this.getComponentByName('frmExample').setError('name', 'Error');
+                }
+            },
+            {
+                name: 'btnSetValidationErrorsOnServer',
+                title: 'Set validation errors on server',
             },
             {
                 name: 'btnLoadValuesFromServer',
@@ -556,6 +502,12 @@ export default class ExampleForm extends View {
         this.updateOutCtrlValueState();
     }
 
+    handleFormChange(frmExample, formState){
+        this.getComponentByName('formState').setState({
+            values: Object.assign({}, formState.values)
+        });
+    }
+
     render() {
         return (
             <div className="container">
@@ -568,7 +520,7 @@ export default class ExampleForm extends View {
                     {/* Controls inside form */}
                     <div className="col-md-3">
                         <h3>Controls inside form</h3>
-                        <Form name="frmExample">
+                        <Form name="frmExample" onChange={this.handleFormChange}>
                             <ControlsList
                                 name="formCtrl"
                                 required={this.state.ctrlStateRequired}
@@ -616,13 +568,13 @@ export default class ExampleForm extends View {
                         </fieldset>
                         <fieldset>
                             <legend>Form values:</legend>
-                            <Container name="formState" content={(state) => (
+                            <Container name="formState" content={(props, state) => (
                                 <pre>{state.values && JSON.stringify(state.values, null, 4)}</pre>
                             )}/>
                         </fieldset>
                         <fieldset>
                             <legend>Out controls values:</legend>
-                            <Container name="outControlState" content={(state) => (
+                            <Container name="outControlState" content={(props, state) => (
                                 <pre>{state.values && JSON.stringify(state.values, null, 4)}</pre>
                             )}/>
                         </fieldset>

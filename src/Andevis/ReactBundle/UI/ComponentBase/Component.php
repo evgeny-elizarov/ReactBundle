@@ -321,7 +321,6 @@ abstract class Component implements ComponentInterface
             'willUpdate',
             'didMount',
             'didUpdate',
-            'bindData',
             'focus',
             'blur'
         ];
@@ -365,15 +364,6 @@ abstract class Component implements ComponentInterface
      */
     function willUpdate(array $nextProps, array $nextState){
         $this->fireEvent('willUpdate', $nextProps, $nextState);
-    }
-
-    /**
-     * Bind data event handler
-     */
-    function bindData(){
-        $args = func_get_args();
-        array_unshift($args, 'bindData');
-        return call_user_func_array([$this, 'fireEvent'], $args);
     }
 
     /**

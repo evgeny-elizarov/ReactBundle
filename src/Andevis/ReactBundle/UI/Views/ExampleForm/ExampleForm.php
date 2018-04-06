@@ -141,5 +141,7 @@ class ExampleForm extends View
         }
     }
 
-
+    function btnSetValidationErrorsOnServer_onClick(){
+        $this->getComponentByName('frmExample')->setError('email', 'test');
+    }
 }

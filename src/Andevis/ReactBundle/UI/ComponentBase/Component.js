@@ -14,6 +14,7 @@ export default class Component extends React.Component {
         name: PropTypes.string,
         index: PropTypes.number,
         enabled: PropTypes.bool,
+        visible: PropTypes.bool,
         className: PropTypes.any,
         style: PropTypes.object,
         onFocus: PropTypes.func,
@@ -21,7 +22,8 @@ export default class Component extends React.Component {
     };
 
     static defaultProps = {
-        enabled: true
+        enabled: true,
+        visible: true
     };
 
     static contextTypes = {
@@ -162,6 +164,13 @@ export default class Component extends React.Component {
      */
     getInitialState(){}
 
+    /**
+     * Check if final object has method
+     */
+    hasOwnMethod(name) {
+        const desc = Object.getOwnPropertyDescriptor (Object.getPrototypeOf(this), name);
+        return !!desc && typeof desc.value === 'function';
+    }
 
     /**
      * Get component attribute state name
@@ -229,7 +238,8 @@ export default class Component extends React.Component {
 
     getAttributesLinkedToProps(){
         return [
-            'enabled'
+            'enabled',
+            'visible'
         ]
     }
 
@@ -306,6 +316,18 @@ export default class Component extends React.Component {
     // }
 
     /**
+     * Attribute: visible
+     * @returns {*}
+     */
+    get visible() {
+        return this.getAttributeValue('visible', this.props.visible);
+    }
+
+    set visible(value) {
+        this.setAttributeValue('visible', value);
+    }
+
+    /**
      * Attribute: enabled
      * @returns {*}
      */
@@ -374,7 +396,6 @@ export default class Component extends React.Component {
             'willUpdate',
             'didMount',
             'didUpdate',
-            'bindData',
             'focus',
             'blur'
         ];
@@ -446,15 +467,6 @@ export default class Component extends React.Component {
         return this.fireEvent('willReceiveProps', nextProps);
     }
 
-    /**
-     * Bind data event
-     */
-    @autobind
-    bindData() {
-        var args = [].slice.call(arguments);
-        args.unshift('bindData');
-        return this.fireEvent.apply(this, args);
-    }
 
     /**
      * Focus event

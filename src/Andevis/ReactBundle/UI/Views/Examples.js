@@ -8,6 +8,8 @@ import ExampleComponentsArray from "./ExampleComponentsArray/ExampleComponentsAr
 import ExampleMsgBox from './ExampleMsgBox/ExampleMsgBox';
 import ExampleDataTable from './ExampleDataTable/ExampleDataTable';
 import ExampleTabs from './ExampleTabs/ExampleTabs';
+import ExampleGlobalState from './ExampleGlobalState/ExampleGlobalState';
+import ExampleServerMethod from './ExampleServerMethod/ExampleServerMethod';
 import Menu from "@AndevisReactBundle/UI/Components/Menu/Menu";
 
 export default () => (
@@ -49,6 +51,14 @@ export default () => (
                             {
                                 label: 'Component array',
                                 link: '/react/example/component-array',
+                            },
+                            {
+                                label: 'Global state',
+                                link: '/react/example/global-state',
+                            },
+                            {
+                                label: 'Server method',
+                                link: '/react/example/server-method',
                             }
                         ]}
                     />
@@ -65,6 +75,8 @@ export default () => (
                 <Route path='/react/example/component' component={ExampleComponents}/>
                 <Route path='/react/example/component-array' component={ExampleComponentsArray}/>
                 <Route path='/react/example/msg-box' component={ExampleMsgBox}/>
+                <Route path='/react/example/global-state' component={ExampleGlobalState}/>
+                <Route path='/react/example/server-method' component={ExampleServerMethod}/>
             </Switch>
         </div>
     </div>

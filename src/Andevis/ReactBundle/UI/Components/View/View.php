@@ -59,6 +59,39 @@ class View extends Component implements ViewInterface
     static public function getInitialState(string $viewId, ContainerInterface $container){}
 
 
+    function eventList()
+    {
+        return array_merge(parent::eventList(), ['callServerMethod']);
+    }
+
+    /**
+     * Server method caller handler
+     * @return mixed
+     * @throws \Exception
+     * @throws \ReflectionException
+     */
+    function callServerMethod()
+    {
+        $args = func_get_args();
+        $methodName = array_shift($args);
+        $refClass = new ReflectionClass(get_class($this));
+        $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methodDefined = false;
+        foreach ($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method){
+            if ($method->class == $refClass->getName() && $method->name == $methodName){
+                $methodDefined = true;
+                break;
+            }
+        }
+
+        if($methodDefined){
+            return call_user_func_array([$this, $methodName], $args);
+        } else {
+            throw new \Exception(sprintf('Server method `%s` not defined in  view `%s`', $methodName, $this->getName()));
+        }
+    }
+
+
     // TODO: rename it to getServiceById
     /**
      * Get symfony service
@@ -172,5 +205,6 @@ class View extends Component implements ViewInterface
     function getComponentByName($componentName){
         return $this->getContext()->getComponentByName($componentName);
     }
+
 
 }

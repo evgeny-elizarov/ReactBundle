@@ -11,14 +11,18 @@ import { filterObjectByKeys } from "@AndevisReactBundle/UI/Helpers";
 export default class DataTable extends Component{
 
     static propTypes = Object.assign({}, Component.propTypes, {
+        data: PropTypes.any,
         defaultPageSize: PropTypes.number,
         filtered: PropTypes.array,
         sortable: PropTypes.bool,
+        loading: PropTypes.bool
     });
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
+        data: null,
         defaultPageSize: 25,
-        sortable: false
+        sortable: false,
+        loading: false
     });
 
     getBundleName(){
@@ -32,6 +36,15 @@ export default class DataTable extends Component{
     getInitialState(){
         return {
             data: [],
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        super.componentWillReceiveProps(nextProps);
+        if(nextProps.hasOwnProperty('data')){
+            this.setState({
+                data: nextProps.data
+            });
         }
     }
 
@@ -58,6 +71,23 @@ export default class DataTable extends Component{
     }
     set pageSize(value) {
         this.setAttributeValue('pageSize', value);
+    }
+
+    /**
+     * Set data
+     * @param data
+     */
+    setData(data){
+        this.setState({
+            data: data
+        });
+    }
+
+    /**
+     * Get data
+     */
+    getData(){
+        return this.state.data;
     }
 
     /**
@@ -115,6 +145,7 @@ export default class DataTable extends Component{
             'showPageSizeOptions',
             'pageSizeOptions',
             'defaultPageSize',
+            'pageSize',
             'showPageJump',
             'collapseOnSortingChange',
             'collapseOnPageChange',
@@ -131,6 +162,16 @@ export default class DataTable extends Component{
             'defaultExpanded'
         ]);
 
+        if(this.props.data === null){
+            tableProps.manual = true;
+            tableProps.onFetchData = this.handleFetchData;
+            tableProps.loading = this.isLoading;
+            tableProps.pages = this.pages;
+            tableProps.loading = this.isLoading;
+        } else {
+            tableProps.loading = this.props.loading;
+        }
+
         return (
             <ReactTable
                 ref={(table) => {
@@ -138,11 +179,11 @@ export default class DataTable extends Component{
                 }}
                 {...tableProps}
                 // Forces table not to paginate or sort automatically, so we can handle it server-side
-                manual
-                onFetchData={this.handleFetchData} // Request new data when things change
-                loading={this.isLoading} // Display the loading overlay when we need it
-                data={this.state.data}
-                pages={this.pages} // Display the total number of pages
+                // manual
+                // onFetchData={this.handleFetchData} // Request new data when things change
+                // loading={this.isLoading} // Display the loading overlay when we need it
+                data={this.state.data || []}
+                // pages={this.pages} // Display the total number of pages
 
                 // Text
                 previousText={i18n(messages.previousText)}

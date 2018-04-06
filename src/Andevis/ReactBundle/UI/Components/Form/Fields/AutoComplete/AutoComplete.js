@@ -105,6 +105,7 @@ class AutoCompleteBase extends TextBase {
 
     updateDataOnInput(value){
         if(value.length >= this.props.minLength){
+            this.isOpen(true);
             this.fetchData(value).then(() => {
                 if(value !== this.value) {
                     this.updateDataOnInput(this.value);
@@ -142,18 +143,15 @@ class AutoCompleteBase extends TextBase {
      * Fetch data
      */
     fetchData(input){
-        if(this.autoComplete) this.autoComplete.setState({ isOpen: true });
-        return this.setAttributes({
-                isLoading: true })
-                .then(() =>
-                    this.fireEvent('fetchData', input)
-                        .then((data) => {
-                            this.setAttributes({
-                                isLoading: false,
-                                dataSource: data
-                            });
-                        })
-                    );
+        this.setAttributes({ isLoading: true });
+        return this.fireEvent('fetchData', input)
+            .then((data) => {
+                this.setAttributes({
+                    isLoading: false,
+                    dataSource: data
+                });
+                return data;
+            });
     }
 
     /**
@@ -215,12 +213,19 @@ class AutoCompleteBase extends TextBase {
     //     }
     // }
 
+    isOpen(){
+        if(arguments.length > 0){
+            const newValue = (arguments[0]); // Convert to boolean
+            if(this.autoComplete) this.autoComplete.setState({ isOpen: newValue });
+        }
+        if(this.autoComplete) return this.autoComplete.state.isOpen;
+    }
+
     /**
      * Select item
      * @param item
      */
     select(item) {
-        if(this.autoComplete) this.autoComplete.setState({ isOpen: false });
         return this.setAttributes({ selectedItem: item }).then(() => {
             return this.fireEvent('select', item);
         });
@@ -230,17 +235,17 @@ class AutoCompleteBase extends TextBase {
     //     })
     }
 
-    // /**
-    //  * Change event
-    //  * @param newValue
-    //  * @returns {*|Promise<any>}
-    //  */
-    // @autobind
-    // change(newValue) {
-    //     return super.change(newValue).then(() => {
-    //         this.setAttributes({ selectedItem: null });
-    //     });
-    // }
+    /**
+     * Change event
+     * @param newValue
+     * @returns {*|Promise<any>}
+     */
+    @autobind
+    change(newValue) {
+        return super.change(newValue).then(() => {
+            if(newValue == '') this.setAttributes({ selectedItem: null });
+        });
+    }
 
     //
     // /**
@@ -260,11 +265,23 @@ class AutoCompleteBase extends TextBase {
     //     this.setAttributes({ options: [] })
     // }
 
+    /**
+     * Set value
+     * @param value
+     */
+    setValue(newValue){
+        super.setValue(newValue);
+        // Reset seleted value
+        if(!newValue || newValue == '')
+            this.selectedItem = null;
+    }
+
     @autobind
     handleSelectOption(text, item){
         const value = this.getItemValue(item);
         this.setValue(value);
         this.change(value);
+        this.isOpen(false);
         this.select(item);
         // this.change(this.getItemValue(item)).then(() =>
         //
@@ -323,7 +340,7 @@ class AutoCompleteBase extends TextBase {
             }
 
         } else {
-            if(this.autoComplete) this.autoComplete.setState({ isOpen: false });
+            this.isOpen(false);
             this.setAttributes({
                 options: [],
                 text: inputText
@@ -341,6 +358,7 @@ class AutoCompleteBase extends TextBase {
             // console.log("handleKeyDown", this.autoComplete.state.highlightedIndex, needFetch, this.value, this.text, e.target.value);
             // this.autoComplete.setIgnoreBlur(false);
             if(value.length >= this.props.minLength){
+                this.isOpen(true);
                 this.fetchData(value);
             }
         }

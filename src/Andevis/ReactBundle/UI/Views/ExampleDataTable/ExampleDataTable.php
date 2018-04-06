@@ -14,6 +14,11 @@ use Andevis\ReactBundle\UI\Components\View\View;
 class ExampleDataTable extends View
 {
 
+    /**
+     * Генерируем данные на сервере
+     * @param $dataCount
+     * @return array
+     */
     function generateData($dataCount)
     {
         $data = [];
@@ -33,43 +38,60 @@ class ExampleDataTable extends View
     }
 
     /**
+     * Сортирует данные
+     * @param $data
+     * @param $sorted
+     * @return mixed
+     */
+    function sortData(&$data, $sorted){
+        foreach ($sorted as $sort) {
+            usort(
+                $data,
+                function ($a, $b) use ($sort) {
+                    if (isset($a[$sort['id']])) {
+                        if ($sort['desc']) {
+                            return strnatcasecmp($b[$sort['id']], $a[$sort['id']]);
+                        } else {
+                            return strnatcasecmp($a[$sort['id']], $b[$sort['id']]);
+                        }
+                    }
+                    return 0;
+                }
+            );
+        }
+    }
+
+    /**
+     * Данные для клиента
+     * @param $dataTable
+
+     * @return array
+     */
+    function loadServerData()
+    {
+        return $this->generateData(1000);
+    }
+
+
+    /**
      * Fetch data
-     * @param $table DataTable
+     * @param $dataTable DataTable
      * @param $pageSize
      * @param $pageIndex
      * @param $sorted
      * @param $filtered
      * @return array
      */
-    function tableTest2_onFetchData($table, $pageSize, $pageIndex, $sorted, $filtered)
+    function dataServer_onFetchData($dataTable, $pageSize, $pageIndex, $sorted, $filtered)
     {
         $dataCount = 1000;
         $data = $this->generateData($dataCount);
 
-        // Sort
-        if($sorted)
-        {
-            foreach ($sorted as $sort)
-            {
-                usort(
-                    $data,
-                    function($a, $b) use ($sort) {
-                        if(isset($a[$sort['id']])){
-                            if($sort['desc']){
-                                return strnatcasecmp($b[$sort['id']], $a[$sort['id']]);
-                            } else {
-                                return strnatcasecmp($a[$sort['id']], $b[$sort['id']]);
-                            }
-                        }
-                        return 0;
-                    }
-                );
-            }
-        }
+        $this->sortData($data, $sorted);
 
         // Pagination
         $pagedData = array_slice($data, $pageIndex * $pageSize, $pageSize);
-        $table->setPages(floor($dataCount / $pageSize));
+        $dataTable->setPages(floor($dataCount / $pageSize));
 
         return $pagedData;
     }

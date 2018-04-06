@@ -94,7 +94,7 @@ class FieldBase extends Component {
     static propTypes = Object.assign({}, Component.propTypes, fieldTypes);
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
-        defaultValue: ''
+        defaultValue: null
     });
 
     static contextTypes = Object.assign({}, Component.contextTypes, {
@@ -163,7 +163,7 @@ class FieldBase extends Component {
      * @returns {*}
      */
     getValue(){
-        return this.props.fieldApi ? this.props.value : this.getAttributeValue('value', this.props.defaultValue);
+        return this.props.fieldApi ? (this.props.value || null) : this.getAttributeValue('value', this.props.defaultValue);
     }
 
     // Attribute: required

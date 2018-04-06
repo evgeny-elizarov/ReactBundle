@@ -4,6 +4,9 @@ import { Component } from './../../ComponentBase';
 // import MutationResolveConfig from "../../GraphQL/MutationResolveConfig";
 import { ComponentNotFoundException } from "./../../Exceptions";
 import { ucfirst } from "@AndevisReactBundle/UI/Helpers";
+import globState from "@AndevisReactBundle/state";
+import { autobind } from "@AndevisReactBundle/decorators";
+import viewStack from './viewStack';
 
 /**
  * The root view should be named as well as the bundle.
@@ -12,8 +15,19 @@ export default class View extends Component
 {
     static childContextTypes = Object.assign({}, Component.childContextTypes, {
         bundleName: PropTypes.string,
-        view: PropTypes.object.isRequired
+        view: PropTypes.object.isRequired,
     });
+
+    static contextTypes = Object.assign({}, Component.contextTypes, {
+        router: PropTypes.object,
+        userProvider: PropTypes.object,
+        intl: PropTypes.object
+    });
+
+    globalStateWillUpdateSubs = null;
+    globalStateDidUpdateSubs = null;
+    globalStateBindedSubs = null;
+    globalStateAutoUpdateKeys = [];
 
     constructor(props, context){
         super(props, context);
@@ -27,9 +41,9 @@ export default class View extends Component
         // Component mount stack
         this.componentMountStack = [];
 
-
-
-
+        // this.state = {
+        //     globState: {}
+        // }
         // Next event components update
         // TODO: remove
         // this.eventComponentsUpdate = {};
@@ -55,6 +69,112 @@ export default class View extends Component
             view: this
         };
     }
+
+    /**
+     * Get view by name
+     */
+    getViewByName(viewName){
+        let bundleName = this.getBundleName();
+        if(viewName.indexOf(":") !== -1){
+            [bundleName, viewName] = viewName.split(":", 2);
+        }
+        return viewStack.getByGlobalName(bundleName + ":" + viewName);
+    }
+
+    componentWillMount(){
+        viewStack.register(this);
+
+        if(this.hasOwnMethod('getInitialGlobalState')){
+            const initState = this.getInitialGlobalState();
+            this.globalStateAutoUpdateKeys = Object.keys(initState);
+            this.setGlobalState(initState);
+        }
+        super.componentWillMount();
+    }
+
+    componentDidMount(){
+
+
+        if(this.hasOwnMethod('globalStateWillUpdate')){
+            this.globalStateWillUpdateSubs = globState.subscribeWillUpdate(this.globalStateWillUpdate.bind(this));
+        }
+
+        if(this.hasOwnMethod('globalStateDidUpdate')){
+            this.globalStateDidUpdateSubs = globState.subscribeDidUpdate(this.globalStateDidUpdate.bind(this));
+        }
+
+        if(this.globalStateAutoUpdateKeys.length > 0) {
+            this.globalStateBindedSubs = globState.subscribeDidUpdate(this.handleBindedGlobalState.bind(this));
+        }
+
+        super.componentDidMount();
+    }
+
+    componentWillUnmount(){
+
+        globState.unsubscribeWillUpdate(this.globalStateWillUpdateSubs);
+        globState.unsubscribeDidUpdate(this.globalStateDidUpdateSubs);
+        globState.unsubscribeDidUpdate(this.globalStateBindedSubs);
+
+        super.componentWillUnmount();
+
+        viewStack.unregister(this);
+    }
+
+    /**
+     * Обновляет инициализированные ключи глобального состояния
+     */
+    handleBindedGlobalState(prevState) {
+        let needUpdate = false;
+        this.globalStateAutoUpdateKeys.forEach((key) => {
+            if(this.globalState.hasOwnProperty(key)){
+                if(!prevState.hasOwnProperty(key)){
+                    needUpdate = true;
+                } else {
+                    if(this.globalState[key] !== prevState[key]) needUpdate = true;
+                }
+            }
+        });
+
+        if(needUpdate) this.forceUpdate();
+    }
+
+    /**
+     * Инициализирует глобальные переменные при монтировании View
+     * @return {object}
+     */
+    getInitialGlobalState() {}
+
+    /**
+     * Вызывается при перед изменением глобального состояния
+     * @param nextState
+     */
+    globalStateWillUpdate(nextState){}
+
+
+    /**
+     * Вызывается после изменения глобального состояния
+     * @param prevState
+     */
+    globalStateDidUpdate(prevState){}
+
+
+    /**
+     * Возвращает текущее глобальное состояние
+     * @return {object}
+     */
+    get globalState(){
+        return globState.state;
+    }
+
+    /**
+     * Установить глобальное состояние
+     * @param {object} state
+     */
+    setGlobalState(state){
+        globState.setState(state);
+    }
+
 
     /**
      * Check if user handler exists on backend
@@ -91,22 +211,6 @@ export default class View extends Component
             throw new ComponentNotFoundException('Component with id `'+id+'` not mounted');
         }
         return this.componentsById[id];
-        // const idParts = id.split(":");
-        // const componentName = idParts[2];
-        // if(!this.components[componentName]) {
-        //     throw new ComponentNotFoundException('Component with id `'+id+'` not found');
-        // }
-        //
-        // // Get index if exists
-        // let index = null;
-        // if(idParts.length >= 4) {
-        //     index = parseInt(idParts[3], 10);
-        // }
-        //
-        // if(!this.components[componentName][index]) {
-        //     throw new ComponentNotFoundException('Component with id `'+id+'` not found');
-        // }
-        // return Number.isInteger(index) ? this.components[componentName][index] : this.components[componentName];
     }
 
     /**
@@ -118,44 +222,6 @@ export default class View extends Component
         }
         return this.components[name];
     }
-
-    // /**
-    //  * Set component status for update in next event
-    //  * @param component
-    //  * @param value
-    //  */
-    // setComponentStatusUpdate(component, value){
-    //     if(this.eventComponentsUpdate[component.getId()] === undefined){
-    //         this.eventComponentsUpdate[component.getId()] = {};
-    //     }
-    //     this.eventComponentsUpdate[component.getId()]['status'] = value;
-    // }
-
-    // /**
-    //  * Set component state for update in next event
-    //  * @param component
-    //  * @param state
-    //  */
-    // setComponentStateUpdate(component, state){
-    //     if(this.eventComponentsUpdate[component.getId()] === undefined){
-    //         this.eventComponentsUpdate[component.getId()] = {};
-    //     }
-    //     this.eventComponentsUpdate[component.getId()]['state'] = {};
-    //     Object.assign(this.eventComponentsUpdate[component.getId()]['state'], state);
-    // }
-
-    // /**
-    //  * Set component props for update in next event
-    //  * @param component
-    //  * @param props
-    //  */
-    // setComponentPropsUpdate(component, props){
-    //     if(this.eventComponentsUpdate[component.getId()] === undefined){
-    //         this.eventComponentsUpdate[component.getId()] = {};
-    //     }
-    //     this.eventComponentsUpdate[component.getId()]['props'] = {};
-    //     Object.assign(this.eventComponentsUpdate[component.getId()]['props'], props);
-    // }
 
 
     /**
@@ -226,24 +292,38 @@ export default class View extends Component
         }
     }
 
+    /**
+     * Event list
+     * @returns {[string,string]}
+     */
+    eventList() {
+        return super.eventList().concat(['callServerMethod']);
+    }
 
-    // /**
-    //  * Get components update
-    //  * @returns {{status: {}, state: {}}|*}
-    //  */
-    // getEventComponentsUpdate(){
-    //     return this.eventComponentsUpdate;
-    // }
+    /**
+     * Allow fire callServerMethod event
+     * @param eventName
+     * @return {boolean}
+     */
+    allowCallEventBackend(eventName){
+        if(eventName === 'callServerMethod'){
+            return true;
+        } else {
+            return super.allowCallEventBackend(eventName);
+        }
+    }
 
-    // /**
-    //  * Reset event components updates
-    //  */
-    // resetEventComponentsUpdates(){
-    //     this.eventComponentsUpdate = {};
-    // }
+    /**
+     * User method caller event
+     */
+    callServerMethod(serverMethodName){
+        var args = [].slice.call(arguments);
+        args.unshift('callServerMethod');
+        return this.fireEvent.apply(this, args);
+    }
 
     render(){
-        return React.Children.only(this.props.children);
+        return (this.visible) ? React.Children.only(this.props.children) : null
     }
 
 };
