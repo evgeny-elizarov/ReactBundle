@@ -7,6 +7,7 @@ import View from "./../Components/View/View";
 import {ucfirst} from './../Helpers';
 import { autobind } from 'core-decorators';
 import ComponentEvent from "@AndevisReactBundle/UI/ComponentBase/ComponentEvent";
+import shorthash from "shorthash";
 
 export default class Component extends React.Component {
 
@@ -82,6 +83,14 @@ export default class Component extends React.Component {
 
     getGlobalName() {
         return this.getView().getClassName() + ':' + this.getClassName() + ':' + this.getName();
+    }
+
+    /**
+     * Get component short hash
+     * @return {*}
+     */
+    getHashedGlobalId(){
+        return shorthash.unique(this.getId());
     }
 
     /**

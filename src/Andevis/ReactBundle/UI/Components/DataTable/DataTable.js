@@ -19,7 +19,7 @@ export default class DataTable extends Component{
     });
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
-        data: null,
+        data: -1, // Fix for detect controlled mode
         defaultPageSize: 25,
         sortable: false,
         loading: false
@@ -41,7 +41,7 @@ export default class DataTable extends Component{
 
     componentWillReceiveProps(nextProps) {
         super.componentWillReceiveProps(nextProps);
-        if(nextProps.hasOwnProperty('data')){
+        if(nextProps.hasOwnProperty('data') && this.props.data !== nextProps.data) {
             this.setState({
                 data: nextProps.data
             });
@@ -162,7 +162,7 @@ export default class DataTable extends Component{
             'defaultExpanded'
         ]);
 
-        if(this.props.data === null){
+        if(this.props.data === -1){
             tableProps.manual = true;
             tableProps.onFetchData = this.handleFetchData;
             tableProps.loading = this.isLoading;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, DataTable } from "@AndevisReactBundle/UI/Components";
+import { View, DataTable, Button } from "@AndevisReactBundle/UI/Components";
 
 
 export default class ExampleDataTable extends View {
@@ -84,6 +84,17 @@ export default class ExampleDataTable extends View {
     }
 
     /**
+     * Перезагружем данные для
+     */
+    btnRealoadDataClient2_onClick(){
+        this.callServerMethod('loadServerData').then((data) => {
+            this.setState({
+                serverData: data
+            })
+        });
+    }
+
+    /**
      * При монтировании компонента dataClient2 загружаем данные с сервера
      * @param dataTable
      */
@@ -140,6 +151,7 @@ export default class ExampleDataTable extends View {
                         accessor: 'friend.age'
                     }]}
                 />
+                <Button name="btnRealoadDataClient2" title="Reload" />
                 <h3>Server side example</h3>
                 <DataTable
                     name="dataServer"

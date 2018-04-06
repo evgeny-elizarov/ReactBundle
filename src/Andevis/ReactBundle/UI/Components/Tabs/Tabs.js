@@ -1,4 +1,5 @@
 import React from "react";
+import shorthash from 'shorthash';
 import { Tab, Tabs as ReactTabs, TabList, TabPanel } from 'react-tabs';
 import Component from "@AndevisReactBundle/UI/ComponentBase/Component";
 import PropTypes from "@AndevisReactBundle/prop-types";
@@ -56,7 +57,8 @@ export default class Tabs extends Component {
      */
     prepareUrlHash(selectedIndex){
         let tabs = this.parseUrlHash();
-        tabs[this.getName()] = selectedIndex;
+        console.log();
+        tabs[this.getHashedGlobalId()] = selectedIndex;
         return Object.keys(tabs).map(key => key + ":" + tabs[key]).join(";");
     }
 
@@ -66,8 +68,8 @@ export default class Tabs extends Component {
      */
     getSelectedTabIndexFromUrl(){
         const hashTabs = this.parseUrlHash();
-        if(hashTabs.hasOwnProperty(this.getName())){
-            return hashTabs[this.getName()];
+        if(hashTabs.hasOwnProperty(this.getHashedGlobalId())){
+            return hashTabs[this.getHashedGlobalId()];
         }
         return 0;
     }
