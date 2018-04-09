@@ -1,6 +1,7 @@
 import React from "react";
 import shorthash from 'shorthash';
-import { Tab, Tabs as ReactTabs, TabList, TabPanel } from 'react-tabs';
+import { Tabs as ReactTabs, TabList, TabPanel } from 'react-tabs';
+import Tab from './Tab';
 import Component from "@AndevisReactBundle/UI/ComponentBase/Component";
 import PropTypes from "@AndevisReactBundle/prop-types";
 import { autobind } from "@AndevisReactBundle/decorators";
@@ -10,28 +11,69 @@ export default class Tabs extends Component {
 
     static propTypes = Object.assign({}, Component.propTypes, {
         onSelect: PropTypes.func,
+        defaultIndex: PropTypes.number,
+        forceRenderTabPanel: PropTypes.bool
     });
+
+    static defaultProps = Object.assign({}, Component.defaultProps, {
+        defaultIndex: 0,
+        forceRenderTabPanel: true
+    });
+
+    static childContextTypes = Object.assign({}, Component.childContextTypes, {
+        tabs: PropTypes.object,
+    });
+
+    getChildContext(){
+        return {
+            tabs: this
+        }
+    }
 
     getBundleName(){
         return 'React';
     }
 
-    // // Attribute: selectedTabIndex
-    // get selectedTabIndex() {
-    //     return this.getAttributeValue('selectedTabIndex', this.getSelectedTabIndexFromUrl());
-    // }
-    // set selectedTabIndex(value) {
-    //     this.setAttributeValue('selectedTabIndex', value);
-    // }
+    getInitialState(){
+        return {
+            tabIndex: this.props.defaultIndex
+        }
+    }
+
+    // Attribute: selectedTabIndex
+    get selectedTabIndex() {
+        return this.getAttributeValue('selectedTabIndex', this.props.defaultIndex);
+    }
+    set selectedTabIndex(value) {
+        this.setAttributeValue('selectedTabIndex', value);
+    }
+
+    componentDidMount(){
+        const tabIndex = this.getSelectedTabIndexFromUrl();
+        if(tabIndex) {
+            this.setAttributes({
+                selectedTabIndex: tabIndex
+            }).then(() => {
+                super.componentDidMount();
+            });
+
+        } else {
+            super.componentDidMount();
+        }
+    }
 
     eventList(){
         return super.eventList().concat(['selectTab']);
     }
 
+    /**
+     * Select tab event
+     * @param index
+     * @return {Promise}
+     */
     selectTab(index){
-        // Отключил. т.к. это перерисовывет табы и опция forceRenderTabPanel становится бессмысленной
-        // if(this.selectedTabIndex !== index)
-        //     this.selectedTabIndex = index;
+        window.history.pushState(null, null, "#"+this.prepareUrlHash(index));
+        this.setAttributeValue('selectedTabIndex', index);
         return this.fireEvent('selectTab', index);
     }
 
@@ -71,32 +113,32 @@ export default class Tabs extends Component {
         if(hashTabs.hasOwnProperty(this.getHashedGlobalId())){
             return hashTabs[this.getHashedGlobalId()];
         }
-        return 0;
     }
 
     @autobind
     handleSelectTab(index){
-        window.history.pushState(null, null, "#"+this.prepareUrlHash(index));
         this.selectTab(index);
+        if(this.props.onSelect)
+            this.props.onSelect(index);
     }
 
     render(){
         const tabProps = Object.assign({
-            defaultIndex: this.getSelectedTabIndexFromUrl(),
-            onSelect: this.handleSelectTab
+            // defaultIndex: this.getSelectedTabIndexFromUrl(),
         }, filterObjectByKeys(this.props, [
             'className',
             'defaultFocus',
-            'defaultIndex',
             'disabledTabClassName',
             'domRef',
             'forceRenderTabPanel',
-            'onSelect',
-            'selectedIndex',
             'selectedTabClassName',
-            'selectedTabPanelClassName'
-        ]));
-
+            'selectedTabPanelClassName',
+            // 'defaultIndex'
+            // 'selectedIndex',
+        ]), {
+            onSelect: this.handleSelectTab,
+            selectedIndex: this.selectedTabIndex,
+        });
         return (
             <ReactTabs {...tabProps}>{this.props.children}</ReactTabs>
         )

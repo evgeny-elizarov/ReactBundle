@@ -22,7 +22,7 @@ export default class DataTable extends Component{
         data: -1, // Fix for detect controlled mode
         defaultPageSize: 25,
         sortable: false,
-        loading: false
+        loading: false,
     });
 
     getBundleName(){
@@ -56,6 +56,13 @@ export default class DataTable extends Component{
         this.setAttributeValue('isLoading', value);
     }
 
+    // Attribute: pageIndex
+    get pageIndex() {
+        return this.getAttributeValue('pageIndex', 0);
+    }
+    set pageIndex(value) {
+        this.setAttributeValue('pageIndex', value);
+    }
 
     // Attribute: pages
     get pages() {
@@ -135,6 +142,13 @@ export default class DataTable extends Component{
         );
     }
 
+    @autobind
+    handlePageChange(pageIndex){
+        this.setAttributes({ pageIndex: pageIndex }).then(() => {
+            if(this.props.onPageChange) this.props.onPageChange(pageIndex);
+        })
+    }
+
     render(){
         // https://react-table.js.org/#/story/readme
         let tableProps = filterObjectByKeys(this.props, [
@@ -159,7 +173,13 @@ export default class DataTable extends Component{
             'defaultSorted',
             'defaultFiltered',
             'defaultResized',
-            'defaultExpanded'
+            'defaultExpanded',
+            // 'onPageChange',
+            'onPageSizeChange',
+            'onSortedChange',
+            'onFilteredChange',
+            'onResizedChange',
+            'onExpandedChange'
         ]);
 
         if(this.props.data === -1){
@@ -196,6 +216,9 @@ export default class DataTable extends Component{
 
                 // Fully controlled
                 filtered={this.props.filtered}
+
+                page={this.pageIndex}
+                onPageChange={this.handlePageChange}
             />
         )
     }

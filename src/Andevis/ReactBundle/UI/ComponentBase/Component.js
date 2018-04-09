@@ -437,7 +437,7 @@ export default class Component extends React.Component {
     }
 
     componentDidMount() {
-        this.didMount();
+        this.didMount()
     }
 
     componentDidUpdate() {

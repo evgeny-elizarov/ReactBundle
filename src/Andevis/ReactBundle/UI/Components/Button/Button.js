@@ -3,6 +3,7 @@ import { Component } from './../../ComponentBase';
 import { autobind } from 'core-decorators';
 import classNames from 'classnames';
 import PropTypes from "prop-types";
+import hotKeys from "@AndevisReactBundle/hotkeys";
 
 /**
  * Button component
@@ -14,11 +15,28 @@ export default class Button extends Component
 {
     static propTypes = Object.assign({}, Component.propTypes, {
         title: PropTypes.string,
+        hotKey: PropTypes.string
     });
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
         type: "button",
     });
+
+    hotKeySubsIndex = null;
+
+    componentDidMount(){
+        super.componentDidMount();
+
+        // Register hot keys
+        if(this.props.hotKey){
+            this.hotKeySubsIndex = hotKeys.registerHotKey(this.props.hotKey, this.click);
+        }
+    }
+
+    componentWillUnmount(){
+        super.componentWillUnmount();
+        hotKeys.unregisterHotKey(this.hotKeySubsIndex);
+    }
 
     // Attribute: isProcessing
     get isProcessing() {
@@ -75,6 +93,8 @@ export default class Button extends Component
             })
         );
     }
+
+
 
     /**
      * Render event
