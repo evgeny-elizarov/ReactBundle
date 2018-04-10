@@ -42,7 +42,9 @@ class CheckboxBase extends FieldBase
     @autobind
     handleChangeEvent(e) {
         if(!this.readOnly){
-            this.change(!this.isChecked());
+            const newValue = !this.isChecked();
+            this.change(newValue);
+            this.isChecked(newValue);
         }
     }
 
