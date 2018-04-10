@@ -10,13 +10,13 @@ import './Checkbox.scss';
 
 class CheckboxBase extends FieldBase
 {
-    // static propTypes = Object.assign({}, FieldBase.propTypes, {
-    //     checked: PropTypes.bool,
-    // });
-    //
-    // static defaultProps = Object.assign({}, FieldBase.defaultProps, {
-    //     checked: false
-    // });
+    static propTypes = Object.assign({}, FieldBase.propTypes, {
+        checked: PropTypes.bool,
+    });
+
+    static defaultProps = Object.assign({}, FieldBase.defaultProps, {
+        checked: false
+    });
 
     getBundleName() {
         return 'React';
@@ -34,47 +34,16 @@ class CheckboxBase extends FieldBase
         if(arguments.length > 0){
             const newValue = (arguments[0]); // Convert to boolean
             this.setValue(newValue);
-            this.change(newValue);
+            // this.change(newValue);
         }
-        return (this.getValue() === null || this.getValue() === undefined) ? false : (this.getValue());
+        return this.props.fieldApi ? (this.props.value || null) : this.getAttributeValue('value', this.props.checked)
     }
-
-
-    // setAttributes(attributes, callback) {
-    //     const valueAttrName = this.getAttributeStateName('value');
-    //     const changed = (this.state.hasOwnProperty(valueAttrName) && this.state[valueAttrName] !== attributes.value);
-    //     const value = attributes.value;
-    //
-    //     return super.setAttributes(attributes, callback).then((updateState) => {
-    //         if(attributes.hasOwnProperty('value')) {
-    //             if (this.props.fieldApi && this.props.fieldApi.value !== value) {
-    //                 this.change(value);
-    //             } else {
-    //                 this.change(value);
-    //             }
-    //         }
-    //     });
-    // }
-
-    // componentDidMount(){
-    //     super.componentDidMount();
-    //     if(this.props.checked)
-    //     {
-    //         this.checked = this.props.checked;
-    //     }
-    // }
 
     @autobind
     handleChangeEvent(e) {
         if(!this.readOnly){
             this.change(!this.isChecked());
         }
-
-        // if (this.props.fieldApi) {
-        //     this.props.fieldApi.setValue(newValue);
-        // } else {
-        //     this.setAttributes({ value: newValue });
-        // }
     }
 
     getFieldWrapperProps(){
