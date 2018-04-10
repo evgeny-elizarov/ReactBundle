@@ -386,7 +386,6 @@ class FieldBase extends Component {
     }
 
     render() {
-        console.log(this.getName(), this.getFieldControlProps());
         return (
             <InputWrapper {...this.getFieldWrapperProps()}>
                 <input {...this.getFieldControlProps()} />
