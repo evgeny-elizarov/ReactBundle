@@ -94,7 +94,8 @@ class FieldBase extends Component {
     static propTypes = Object.assign({}, Component.propTypes, fieldTypes);
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
-        defaultValue: null
+        defaultValue: '',
+        required: false
     });
 
     static contextTypes = Object.assign({}, Component.contextTypes, {
@@ -163,7 +164,7 @@ class FieldBase extends Component {
      * @returns {*}
      */
     getValue(){
-        return this.props.fieldApi ? (this.props.value || null) : this.getAttributeValue('value', this.props.defaultValue);
+        return this.props.fieldApi ? (this.props.value || '') : this.getAttributeValue('value', this.props.defaultValue);
     }
 
     // Attribute: required
@@ -266,8 +267,6 @@ class FieldBase extends Component {
         }
     }
 
-    // React change vs input
-    // https://stackoverflow.com/questions/38256332/in-react-whats-the-difference-between-onchange-and-oninput
     /**
      * Change event
      * @param newValue
@@ -343,7 +342,7 @@ class FieldBase extends Component {
             ref: (input) => { this.refInput = input; },
             className: 'form-control',
             type: 'text',
-            autoComplete: 'off',
+            // autoComplete: 'off',
             placeholder: this.props.placeholder,
             required: this.required,
             readOnly: this.readOnly,
@@ -358,7 +357,9 @@ class FieldBase extends Component {
                     this.context.form.backendEventProcessing
                 )
             ),
-            onInput: this.handleInputEvent,
+            // React change vs input
+            // https://stackoverflow.com/questions/38256332/in-react-whats-the-difference-between-onchange-and-oninput
+            onChange: this.handleInputEvent,
             onBlur: this.handleBlurEvent,
             onFocus: this.handleFocusEvent,
             onClick: this.click,
@@ -385,6 +386,7 @@ class FieldBase extends Component {
     }
 
     render() {
+        console.log(this.getName(), this.getFieldControlProps());
         return (
             <InputWrapper {...this.getFieldWrapperProps()}>
                 <input {...this.getFieldControlProps()} />
