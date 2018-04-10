@@ -67,7 +67,7 @@ class CheckboxBase extends FieldBase
     @autobind
     handleChangeEvent(e) {
         if(!this.readOnly){
-            this.isChecked(!this.isChecked());
+            this.change(!this.isChecked());
         }
 
         // if (this.props.fieldApi) {
