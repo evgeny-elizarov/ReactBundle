@@ -109,7 +109,12 @@ export default class Form extends Component {
     @autobind
     handleFormSubmitEvent(e){
         e.preventDefault();
-        this.submit();
+        // Update values for backend state
+        this.setAttributes({
+            values: this.getValues()
+        }).then(() => {
+            this.submit();
+        });
     }
 
     @autobind
@@ -173,134 +178,170 @@ export default class Form extends Component {
     }
 
 
-    prepareStateAfterEvent(nextState){
-        // console.log("prepareStateAfterEvent", nextState);
-        // Когда изменяется состояние (допустим после события на бэкенде)
-        // устанавливаем значения для formApi
-        if(this.formApi && nextState){
+    // prepareStateAfterEvent(nextState){
+    //     console.log(this.getName(), "prepareStateAfterEvent");
+    //     // console.log("prepareStateAfterEvent", nextState);
+    //     // Когда изменяется состояние (допустим после события на бэкенде)
+    //     // устанавливаем значения для formApi
+    //     if(this.formApi && nextState){
+    //
+    //         let formState = this.formApi.getFormState();
+    //         let formStateChanged = false;
+    //         const attrValues = this.getAttributeStateName('values');
+    //         const attrErrors = this.getAttributeStateName('errors');
+    //         const attrWarnings = this.getAttributeStateName('warnings');
+    //         const attrSuccesses = this.getAttributeStateName('successes');
+    //         if (
+    //             nextState.hasOwnProperty(attrValues) &&
+    //             nextState[attrValues] !== formState.values
+    //         ) {
+    //             formState.values = nextState[attrValues];
+    //             formStateChanged = true;
+    //         }
+    //
+    //         if(
+    //             nextState.hasOwnProperty(attrErrors) &&
+    //             nextState[attrErrors] !== formState.errors
+    //         ) {
+    //             formState.errors = nextState[attrErrors];
+    //             formStateChanged = true;
+    //         }
+    //
+    //         if(
+    //             nextState.hasOwnProperty(attrWarnings) &&
+    //             nextState[attrWarnings] !== formState.warnings
+    //         ) {
+    //             formState.warnings = nextState[attrWarnings];
+    //             formStateChanged = true;
+    //         }
+    //
+    //         if(
+    //             nextState.hasOwnProperty(attrSuccesses) &&
+    //             nextState[attrSuccesses] !== formState.successes
+    //         ) {
+    //             formState.successes = nextState[attrSuccesses];
+    //             formStateChanged = true;
+    //         }
+    //
+    //         if(formStateChanged) {
+    //             console.log("setFormState 3", formState);
+    //             this.formApi.setFormState(formState);
+    //         }
+    //
+    //     }
+    //     return nextState;
+    // }
 
-            let formState = this.formApi.getFormState();
-            let formStateChanged = false;
-            const attrValues = this.getAttributeStateName('values');
-            const attrErrors = this.getAttributeStateName('errors');
-            const attrWarnings = this.getAttributeStateName('warnings');
-            const attrSuccesses = this.getAttributeStateName('successes');
-            if (
-                nextState.hasOwnProperty(attrValues) &&
-                nextState[attrValues] !== formState.values
-            ) {
-                formState.values = nextState[attrValues];
-                formStateChanged = true;
-            }
+    // componentWillUpdate(nextProps, nextState) {
+    //     console.log(this.getName(), "componentWillUpdate");
+    //     if(this.formApi)
+    //     {
+    //         let formState = this.formApi.getFormState();
+    //
+    //
+    //         // const newFormState = {};
+    //         //
+    //         // const attrValues = this.getAttributeStateName('values');
+    //         // if(formState.values !== nextState[attrValues]) {
+    //         //     newFormState[attrValues] = nextState[attrValues]
+    //         // }
+    //         //
+    //         // const attrErrors = this.getAttributeStateName('errors');
+    //         // if(formState.errors !== nextState[attrErrors]) {
+    //         //     newFormState[attrErrors] = nextState[attrErrors]
+    //         // }
+    //         //
+    //         // if(Object.keys(newFormState).length > 0)
+    //         // {
+    //         //     this.formApi.setFormState(Object.assign({}, formState, newFormState));
+    //         // }
+    //
+    //
+    //         let newFormState = {};
+    //
+    //         const valuesAttrName = this.getAttributeStateName('values');
+    //         if(nextState[valuesAttrName] !== formState[valuesAttrName]){
+    //             newFormState['values'] = nextState[valuesAttrName];
+    //             // this.formApi.setAllValues(nextState[valuesAttrName]);
+    //         }
+    //
+    //         const errorsAttrName = this.getAttributeStateName('errors');
+    //         // if(nextState.hasOwnProperty(errorsAttrName)){
+    //         if(nextState[errorsAttrName] !== formState[errorsAttrName]){
+    //             newFormState['errors'] = nextState[errorsAttrName];
+    //             // Object.keys(nextState[errorsAttrName]).map((key) => {
+    //             //     this.formApi.setError(key, nextState[errorsAttrName][key]);
+    //             // });
+    //         }
+    //
+    //         const warringisAttrName = this.getAttributeStateName('warringis');
+    //         if(nextState[warringisAttrName] !== formState[warringisAttrName]){
+    //             newFormState['warringis'] = nextState[errorsAttrName];
+    //             // Object.keys(nextState[warringisAttrName]).map((key) => {
+    //             //     this.formApi.setWarning(key, nextState[warringisAttrName][key]);
+    //             // });
+    //         }
+    //
+    //         const successesAttrName = this.getAttributeStateName('successes');
+    //         if(nextState[successesAttrName] !== formState[successesAttrName]){
+    //             newFormState['successes'] = nextState[errorsAttrName];
+    //             // Object.keys(nextState[successesAttrName]).map((key) => {
+    //             //     this.formApi.setSuccess(key, nextState[successesAttrName][key]);
+    //             // });
+    //         }
+    //
+    //         if(Object.keys(newFormState).length > 0){
+    //             console.log("setFormState 1", Object.assign({}, formState, newFormState));
+    //             this.formApi.setFormState(Object.assign({}, formState, newFormState));
+    //         }
+    //     }
+    //
+    //
+    //
+    //     // console.log('componentWillUpdate', nextProps, nextState);
+    //     // if(nextProps.defaultValues !== this.props.defaultValues){
+    //     //
+    //     //     formState.values = nextProps.defaultValues;
+    //     //     this.values = nextProps.defaultValues;
+    //     //     this.formApi.setFormState(formState);
+    //     // } else {
+    //     //     const attrValues = this.getAttributeStateName('values');
+    //     //     const nextStateValues = (nextState.hasOwnProperty(attrValues)) ? nextState[attrValues] : null;
+    //     //     if(formState.values !== nextStateValues){
+    //     //         nextState[attrValues] = formState.values;
+    //     //     }
+    //     // }
+    // }
 
-            if(
-                nextState.hasOwnProperty(attrErrors) &&
-                nextState[attrErrors] !== formState.errors
-            ) {
-                formState.errors = nextState[attrErrors];
-                formStateChanged = true;
-            }
+    componentWillReceiveBackendState(nextState) {
+        super.componentWillReceiveBackendState(nextState);
 
-            if(
-                nextState.hasOwnProperty(attrWarnings) &&
-                nextState[attrWarnings] !== formState.warnings
-            ) {
-                formState.warnings = nextState[attrWarnings];
-                formStateChanged = true;
-            }
+        let formState = this.formApi.getFormState();
+        let newFormState = {};
 
-            if(
-                nextState.hasOwnProperty(attrSuccesses) &&
-                nextState[attrSuccesses] !== formState.successes
-            ) {
-                formState.successes = nextState[attrSuccesses];
-                formStateChanged = true;
-            }
-
-            if(formStateChanged) this.formApi.setFormState(formState);
-
+        const valuesAttrName = this.getAttributeStateName('values');
+        if(nextState.hasOwnProperty(valuesAttrName)){
+            newFormState['values'] = nextState[valuesAttrName];
         }
-        return nextState;
-    }
 
-    componentWillUpdate(nextProps, nextState) {
-
-        if(this.formApi)
-        {
-            let formState = this.formApi.getFormState();
-
-
-            // const newFormState = {};
-            //
-            // const attrValues = this.getAttributeStateName('values');
-            // if(formState.values !== nextState[attrValues]) {
-            //     newFormState[attrValues] = nextState[attrValues]
-            // }
-            //
-            // const attrErrors = this.getAttributeStateName('errors');
-            // if(formState.errors !== nextState[attrErrors]) {
-            //     newFormState[attrErrors] = nextState[attrErrors]
-            // }
-            //
-            // if(Object.keys(newFormState).length > 0)
-            // {
-            //     this.formApi.setFormState(Object.assign({}, formState, newFormState));
-            // }
-
-
-            let newFormState = {};
-
-            const valuesAttrName = this.getAttributeStateName('values');
-            if(nextState[valuesAttrName] !== formState[valuesAttrName]){
-                newFormState['values'] = nextState[valuesAttrName];
-                // this.formApi.setAllValues(nextState[valuesAttrName]);
-            }
-
-            const errorsAttrName = this.getAttributeStateName('errors');
-            // if(nextState.hasOwnProperty(errorsAttrName)){
-            if(nextState[errorsAttrName] !== formState[errorsAttrName]){
-                newFormState['errors'] = nextState[errorsAttrName];
-                // Object.keys(nextState[errorsAttrName]).map((key) => {
-                //     this.formApi.setError(key, nextState[errorsAttrName][key]);
-                // });
-            }
-
-            const warringisAttrName = this.getAttributeStateName('warringis');
-            if(nextState[warringisAttrName] !== formState[warringisAttrName]){
-                newFormState['warringis'] = nextState[errorsAttrName];
-                // Object.keys(nextState[warringisAttrName]).map((key) => {
-                //     this.formApi.setWarning(key, nextState[warringisAttrName][key]);
-                // });
-            }
-
-            const successesAttrName = this.getAttributeStateName('successes');
-            if(nextState[successesAttrName] !== formState[successesAttrName]){
-                newFormState['successes'] = nextState[errorsAttrName];
-                // Object.keys(nextState[successesAttrName]).map((key) => {
-                //     this.formApi.setSuccess(key, nextState[successesAttrName][key]);
-                // });
-            }
-
-            if(Object.keys(newFormState).length > 0){
-                this.formApi.setFormState(Object.assign({}, formState, newFormState));
-            }
+        const errorsAttrName = this.getAttributeStateName('errors');
+        if(nextState.hasOwnProperty(errorsAttrName)){
+            newFormState['errors'] = nextState[errorsAttrName];
         }
 
+        const warringisAttrName = this.getAttributeStateName('warringis');
+        if(nextState.hasOwnProperty(warringisAttrName)){
+            newFormState['warringis'] = nextState[errorsAttrName];
+        }
 
+        const successesAttrName = this.getAttributeStateName('successes');
+        if(nextState.hasOwnProperty(successesAttrName)){
+            newFormState['successes'] = nextState[errorsAttrName];
+        }
 
-        // console.log('componentWillUpdate', nextProps, nextState);
-        // if(nextProps.defaultValues !== this.props.defaultValues){
-        //
-        //     formState.values = nextProps.defaultValues;
-        //     this.values = nextProps.defaultValues;
-        //     this.formApi.setFormState(formState);
-        // } else {
-        //     const attrValues = this.getAttributeStateName('values');
-        //     const nextStateValues = (nextState.hasOwnProperty(attrValues)) ? nextState[attrValues] : null;
-        //     if(formState.values !== nextStateValues){
-        //         nextState[attrValues] = formState.values;
-        //     }
-        // }
+        if(Object.keys(formState).length > 0){
+            this.formApi.setFormState(Object.assign({}, formState, newFormState));
+        }
     }
 
 
@@ -356,45 +397,7 @@ export default class Form extends Component {
         });
     }
 
-    componentWillReceiveBackendState(nextState) {
-        super.componentWillReceiveBackendState(nextState);
 
-        let formState = {};
-
-        const valuesAttrName = this.getAttributeStateName('values');
-        if(nextState.hasOwnProperty(valuesAttrName)){
-            formState['values'] = nextState[valuesAttrName];
-            // this.formApi.setAllValues(nextState[valuesAttrName]);
-        }
-
-        const errorsAttrName = this.getAttributeStateName('errors');
-        if(nextState.hasOwnProperty(errorsAttrName)){
-            formState['errors'] = nextState[errorsAttrName];
-            // Object.keys(nextState[errorsAttrName]).map((key) => {
-            //     this.formApi.setError(key, nextState[errorsAttrName][key]);
-            // });
-        }
-
-        const warringisAttrName = this.getAttributeStateName('warringis');
-        if(nextState.hasOwnProperty(warringisAttrName)){
-            formState['warringis'] = nextState[errorsAttrName];
-            // Object.keys(nextState[warringisAttrName]).map((key) => {
-            //     this.formApi.setWarning(key, nextState[warringisAttrName][key]);
-            // });
-        }
-
-        const successesAttrName = this.getAttributeStateName('successes');
-        if(nextState.hasOwnProperty(successesAttrName)){
-            formState['successes'] = nextState[errorsAttrName];
-            // Object.keys(nextState[successesAttrName]).map((key) => {
-            //     this.formApi.setSuccess(key, nextState[successesAttrName][key]);
-            // });
-        }
-
-        if(Object.keys(formState).length > 0){
-            this.formApi.setFormState(formState);
-        }
-    }
 
     render() {
         const form = this

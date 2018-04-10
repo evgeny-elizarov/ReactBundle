@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import ExampleForm from "./ExampleForm/ExampleForm";
+import ExampleFormComponents from "./ExampleFormComponents/ExampleFormComponents";
 import ExampleGrid from "./ExampleGrid/ExampleGrid";
 import ExampleComponents from "./ExampleComponents/ExampleComponents";
 import ExampleContainer from "./ExampleContainer/ExampleContainer";
@@ -33,8 +34,12 @@ export default () => (
                                 link: '/react/example/msg-box',
                             },
                             {
-                                label: 'Form',
+                                label: 'Form ',
                                 link: '/react/example/form',
+                            },
+                            {
+                                label: 'Form components',
+                                link: '/react/example/form-components',
                             },
                             {
                                 label: 'Tabs',
@@ -70,6 +75,7 @@ export default () => (
                 <Route path='/react/example/container' component={ExampleContainer}/>
                 <Route path='/react/example/data-table' component={ExampleDataTable}/>
                 <Route path='/react/example/form' component={ExampleForm}/>
+                <Route path='/react/example/form-components' component={ExampleFormComponents}/>
                 <Route path='/react/example/tabs' component={ExampleTabs}/>
                 {/*<Route path='/react/example/grid' component={ExampleGrid}/>*/}
                 <Route path='/react/example/component' component={ExampleComponents}/>

@@ -36,7 +36,7 @@ class CheckboxBase extends FieldBase
             this.setValue(newValue);
             // this.change(newValue);
         }
-        return this.props.fieldApi ? (this.props.value || null) : this.getAttributeValue('value', this.props.checked)
+        return this.props.fieldApi ? (this.props.value || this.props.checked) : this.getAttributeValue('value', this.props.checked)
     }
 
     @autobind
