@@ -21,7 +21,7 @@ class Checkbox extends FormInputBase
         if(sizeof($args) > 0){
             $this->setValue(boolval($args[0]));
         }
-        return boolval($this->getValue());
+        return boolval($this->getAttributeValue('value', $this->getProperty('checked')));
     }
 
 }
