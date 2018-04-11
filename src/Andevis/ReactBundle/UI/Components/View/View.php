@@ -78,7 +78,8 @@ class View extends Component implements ViewInterface
         $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC);
         $methodDefined = false;
         foreach ($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method){
-            if ($method->class == $refClass->getName() && $method->name == $methodName){
+            // $method->class == $refClass->getName() &&
+            if ($method->name == $methodName){
                 $methodDefined = true;
                 break;
             }
