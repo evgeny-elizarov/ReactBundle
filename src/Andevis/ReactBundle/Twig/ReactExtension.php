@@ -61,6 +61,7 @@ class ReactExtension extends \Twig_Extension
         $state = json_encode([
             'locale' => $request->getLocale(),
             'viewsUserHandlers' => $componentSet->getViewsUserHandlers(),
+            'viewsInitialGlobalState' => $componentSet->getViewsInitialGlobalState(),
             'viewsInitialState' => $componentSet->getViewsInitialState(),
         ]);
         return "(function() { window.AndevisReactBundle = ".$state."; })();";

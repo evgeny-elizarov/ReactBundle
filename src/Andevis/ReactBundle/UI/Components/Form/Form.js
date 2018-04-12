@@ -17,6 +17,7 @@ export default class Form extends Component {
         form: PropTypes.object,
     });
 
+    _backendUpdate = false;
     // constructor(props, context){
     //     super(props, context);
     //     this.state = Object.assign({}, this.state, {
@@ -340,7 +341,9 @@ export default class Form extends Component {
         }
 
         if(Object.keys(formState).length > 0){
+            this._backendUpdate = true;
             this.formApi.setFormState(Object.assign({}, formState, newFormState));
+            this._backendUpdate = false;
         }
     }
 
@@ -393,7 +396,8 @@ export default class Form extends Component {
             'warnings': formState.warnings,
             'successes': formState.successes,
         }).then(() => {
-            this.change(formState);
+            if(!this._backendUpdate)
+                this.change(formState);
         });
     }
 

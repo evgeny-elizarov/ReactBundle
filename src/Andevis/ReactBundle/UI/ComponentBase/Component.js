@@ -55,8 +55,6 @@ export default class Component extends React.Component {
             Object.assign(initialState, window.AndevisReactBundle.viewsInitialState[this.getId()]);
         }
 
-        Object.assign(initialState, window.AndevisReactBundle.viewsInitialState[this.getId()]);
-
         const frontendInitState = this.getInitialState();
         if(frontendInitState)
             Object.assign(initialState, frontendInitState);

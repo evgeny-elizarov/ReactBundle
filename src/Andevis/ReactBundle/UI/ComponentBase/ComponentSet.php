@@ -22,6 +22,7 @@ class ComponentSet
     private $componentClasses = [];
     private $viewUserHandlers = [];
     private $viewsInitialState = [];
+    private $viewsInitialGlobalState = [];
 
     function __construct($container)
     {
@@ -67,9 +68,17 @@ class ComponentSet
 
                 // Get view ID
                 $viewId = View::getViewId($componentClass);
+
+                // Load view init state
                 $state = call_user_func([$componentClass, 'getInitialState'], $viewId, $this->container);
                 if($state){
                     $this->viewsInitialState[$viewId] = $state;
+                }
+
+                // Load view init global state
+                $state = call_user_func([$componentClass, 'getInitialGlobalState'], $viewId, $this->container);
+                if($state){
+                    $this->viewsInitialGlobalState[$viewId] = $state;
                 }
             }
         }
@@ -77,6 +86,10 @@ class ComponentSet
 
     public function getViewsInitialState(){
         return $this->viewsInitialState;
+    }
+
+    public function getViewsInitialGlobalState(){
+        return $this->viewsInitialGlobalState;
     }
 
     public function getViewsUserHandlers(){

@@ -7,6 +7,7 @@ import PropTypes from "@AndevisReactBundle/prop-types";
 import { autobind } from "@AndevisReactBundle/decorators";
 import {filterObjectByKeys} from "@AndevisReactBundle/UI/Helpers";
 
+
 export default class Tabs extends Component {
 
     static propTypes = Object.assign({}, Component.propTypes, {
@@ -93,6 +94,26 @@ export default class Tabs extends Component {
     }
 
     /**
+     * Get tab url hash
+     *
+     * @param globalTabsName  ViewBundleName:ViewName:TabsName
+     * @param tabIndex
+     * @returns {string}
+     */
+    static getTabUrlHashLink(globalTabsName, tabIndex){
+        return shorthash.unique(globalTabsName) + ":" + tabIndex;
+    }
+
+    /**
+     * Get hashed tabs global name
+     * @returns {*}
+     */
+    getHashedTabsGlobalName(){
+        return shorthash.unique(this.getView().getBundleName()+":"+this.getView().getName()+":"+this.getName());
+    }
+
+
+    /**
      * Prepare url hash
      * @param selectedIndex
      * @returns {string}
@@ -100,7 +121,7 @@ export default class Tabs extends Component {
     prepareUrlHash(selectedIndex){
         let tabs = this.parseUrlHash();
         console.log();
-        tabs[this.getHashedGlobalId()] = selectedIndex;
+        tabs[this.getHashedTabsGlobalName()] = selectedIndex;
         return Object.keys(tabs).map(key => key + ":" + tabs[key]).join(";");
     }
 
@@ -110,8 +131,8 @@ export default class Tabs extends Component {
      */
     getSelectedTabIndexFromUrl(){
         const hashTabs = this.parseUrlHash();
-        if(hashTabs.hasOwnProperty(this.getHashedGlobalId())){
-            return hashTabs[this.getHashedGlobalId()];
+        if(hashTabs.hasOwnProperty(this.getHashedTabsGlobalName())){
+            return hashTabs[this.getHashedTabsGlobalName()];
         }
     }
 

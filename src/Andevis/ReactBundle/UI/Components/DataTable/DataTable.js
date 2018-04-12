@@ -3,10 +3,13 @@ import Component from "@AndevisReactBundle/UI/ComponentBase/Component";
 import PropTypes from "@AndevisReactBundle/prop-types";
 import { autobind } from "@AndevisReactBundle/decorators";
 import ReactTable from 'react-table';
+import selectTableHOC from 'react-table/lib/hoc/selectTable';
+import treeTableHOC from 'react-table/lib/hoc/treeTable';
 import messages from './messages';
-import 'react-table/react-table.css';
 import { i18n } from "@AndevisReactBundle/UI/Translation";
 import { filterObjectByKeys } from "@AndevisReactBundle/UI/Helpers";
+import 'react-table/react-table.css';
+import './DataTable.scss';
 
 export default class DataTable extends Component{
 
@@ -179,7 +182,16 @@ export default class DataTable extends Component{
             'onSortedChange',
             'onFilteredChange',
             'onResizedChange',
-            'onExpandedChange'
+            'onExpandedChange',
+            'pivotBy',
+            'pivotValKey',
+            'pivotIDKey',
+            'subRowsKey',
+            'aggregatedKey',
+            'nestingLevelKey',
+            'originalKey',
+            'indexKey',
+            'groupedByPivotKey',
         ]);
 
         if(this.props.data === -1){
@@ -197,7 +209,7 @@ export default class DataTable extends Component{
                 ref={(table) => {
                     this.table = table;
                 }}
-                {...tableProps}
+                {...this.props}
                 // Forces table not to paginate or sort automatically, so we can handle it server-side
                 // manual
                 // onFetchData={this.handleFetchData} // Request new data when things change
@@ -223,3 +235,4 @@ export default class DataTable extends Component{
         )
     }
 }
+

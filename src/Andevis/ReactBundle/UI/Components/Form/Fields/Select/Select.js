@@ -111,6 +111,16 @@ class SelectBase extends FieldBase {
         }, this.props.selectProps);
     }
 
+    componentWillReceiveBackendState(nextState) {
+        super.componentWillReceiveBackendState(nextState);
+        const optionsAttrName = this.getAttributeStateName('options');
+        if(nextState.hasOwnProperty(optionsAttrName)){
+            this.setAttributes({
+                options: nextState[optionsAttrName]
+            });
+        }
+    }
+
     render() {
         return (
             <InputWrapper {...this.getFieldWrapperProps()}>

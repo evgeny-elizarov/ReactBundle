@@ -57,6 +57,7 @@ class View extends Component implements ViewInterface
 //    }
 
     static public function getInitialState(string $viewId, ContainerInterface $container){}
+    static public function getInitialGlobalState(string $viewId, ContainerInterface $container){}
 
 
     function eventList()

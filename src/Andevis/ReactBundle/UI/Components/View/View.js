@@ -28,6 +28,7 @@ export default class View extends Component
     globalStateDidUpdateSubs = null;
     globalStateBindedSubs = null;
     globalStateAutoUpdateKeys = [];
+    // globalInitState = {};
 
     constructor(props, context){
         super(props, context);
@@ -40,6 +41,25 @@ export default class View extends Component
 
         // Component mount stack
         this.componentMountStack = [];
+
+        // Load initial state
+        let viewInitialGlobalState = {};
+        if(window.AndevisReactBundle.viewsInitialGlobalState.hasOwnProperty(this.getId()))
+        {
+            viewInitialGlobalState = Object.assign(
+                viewInitialGlobalState,
+                window.AndevisReactBundle.viewsInitialGlobalState[this.getId()]
+            );
+        }
+
+        if(this.hasOwnMethod('getInitialGlobalState')){
+            const state = this.getInitialGlobalState();
+            if(state)
+                viewInitialGlobalState = Object.assign(viewInitialGlobalState, state)
+        }
+        // this.globalInitState = viewInitialGlobalState;
+        this.globalStateAutoUpdateKeys = Object.keys(viewInitialGlobalState);
+        this.setGlobalState(viewInitialGlobalState);
 
         // this.state = {
         //     globState: {}
@@ -84,11 +104,9 @@ export default class View extends Component
     componentWillMount(){
         viewStack.register(this);
 
-        if(this.hasOwnMethod('getInitialGlobalState')){
-            const initState = this.getInitialGlobalState();
-            this.globalStateAutoUpdateKeys = Object.keys(initState);
-            this.setGlobalState(initState);
-        }
+        // if(this.hasOwnMethod(this.globalInitState)){
+        //     this.setGlobalState(this.globalInitState);
+        // }
         super.componentWillMount();
     }
 
