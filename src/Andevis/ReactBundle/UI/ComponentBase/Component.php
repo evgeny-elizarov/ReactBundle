@@ -61,6 +61,15 @@ abstract class Component implements ComponentInterface
     }
 
     /**
+     * Access method return boolean or list of permissions
+     * @return boolean|array
+     */
+    function access(){
+        // By default always allow access to component
+        return true;
+    }
+
+    /**
      * Get id
      * @return string
      */

@@ -8,6 +8,8 @@ import {ucfirst} from './../Helpers';
 import { autobind } from 'core-decorators';
 import ComponentEvent from "@AndevisReactBundle/UI/ComponentBase/ComponentEvent";
 import shorthash from "shorthash";
+import { authStore } from "@AndevisAuthReactBundle/UI/Stores";
+import { hasPermission } from "@AndevisAuthReactBundle/UI/Helpers";
 
 export default class Component extends React.Component {
 
@@ -69,6 +71,97 @@ export default class Component extends React.Component {
                 };
             },
         });
+
+        // Wrap render by permission checker method
+        this.render = this.checkAccessBeforeCall(
+            this.checkVisibleBeforeRender(this.render.bind(this)),
+            this.renderAccessDenied.bind(this)
+        );
+
+        // Wrap react Lifecycle methods
+        const lifeCycleMethods = [
+            'componentWillMount',
+            'componentWillUnmount',
+            'componentWillUpdate',
+            'componentDidMount',
+            'componentDidUpdate',
+            'componentWillReceiveProps',
+        ];
+        lifeCycleMethods.forEach((method) => {
+            this[method] = this.checkAccessBeforeCall(this[method].bind(this));
+        });
+
+    }
+
+    /**
+     * Check visible
+     * @param callback
+     */
+    checkVisibleBeforeRender(callback)
+    {
+        return (...args) => {
+            if(this.visible) {
+                return callback.apply(this, args);
+            } else {
+                return null;
+            }
+        };
+    }
+
+    /**
+     * Render
+     * @param callback
+     * @param callbackDenied
+     * @returns {function()}
+     */
+    checkAccessBeforeCall(callback, callbackDenied = null){
+        return (...args) => {
+            // Check access permission
+            let hasAccess = true;
+            if(this.context.userProvider) {
+                const permissions = authStore.userPermissions;
+                const checkPermissions = this.access();
+                if(typeof checkPermissions === 'boolean'){
+                    // ... if return boolean
+                    hasAccess = checkPermissions;
+                } else if(Array.isArray(checkPermissions)) {
+                    // ... if return array of permissions
+                    for(let i = 0; i < checkPermissions.length; i++)
+                    {
+                        hasAccess = hasPermission(checkPermissions[i]);
+                        // Allow access if all permissions return TRUE
+                        if(!hasAccess){
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(hasAccess) {
+                return callback.apply(this, args);
+            } else {
+                if(typeof callbackDenied === 'function'){
+                    return callbackDenied();
+                }
+            }
+        };
+    }
+
+    /**
+     * Render access denied
+     * @return {null}
+     */
+    renderAccessDenied(){
+        return null;
+    }
+
+    /**
+     * Access method return boolean or list of permissions
+     * @return boolean|Array
+     */
+    access(){
+        // By default always allow access to component
+        return true;
     }
 
     getChildContext() {
@@ -164,6 +257,15 @@ export default class Component extends React.Component {
      */
     getClassName() {
         return this.getBundleName() + this.getShortClassName();
+    }
+
+    /**
+     * Get component permission name
+     * @return string
+     * @throws \Exception
+     */
+    getComponentPermissionName() {
+        return this.getBundleName() + ":" + this.getView().getShortClassName() + ":" + this.getShortClassName();
     }
 
     /**

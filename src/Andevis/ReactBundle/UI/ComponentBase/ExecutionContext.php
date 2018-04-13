@@ -9,6 +9,7 @@
 namespace Andevis\ReactBundle\UI\ComponentBase;
 
 
+use Andevis\AuthBundle\Security\PermissionVoter;
 use Andevis\ReactBundle\Security\ViewAccessVoter;
 use Andevis\ReactBundle\UI\ComponentBase\ComponentSet;
 use Andevis\ReactBundle\GraphQL\AbstractResolveConfig;
@@ -137,14 +138,6 @@ class ExecutionContext
         $viewClass = $this->componentSet->getComponentClass($id['viewClass']);
         $viewName = self::getShortClassName($viewClass);
 
-        // Check permissions
-        if ($this->container->has('security.authorization_checker')) {
-            $isGranted = $this->container->get('security.authorization_checker')->isGranted(ViewAccessVoter::HAS_VIEW_ACCESS, $viewClass);
-            if(!$isGranted){
-                throw new AccessDeniedException(sprintf('Access denied to view `%s`', $viewName));
-            }
-        }
-
         // Register components
         if(is_array($args['event']['components'])) {
             foreach ($args['event']['components'] as $componentData) {
@@ -155,6 +148,11 @@ class ExecutionContext
 
         // Init view
         $this->view = $this->getComponentByName($viewName);
+
+        // Check View access
+        if(!$this->viewHasAccess($this->view)){
+            throw new AccessDeniedException(sprintf('Access denied to view `%s`', $viewName));
+        }
 
         //
         // 1. Before calls event set component state and props from frontend
@@ -190,6 +188,32 @@ class ExecutionContext
             }
         }
         return $this->executeComponentMethod($componentId, $resolveConfig->getMethodName(), [$args]);
+    }
+
+
+    /**
+     * @param $view
+     * @return bool
+     * @throws \Exception
+     */
+    function viewHasAccess(View $view){
+        $hasAccess = true;
+        // Check permissions
+        if ($this->container->has('security.authorization_checker'))
+        {
+            $checkPermissions = $view->access();
+            if (is_bool($checkPermissions)) {
+                $hasAccess = $checkPermissions;
+            } elseif (is_array($checkPermissions)) {
+
+                foreach ($checkPermissions as $permission)
+                {
+                    $hasAccess = $this->container->get('security.authorization_checker')->isGranted(PermissionVoter::HAS_PERMISSION, $permission);
+                    if(!$hasAccess) break;
+                }
+            }
+        }
+        return $hasAccess;
     }
 
     /**

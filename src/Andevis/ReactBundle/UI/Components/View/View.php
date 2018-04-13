@@ -61,6 +61,17 @@ class View extends Component implements ViewInterface
     static public function getInitialState(string $viewId, ContainerInterface $container){}
     static public function getInitialGlobalState(string $viewId, ContainerInterface $container){}
 
+    /**
+     * Access method return boolean or list of permissions
+     * @return boolean|array
+     * @throws \Exception
+     */
+    function access(){
+        // By default check UI component permission
+        return [
+            'UI:' . self::getComponentPermissionName(get_class($this))
+        ];
+    }
 
     function eventList()
     {

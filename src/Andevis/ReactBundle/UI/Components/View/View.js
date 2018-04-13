@@ -63,7 +63,7 @@ export default class View extends Component
         this.setGlobalState(viewInitialGlobalState);
 
 
-        this.render = this.renderIfAllowedWrapper(this.render.bind(this));
+
 
         // this.state = {
         //     globState: {}
@@ -78,25 +78,14 @@ export default class View extends Component
     }
 
     /**
-     * Render
-     * @param render
-     * @returns {function()}
+     * Access method return boolean or list of permissions
+     * @return boolean|Array
      */
-    renderIfAllowedWrapper(render){
-        return () => {
-            let isGranted = true;
-            if(this.context.userProvider) {
-                const permissions = authStore.userPermissions;
-                if(
-                    permissions.hasOwnProperty('UI') &&
-                    permissions && permissions['UI'].hasOwnProperty(this.getComponentPermissionName())
-                ){
-                    isGranted = permissions['UI'][this.getComponentPermissionName()];
-                }
-            }
-            if(isGranted) return render();
-            else return (this.props.children) ? React.Children.only(this.props.children) : null;
-        };
+    access(){
+        // By default check UI component permission
+        return [
+            'UI:' + this.getComponentPermissionName()
+        ]
     }
 
     getName(){
@@ -118,7 +107,6 @@ export default class View extends Component
 
     /**
      * Get component permission name
-     * @param $className
      * @return string
      * @throws \Exception
      */
@@ -377,7 +365,7 @@ export default class View extends Component
     }
 
     render(){
-        return (this.visible) ? React.Children.only(this.props.children) : null
+        return React.Children.only(this.props.children);
     }
 
 };

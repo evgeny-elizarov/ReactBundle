@@ -20,14 +20,15 @@ class PermissionsUpdateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('react:permissions:update')
-            ->setDescription('Updates all registered Views components access permissions. Remove unused permissions.');
+            ->setName('ui:permissions:update')
+            ->setDescription('Updates access permissions for all registered UI Views components. Remove unused permissions.');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return null
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
