@@ -84,6 +84,22 @@ class ComponentSet
         }
     }
 
+    /**
+     * Return view classes
+     * @return array
+     */
+    public function getViewsClasses(){
+        $viewClasses = [];
+        /** @var Component $component */
+        foreach ($this->getBundleComponentClasses() as $componentClass) {
+            if (is_subclass_of($componentClass, View::class)) {
+
+                $viewClasses[] = $componentClass;
+            }
+        }
+        return $viewClasses;
+    }
+
     public function getViewsInitialState(){
         return $this->viewsInitialState;
     }

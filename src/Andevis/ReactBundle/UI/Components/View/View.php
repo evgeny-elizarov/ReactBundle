@@ -26,6 +26,8 @@ use Youshido\GraphQL\Type\Scalar\StringType;
 
 class View extends Component implements ViewInterface
 {
+    use ViewTrait;
+
     /**
      * Component constructor.
      * @param $name

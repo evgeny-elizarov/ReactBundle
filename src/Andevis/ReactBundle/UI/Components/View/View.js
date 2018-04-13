@@ -7,6 +7,7 @@ import { ucfirst } from "@AndevisReactBundle/UI/Helpers";
 import globState from "@AndevisReactBundle/state";
 import { autobind } from "@AndevisReactBundle/decorators";
 import viewStack from './viewStack';
+import { authStore } from "@AndevisAuthReactBundle/UI/Stores";
 
 /**
  * The root view should be named as well as the bundle.
@@ -61,6 +62,9 @@ export default class View extends Component
         this.globalStateAutoUpdateKeys = Object.keys(viewInitialGlobalState);
         this.setGlobalState(viewInitialGlobalState);
 
+
+        this.render = this.renderIfAllowedWrapper(this.render.bind(this));
+
         // this.state = {
         //     globState: {}
         // }
@@ -71,6 +75,28 @@ export default class View extends Component
         // // TODO: remove
         // this.componentsStateUpdates = {};
         // // this.componentsInitState = {};
+    }
+
+    /**
+     * Render
+     * @param render
+     * @returns {function()}
+     */
+    renderIfAllowedWrapper(render){
+        return () => {
+            let isGranted = true;
+            if(this.context.userProvider) {
+                const permissions = authStore.userPermissions;
+                if(
+                    permissions.hasOwnProperty('UI') &&
+                    permissions && permissions['UI'].hasOwnProperty(this.getComponentPermissionName())
+                ){
+                    isGranted = permissions['UI'][this.getComponentPermissionName()];
+                }
+            }
+            if(isGranted) return render();
+            else return (this.props.children) ? React.Children.only(this.props.children) : null;
+        };
     }
 
     getName(){
@@ -88,6 +114,16 @@ export default class View extends Component
         return {
             view: this
         };
+    }
+
+    /**
+     * Get component permission name
+     * @param $className
+     * @return string
+     * @throws \Exception
+     */
+    getComponentPermissionName() {
+        return this.getBundleName()+":"+this.getShortClassName();
     }
 
     /**

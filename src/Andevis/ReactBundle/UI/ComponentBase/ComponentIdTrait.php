@@ -49,6 +49,16 @@ trait ComponentIdTrait
     }
 
     /**
+     * Get component permission name
+     * @param $className
+     * @return string
+     * @throws \Exception
+     */
+    static function getComponentPermissionName($className){
+        return self::getBundleName($className).":".self::getShortClassName($className);
+    }
+
+    /**
      * Component short class name
      * @param $className
      * @return string

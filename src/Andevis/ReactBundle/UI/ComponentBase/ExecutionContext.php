@@ -9,11 +9,13 @@
 namespace Andevis\ReactBundle\UI\ComponentBase;
 
 
+use Andevis\ReactBundle\Security\ViewAccessVoter;
 use Andevis\ReactBundle\UI\ComponentBase\ComponentSet;
 use Andevis\ReactBundle\GraphQL\AbstractResolveConfig;
 use Andevis\ReactBundle\UI\Components\View\View;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ExecutionContext
 {
@@ -134,6 +136,14 @@ class ExecutionContext
         /** @var View $view */
         $viewClass = $this->componentSet->getComponentClass($id['viewClass']);
         $viewName = self::getShortClassName($viewClass);
+
+        // Check permissions
+        if ($this->container->has('security.authorization_checker')) {
+            $isGranted = $this->container->get('security.authorization_checker')->isGranted(ViewAccessVoter::HAS_VIEW_ACCESS, $viewClass);
+            if(!$isGranted){
+                throw new AccessDeniedException(sprintf('Access denied to view `%s`', $viewName));
+            }
+        }
 
         // Register components
         if(is_array($args['event']['components'])) {
