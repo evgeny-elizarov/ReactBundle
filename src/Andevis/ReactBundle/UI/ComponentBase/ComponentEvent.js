@@ -74,7 +74,10 @@ export default class ComponentEvent {
                 //
                 // console.log(this.getId(), this.getName(), eventName, "step 1 before");
                 const viewBeforeUserHandlerName = this.component.getName() + '_before' + ucfirst(eventName);
+
                 if (typeof view[viewBeforeUserHandlerName] === 'function') {
+
+
                     // arguments[0] = this;
 
                     // check if canceled
@@ -117,6 +120,8 @@ export default class ComponentEvent {
                 const viewUserHandlerName = this.component.getName() + '_on' + ucfirst(eventName);
                 //console.log(this.getName(), eventName, "step 2 on:frontend");
                 if (typeof view[viewUserHandlerName] === 'function') {
+                    // console.log("!!", view, viewUserHandlerName, this.component, this.component.getView(), typeof view[viewUserHandlerName], "aaa");
+
                     // check if canceled
                     if(this.canceled) return;
                     // arguments[0] = this;
@@ -133,7 +138,6 @@ export default class ComponentEvent {
                 //
                 // 3. Call backend user event handler (if exists)
                 //
-                // console.log(this.getName(), eventName, "step 3 on:backend");
                 if(this.component.allowCallEventBackend(eventName)) {
 
 

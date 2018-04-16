@@ -3,9 +3,10 @@ import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
 import View from "@AndevisReactBundle/UI/Components/View/View";
 import Grid from "@AndevisReactBundle/UI/Components/Grid/Grid";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 const $ = window.$;
 
-export default class ExampleGrid extends View {
+export default class ExampleGrid extends ExampleBaseView {
 
     getBundleName(){
         return 'React';

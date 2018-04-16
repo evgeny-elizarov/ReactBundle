@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, DataTable, Button } from "@AndevisReactBundle/UI/Components";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 
-export default class ExampleDataTable extends View {
+export default class ExampleDataTable extends ExampleBaseView {
 
     getBundleName() {
         return 'React';

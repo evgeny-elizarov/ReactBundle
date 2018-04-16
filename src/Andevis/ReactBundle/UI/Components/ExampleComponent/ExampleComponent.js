@@ -30,10 +30,10 @@ export default class ExampleComponent extends Component {
 
     // Always call backend
     allowCallEventBackend(eventName){
-        if(eventName== 'loadDate' || eventName == 'longTask'){
+        if(eventName === 'loadDate' || eventName === 'longTask'){
             return true;
         } else {
-            return this.allowCallEventBackend(eventName)
+            return super.allowCallEventBackend(eventName);
         }
     }
 

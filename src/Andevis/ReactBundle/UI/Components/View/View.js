@@ -8,6 +8,7 @@ import globState from "@AndevisReactBundle/state";
 import { autobind } from "@AndevisReactBundle/decorators";
 import viewStack from './viewStack';
 import { authStore } from "@AndevisAuthReactBundle/UI/Stores";
+import { isGranted, hasPermission } from "@AndevisAuthReactBundle/UI/Helpers";
 
 /**
  * The root view should be named as well as the bundle.
@@ -29,6 +30,8 @@ export default class View extends Component
     globalStateDidUpdateSubs = null;
     globalStateBindedSubs = null;
     globalStateAutoUpdateKeys = [];
+
+    _hasAccess = null;
     // globalInitState = {};
 
     constructor(props, context){
@@ -42,6 +45,8 @@ export default class View extends Component
 
         // Component mount stack
         this.componentMountStack = [];
+
+        this._hasAccess = null;
 
         // Load initial state
         let viewInitialGlobalState = {};
@@ -77,15 +82,36 @@ export default class View extends Component
         // // this.componentsInitState = {};
     }
 
-    /**
-     * Access method return boolean or list of permissions
-     * @return boolean|Array
-     */
-    access(){
-        // By default check UI component permission
-        return [
-            'UI:' + this.getComponentPermissionName()
-        ]
+    // /**
+    //  * Access method return boolean or list of permissions
+    //  * @return boolean|Array
+    //  */
+    // access(){
+    //     // By default check UI component permission
+    //     return [
+    //         'UI:' + this.getComponentPermissionName()
+    //     ]
+    // }
+
+    // TODO: сделать кэширование результатов (см. бэкенд)
+    hasAccess(){
+        if(this._hasAccess === null)
+        {
+            // 1. Check access permission
+            if(hasPermission('UI:Access', this.getBackendClassName()))
+            {
+                if(this.context.userProvider) {
+                    this._hasAccess = isGranted('UI:Access', this.getBackendClassName())
+                }
+            }
+
+            // 2. Check user custom logic in access method
+            if(this._hasAccess){
+                this._hasAccess = this.access();
+            }
+        }
+
+        return this._hasAccess;
     }
 
     getName(){
@@ -97,6 +123,16 @@ export default class View extends Component
             throw new Error('Bundle context not set for this component. Wrap the component in a Bundle tag');
         }
         return this.context.bundleName;
+    }
+
+    /**
+     * Get backend class name
+     * @return {*}
+     */
+    getBackendClassName(){
+        if(window.AndevisReactBundle.viewsClassMap.hasOwnProperty(this.getId())) {
+            return window.AndevisReactBundle.viewsClassMap[this.getId()];
+        }
     }
 
     getChildContext() {
@@ -136,7 +172,7 @@ export default class View extends Component
 
     componentDidMount(){
 
-
+        this._hasAccess = null; // Reset has access cache
         if(this.hasOwnMethod('globalStateWillUpdate')){
             this.globalStateWillUpdateSubs = globState.subscribeWillUpdate(this.globalStateWillUpdate.bind(this));
         }
@@ -152,6 +188,11 @@ export default class View extends Component
         super.componentDidMount();
     }
 
+    componentWillReceiveProps(nextProps){
+        this._hasAccess = null; // Reset has access cache
+        super.componentWillReceiveProps(nextProps);
+    }
+
     componentWillUnmount(){
 
         globState.unsubscribeWillUpdate(this.globalStateWillUpdateSubs);
@@ -161,6 +202,7 @@ export default class View extends Component
         super.componentWillUnmount();
 
         viewStack.unregister(this);
+        this._hasAccess = null; // Reset has access cache
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Andevis\ReactBundle\Security;
 use Andevis\AuthBundle\Entity\User;
 use Andevis\AuthBundle\Service\PermissionChecker;
 
+use Andevis\ReactBundle\UI\ComponentBase\Component;
 use Andevis\ReactBundle\UI\Components\View\View;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -16,10 +17,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * Time: 16:07
  */
 
-class ViewAccessVoter extends Voter
+class UIVoter extends Voter
 {
-    const HAS_VIEW_ACCESS = 'HAS_VIEW_ACCESS';
-
     /* @var PermissionChecker */
     protected $permissionChecker;
 
@@ -37,19 +36,32 @@ class ViewAccessVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        return $attribute == self::HAS_VIEW_ACCESS && class_exists($subject);
+        return
+            substr($attribute, 0, 3) === 'UI:' &&
+            class_exists($subject) &&
+            is_subclass_of($subject, Component::class);
     }
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @param TokenInterface $token
+     * @return array|bool|mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        // Check class
-        if(!is_subclass_of($subject, View::class))
-            return false;
+        list($group, $permissionName) = explode(":", $attribute, 2);
 
         // Check if user got permission
         /** @var PermissionChecker $permissionChecker */
         $permissionChecker = $this->container->get('auth.permission_checker');
-        $isGranted = $permissionChecker->isGranted($token->getUser(), $token->getRoles(), 'UI', View::getComponentPermissionName($subject));
+        $isGranted = $permissionChecker->isGranted(
+            $token->getUser(),
+            $token->getRoles(),
+            $group,
+            $permissionName,
+            $subject);
         return $isGranted;
 
     }

@@ -8,9 +8,9 @@
 
 namespace Andevis\ReactBundle\UI\Views\ExampleServerMethod;
 
-use Andevis\ReactBundle\UI\Components\View\View;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
-class ExampleServerMethod extends View
+class ExampleServerMethod extends ExampleBaseView
 {
 
 

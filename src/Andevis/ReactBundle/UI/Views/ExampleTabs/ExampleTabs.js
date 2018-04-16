@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tabs, Tab, TabPanel, TabList } from "@AndevisReactBundle/UI/Components/Tabs/Tabs";
-import View from "@AndevisReactBundle/UI/Components/View/View";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
-export default class ExampleTabs extends View {
+export default class ExampleTabs extends ExampleBaseView {
 
     getBundleName(){
         return 'React';

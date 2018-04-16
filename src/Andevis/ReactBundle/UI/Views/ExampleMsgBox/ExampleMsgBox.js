@@ -1,10 +1,9 @@
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import View from "@AndevisReactBundle/UI/Components/View/View";
 import Button from "@AndevisReactBundle/UI/Components/Button/Button";
 import MsgBox from "@AndevisReactBundle/UI/Components/MsgBox";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
-export default class ExampleMsgBox extends View {
+export default class ExampleMsgBox extends ExampleBaseView {
 
     getBundleName(){
         return 'React';

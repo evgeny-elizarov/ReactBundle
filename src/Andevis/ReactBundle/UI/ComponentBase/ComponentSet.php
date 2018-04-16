@@ -8,6 +8,7 @@
 
 namespace Andevis\ReactBundle\UI\ComponentBase;
 
+use Andevis\ReactBundle\UI\Components\Page\Page;
 use Andevis\ReactBundle\UI\Components\View\View;
 use ReflectionClass;
 use ReflectionMethod;
@@ -92,12 +93,28 @@ class ComponentSet
         $viewClasses = [];
         /** @var Component $component */
         foreach ($this->getBundleComponentClasses() as $componentClass) {
-            if (is_subclass_of($componentClass, View::class)) {
+            // Skip base classes
+            if($componentClass == View::class ||
+                $componentClass == Page::class
+            ) continue;
 
+            if(is_subclass_of($componentClass, View::class)) {
                 $viewClasses[] = $componentClass;
             }
         }
         return $viewClasses;
+    }
+
+    /**
+     * Get view class map
+     */
+    public function getViewsClassMap(){
+        $viewClasses = $this->getViewsClasses();
+        $map = [];
+        foreach ($viewClasses as $className){
+            $map[View::getViewId($className)] = $className;
+        }
+        return $map;
     }
 
     public function getViewsInitialState(){

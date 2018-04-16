@@ -10,7 +10,7 @@ namespace Andevis\ReactBundle\UI\ComponentBase;
 
 
 use Andevis\AuthBundle\Security\PermissionVoter;
-use Andevis\ReactBundle\Security\ViewAccessVoter;
+use Andevis\ReactBundle\Security\UIVoter;
 use Andevis\ReactBundle\UI\ComponentBase\ComponentSet;
 use Andevis\ReactBundle\GraphQL\AbstractResolveConfig;
 use Andevis\ReactBundle\UI\Components\View\View;
@@ -149,11 +149,6 @@ class ExecutionContext
         // Init view
         $this->view = $this->getComponentByName($viewName);
 
-        // Check View access
-        if(!$this->viewHasAccess($this->view)){
-            throw new AccessDeniedException(sprintf('Access denied to view `%s`', $viewName));
-        }
-
         //
         // 1. Before calls event set component state and props from frontend
         //
@@ -187,34 +182,15 @@ class ExecutionContext
                 }
             }
         }
+
+        // Check View access
+        if(!$this->view->hasAccess()){
+            throw new AccessDeniedException(sprintf('Access denied to view `%s`', $viewName));
+        }
+
         return $this->executeComponentMethod($componentId, $resolveConfig->getMethodName(), [$args]);
     }
 
-
-    /**
-     * @param $view
-     * @return bool
-     * @throws \Exception
-     */
-    function viewHasAccess(View $view){
-        $hasAccess = true;
-        // Check permissions
-        if ($this->container->has('security.authorization_checker'))
-        {
-            $checkPermissions = $view->access();
-            if (is_bool($checkPermissions)) {
-                $hasAccess = $checkPermissions;
-            } elseif (is_array($checkPermissions)) {
-
-                foreach ($checkPermissions as $permission)
-                {
-                    $hasAccess = $this->container->get('security.authorization_checker')->isGranted(PermissionVoter::HAS_PERMISSION, $permission);
-                    if(!$hasAccess) break;
-                }
-            }
-        }
-        return $hasAccess;
-    }
 
     /**
      * TODO: remove

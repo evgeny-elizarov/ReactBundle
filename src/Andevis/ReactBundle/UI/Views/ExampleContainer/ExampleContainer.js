@@ -2,8 +2,9 @@ import React from 'react';
 import View from "@AndevisReactBundle/UI/Components/View/View";
 import Container from "@AndevisReactBundle/UI/Components/Container/Container";
 import Button from "@AndevisReactBundle/UI/Components/Button/Button";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
-export default class ExampleContainer extends View {
+export default class ExampleContainer extends ExampleBaseView {
 
     getBundleName(){
         return 'React';

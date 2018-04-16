@@ -1,4 +1,6 @@
 import View from './View';
+import Page from './Page/Page';
+import PageNotFound from './PageNotFound/PageNotFound';
 import Container from './Container/Container';
 import { Form, Field, Select, TextArea, Text, AutoComplete, DateTime, Checkbox, RadioGroup, Radio } from './Form';
 import Button from './Button/Button';
@@ -10,6 +12,8 @@ import './../../../../../node_modules/react-tabs/style/react-tabs.scss';
 
 export {
     View,
+    Page,
+    PageNotFound,
     Container,
 
     Form,

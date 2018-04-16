@@ -3,9 +3,10 @@ import ReactDOMServer from 'react-dom/server';
 import View from "@AndevisReactBundle/UI/Components/View/View";
 import Button from "@AndevisReactBundle/UI/Components/Button/Button";
 import MsgBox from "@AndevisReactBundle/UI/Components/MsgBox";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 
-export default class ExampleServerMethod extends View {
+export default class ExampleServerMethod extends ExampleBaseView {
 
     getBundleName(){
         return 'React';

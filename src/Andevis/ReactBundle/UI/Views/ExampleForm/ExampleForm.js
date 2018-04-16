@@ -3,8 +3,9 @@ import View from "@AndevisReactBundle/UI/Components/View/View";
 import Form from "@AndevisReactBundle/UI/Components/Form/Form";
 import Text from "@AndevisReactBundle/UI/Components/Form/Fields/Text/Text";
 import Button from "@AndevisReactBundle/UI/Components/Button/Button";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
-export default class ExampleForm extends View {
+export default class ExampleForm extends ExampleBaseView {
 
     getBundleName() {
         return 'React';

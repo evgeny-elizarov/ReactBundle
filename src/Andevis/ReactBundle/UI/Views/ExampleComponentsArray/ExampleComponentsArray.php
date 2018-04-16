@@ -3,7 +3,7 @@
 namespace Andevis\ReactBundle\UI\Views\ExampleComponentsArray;
 
 use Andevis\ReactBundle\UI\Components\Button\Button;
-use Andevis\ReactBundle\UI\Components\View\View;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
 /**
  * Created by PhpStorm.
@@ -12,7 +12,7 @@ use Andevis\ReactBundle\UI\Components\View\View;
  * Time: 16:17
  */
 
-class ExampleComponentsArray extends View
+class ExampleComponentsArray extends ExampleBaseView
 {
 
     function btnEdit_onClick(Button $btn){

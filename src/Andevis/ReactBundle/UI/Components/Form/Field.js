@@ -26,7 +26,8 @@ const fieldTypes = {
     value: PropTypes.any,
     error: PropTypes.string,
     warning: PropTypes.string,
-    success: PropTypes.string
+    success: PropTypes.string,
+    autoComplete: PropTypes.string
 }
 
 const formFieldWrapper = (WrappedComponent) => {
@@ -95,6 +96,7 @@ class FieldBase extends Component {
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
         defaultValue: '',
+        autoComplete: 'off',
         required: false
     });
 
@@ -342,7 +344,7 @@ class FieldBase extends Component {
             ref: (input) => { this.refInput = input; },
             className: 'form-control',
             type: 'text',
-            // autoComplete: 'off',
+            autoComplete: this.props.field || 'off',
             placeholder: this.props.placeholder,
             required: this.required,
             readOnly: this.readOnly,

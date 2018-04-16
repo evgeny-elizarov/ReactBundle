@@ -60,6 +60,7 @@ class ReactExtension extends \Twig_Extension
 
         $state = json_encode([
             'locale' => $request->getLocale(),
+            'viewsClassMap' => $componentSet->getViewsClassMap(),
             'viewsUserHandlers' => $componentSet->getViewsUserHandlers(),
             'viewsInitialGlobalState' => $componentSet->getViewsInitialGlobalState(),
             'viewsInitialState' => $componentSet->getViewsInitialState(),

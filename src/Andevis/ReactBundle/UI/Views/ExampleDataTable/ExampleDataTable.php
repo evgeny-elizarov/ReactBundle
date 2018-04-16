@@ -3,7 +3,7 @@
 namespace Andevis\ReactBundle\UI\Views\ExampleDataTable;
 
 use Andevis\ReactBundle\UI\Components\DataTable\DataTable;
-use Andevis\ReactBundle\UI\Components\View\View;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
 /**
  * Created by PhpStorm.
@@ -11,7 +11,7 @@ use Andevis\ReactBundle\UI\Components\View\View;
  * Date: 14.03.2018
  * Time: 19:09
  */
-class ExampleDataTable extends View
+class ExampleDataTable extends ExampleBaseView
 {
 
     /**

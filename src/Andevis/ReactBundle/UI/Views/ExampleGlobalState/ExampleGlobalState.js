@@ -1,13 +1,11 @@
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import ReactDOM from 'react-dom';
-import View from "@AndevisReactBundle/UI/Components/View/View";
 import TestView1 from "./TestView1";
 import TestView2 from "./TestView2";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 
 
-export default class ExampleGlobalState extends View {
+export default class ExampleGlobalState extends ExampleBaseView {
 
     getBundleName(){
         return 'React';

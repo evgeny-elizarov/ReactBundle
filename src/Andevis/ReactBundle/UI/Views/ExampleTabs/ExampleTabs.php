@@ -2,6 +2,7 @@
 namespace Andevis\ReactBundle\UI\Views\ExampleTabs;
 
 use Andevis\ReactBundle\UI\Components\View\View;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
 /**
  * Created by PhpStorm.
@@ -10,7 +11,7 @@ use Andevis\ReactBundle\UI\Components\View\View;
  * Time: 3:09
  */
 
-class ExampleTabs extends View
+class ExampleTabs extends ExampleBaseView
 {
     /**
      * Example how catch selected tab on backed

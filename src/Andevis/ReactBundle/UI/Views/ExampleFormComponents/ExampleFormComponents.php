@@ -17,9 +17,10 @@ use Andevis\ReactBundle\UI\Components\Form\Fields\Checkbox\Checkbox;
 use Andevis\ReactBundle\UI\Components\Form\Fields\DateTime\DateTime;
 use Andevis\ReactBundle\UI\Components\Form\Fields\Select\Select;
 use Andevis\ReactBundle\UI\Components\Form\Fields\TextArea\TextArea;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
 
-class ExampleFormComponents extends View
+class ExampleFormComponents extends ExampleBaseView
 {
     /**
      * Logger to view debug info

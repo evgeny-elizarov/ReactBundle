@@ -2,15 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from "classnames";
 
-const Tooltip = ({ styleClass, message, show }) => (
-    <div
-        className={classNames("tooltip fade bottom in", styleClass)}
-        style={{display: show ? 'block' : 'none'}}
-        role="tooltip">
-        <div className="tooltip-arrow" style={{left: "50%"}} />
-        <div className="tooltip-inner">{message}</div>
-    </div>
-);
+import Tooltip from '@AndevisReactBundle/UI/Components/Tooltip/Tooltip';
 
 export default class InputWrapper extends React.Component
 {

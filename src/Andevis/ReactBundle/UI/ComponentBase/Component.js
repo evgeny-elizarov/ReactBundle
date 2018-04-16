@@ -11,6 +11,7 @@ import shorthash from "shorthash";
 import { authStore } from "@AndevisAuthReactBundle/UI/Stores";
 import { hasPermission } from "@AndevisAuthReactBundle/UI/Helpers";
 
+
 export default class Component extends React.Component {
 
     static propTypes = {
@@ -117,27 +118,7 @@ export default class Component extends React.Component {
     checkAccessBeforeCall(callback, callbackDenied = null){
         return (...args) => {
             // Check access permission
-            let hasAccess = true;
-            if(this.context.userProvider) {
-                const permissions = authStore.userPermissions;
-                const checkPermissions = this.access();
-                if(typeof checkPermissions === 'boolean'){
-                    // ... if return boolean
-                    hasAccess = checkPermissions;
-                } else if(Array.isArray(checkPermissions)) {
-                    // ... if return array of permissions
-                    for(let i = 0; i < checkPermissions.length; i++)
-                    {
-                        hasAccess = hasPermission(checkPermissions[i]);
-                        // Allow access if all permissions return TRUE
-                        if(!hasAccess){
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if(hasAccess) {
+            if(this.hasAccess()) {
                 return callback.apply(this, args);
             } else {
                 if(typeof callbackDenied === 'function'){
@@ -153,6 +134,10 @@ export default class Component extends React.Component {
      */
     renderAccessDenied(){
         return null;
+    }
+
+    hasAccess(){
+        return true;
     }
 
     /**
@@ -515,8 +500,9 @@ export default class Component extends React.Component {
      * @returns {*}
      */
     getView() {
-        if (this instanceof View) return this;
-        if (this.context && this.context.view instanceof View) return this.context.view;
+        if (this instanceof View ) return this;
+        // if (this.context && this.context.view) console.log("getView", this.getName(), this.context.view);
+        if (this.context && this.context.view ) return this.context.view;
         return null;
     }
 
@@ -635,7 +621,6 @@ export default class Component extends React.Component {
 
         const event = new ComponentEvent(this, eventName, args);
         this.processingEvents.push(event);
-        const promise = event.getPromise();
         return event.getPromise();
     }
 

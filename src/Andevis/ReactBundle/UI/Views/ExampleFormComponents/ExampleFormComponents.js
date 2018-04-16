@@ -19,6 +19,7 @@ import {
 } from "@AndevisReactBundle/UI/Components";
 import classNames from "classnames";
 import Container from "@AndevisReactBundle/UI/Components/Container/Container";
+import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 
 class LogContainer extends Container {
@@ -285,7 +286,7 @@ class ControlsList extends React.Component {
     }
 }
 
-export default class ExampleFormComponents extends View {
+export default class ExampleFormComponents extends ExampleBaseView {
 
 
     constructor(props, context) {

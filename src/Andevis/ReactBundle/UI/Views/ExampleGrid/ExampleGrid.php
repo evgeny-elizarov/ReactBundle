@@ -10,18 +10,16 @@ namespace Andevis\ReactBundle\UI\Views\ExampleGrid;
 
 
 use Andevis\AuthBundle\Entity\Permission;
-use Andevis\AuthBundle\Entity\User;
 use Andevis\ReactBundle\UI\Components\Grid\Grid;
-use Andevis\ReactBundle\UI\Components\View\View;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 use Doctrine\ORM\EntityRepository;
 
-class ExampleGrid extends View
+class ExampleGrid extends ExampleBaseView
 {
 
     /**
      * Load users
      * @param Grid $grid
-     * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @internal param JqxDataAdapter $data
      */

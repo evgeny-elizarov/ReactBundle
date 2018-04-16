@@ -444,7 +444,7 @@ class AutoCompleteBase extends TextBase {
                 return item;
             })
 
-            return Object.assign({
+            const attr = Object.assign({
                 ref: (autoComplete) => {
                     this.autoComplete = autoComplete;
                     this.refInput = autoComplete;
@@ -463,6 +463,7 @@ class AutoCompleteBase extends TextBase {
             }, filterObjectByKeys(this.props, [
                 'wrapperStyle', 'renderMenu'
             ]));
+            return attr;
         }
     }
 

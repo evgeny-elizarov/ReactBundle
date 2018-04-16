@@ -9,19 +9,13 @@
 namespace Andevis\ReactBundle\UI\Components\View;
 
 
+use Andevis\AuthReactBundle\UI\Components\PublicAccessComponent;
 use Andevis\ReactBundle\UI\ComponentBase\Component;
 use Andevis\ReactBundle\UI\ComponentBase\ExecutionContext;
-use Andevis\ReactBundle\GraphQL\InputType\ComponentInputType;
-use Andevis\ReactBundle\GraphQL\InputType\EventInputType;
-use Andevis\ReactBundle\GraphQL\MutationResolveConfig;
-use Andevis\ReactBundle\GraphQL\QueryResolveConfig;
-use Andevis\ReactBundle\GraphQL\Type\ViewInitStatusType;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Youshido\GraphQL\Type\ListType\ListType;
-use Youshido\GraphQL\Type\Object\AbstractObjectType;
-use Youshido\GraphQL\Type\Scalar\StringType;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 
 class View extends Component implements ViewInterface
@@ -61,16 +55,39 @@ class View extends Component implements ViewInterface
     static public function getInitialState(string $viewId, ContainerInterface $container){}
     static public function getInitialGlobalState(string $viewId, ContainerInterface $container){}
 
+    private $_hasAccess = null;
+
     /**
-     * Access method return boolean or list of permissions
-     * @return boolean|array
+     * Return true if access allowed
+     * @return mixed
      * @throws \Exception
      */
-    function access(){
-        // By default check UI component permission
-        return [
-            'UI:' . self::getComponentPermissionName(get_class($this))
-        ];
+    function hasAccess() {
+        if(!is_null($this->_hasAccess)) {
+            return $this->_hasAccess;
+        }
+
+        // 1. Check access permission
+        $hasAccess = true;
+
+        // Check permissions
+        if(!($this instanceof PublicAccessComponent))
+        {
+            if ($this->getContainer()->has('security.authorization_checker'))
+            {
+                /** @var AuthorizationChecker $permCheck */
+                $permCheck = $this->getContainer()->get('security.authorization_checker');
+                $hasAccess = $permCheck->isGranted('UI:Access', get_class($this));
+            }
+        }
+
+        // 2. Check user custom logic in access method
+        if($hasAccess){
+            $hasAccess = $this->access();
+        }
+
+        $this->_hasAccess = $hasAccess;
+        return $this->_hasAccess;
     }
 
     function eventList()

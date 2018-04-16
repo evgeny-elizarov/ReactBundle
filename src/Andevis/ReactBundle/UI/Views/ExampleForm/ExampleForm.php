@@ -8,11 +8,10 @@
 
 namespace Andevis\ReactBundle\UI\Views\ExampleForm;
 
-
 use Andevis\ReactBundle\UI\Components\Form\Form;
-use Andevis\ReactBundle\UI\Components\View\View;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
-class ExampleForm extends View
+class ExampleForm extends ExampleBaseView
 {
     function formExample_onSubmit(Form $form, array $values){
         $this->setState([

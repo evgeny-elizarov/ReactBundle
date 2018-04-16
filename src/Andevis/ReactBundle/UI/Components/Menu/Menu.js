@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { autobind } from 'core-decorators';
 import Component from "@AndevisReactBundle/UI/ComponentBase/Component";
 import classNames from "classnames";
@@ -165,7 +164,7 @@ class MenuList extends React.Component {
     }
 }
 
-@withRouter
+
 export default class Menu extends Component {
 
     static propTypes = Object.assign({}, Component.propTypes, {
@@ -174,21 +173,34 @@ export default class Menu extends Component {
     });
 
     static defaultProps = Object.assign({}, Component.defaultProps,{
+        items: [],
         level: 1
     });
 
-    static childContextTypes = Object.assign({}, Component.childContextTypes, {
-        menuComponent: PropTypes.object.isRequired
+    static contextTypes = Object.assign({}, Component.contextTypes, {
+        router: PropTypes.object.isRequired,
     });
 
-    constructor(props, context)
-    {
-        super(props, context);
-        if(props.items){
-            this.state = {
-                items: props.items
-            };
-        }
+    static childContextTypes = Object.assign({}, Component.childContextTypes, {
+        menuComponent: PropTypes.object.isRequired,
+    });
+
+    /**
+     * Attribute: items
+     * @returns {*}
+     */
+    get items() {
+        return this.getAttributeValue('items', this.props.items);
+    }
+
+    set items(value) {
+        this.setAttributeValue('items', value);
+    }
+
+    getAttributesLinkedToProps(){
+        return super.getAttributesLinkedToProps().concat([
+            'items'
+        ]);
     }
 
     getChildContext() {
@@ -218,7 +230,7 @@ export default class Menu extends Component {
                     window.open(basename + item.link, item.target);
                 } else {
                     // Use react history API
-                    this.props.history.push(item.link);
+                    this.context.router.history.push(item.link);
                 }
             }
         });
@@ -236,17 +248,16 @@ export default class Menu extends Component {
      */
     getItems()
     {
-        return (this.state && this.state.hasOwnProperty('items'))? this.state.items : [];
+        return this.items;
     }
 
-
     @autobind
-    handleClickOutside(e){
+    handleClickOutside(e) {
         // If click on menu item children
-        if($(e.target).parents().is(ReactDOM.findDOMNode(this.refs.MenuList))){
+        if ($(e.target).parents().is(ReactDOM.findDOMNode(this.refs.MenuList))) {
             e.preventDefault();
         } else {
-            if(this.refs.MenuList.selectedMenuItem)
+            if (this.refs.MenuList.selectedMenuItem)
                 this.refs.MenuList.selectedMenuItem.close();
         }
     }
@@ -261,25 +272,6 @@ export default class Menu extends Component {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
-
-    // componentWillUpdate(nextProps, nextState) {
-    //     //     let formState = this.formApi.getFormState();
-    //     console.log('componentWillUpdate', this.getName(), nextProps, nextState);
-    //     //     if(nextProps.defaultValues !== this.props.defaultValues){
-    //     //
-    //     //         formState.values = nextProps.defaultValues;
-    //     //         this.values = nextProps.defaultValues;
-    //     //         console.log("!!!!", formState.values);
-    //     //         this.formApi.setFormState(formState);
-    //     //     } else {
-    //     //         const attrValues = this.getAttributeStateName('values');
-    //     //         const nextStateValues = (nextState.hasOwnProperty(attrValues)) ? nextState[attrValues] : null;
-    //     //         if(formState.values !== nextStateValues){
-    //     //             nextState[attrValues] = formState.values;
-    //     //         }
-    //     //     }
-    //     //
-    // }
 
     render() {
         const className = classNames(

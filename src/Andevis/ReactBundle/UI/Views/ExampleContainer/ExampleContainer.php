@@ -2,9 +2,8 @@
 
 namespace Andevis\ReactBundle\UI\Views\ExampleContainer;
 
-
 use Andevis\ReactBundle\UI\Components\Container\Container;
-use Andevis\ReactBundle\UI\Components\View\View;
+use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
 /**
  * Created by PhpStorm.
@@ -13,7 +12,7 @@ use Andevis\ReactBundle\UI\Components\View\View;
  * Time: 13:42
  */
 
-class ExampleContainer extends View
+class ExampleContainer extends ExampleBaseView
 {
 
     /**
