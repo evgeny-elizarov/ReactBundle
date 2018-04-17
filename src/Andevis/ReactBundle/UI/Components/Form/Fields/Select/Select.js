@@ -16,9 +16,7 @@ class SelectBase extends FieldBase {
         options: [],
     });
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getShortClassName() {
         return 'Select';

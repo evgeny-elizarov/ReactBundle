@@ -116,9 +116,7 @@ class FieldBase extends Component {
             console.error("Property `field` not set for form field component `" + this.getShortClassName() + ":" + this.getName() + "`");
     }
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getShortClassName() {
         return 'Field';

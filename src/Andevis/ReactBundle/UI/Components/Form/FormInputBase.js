@@ -72,9 +72,7 @@ class FormInputBase extends Component {
             console.error("Property `field` not set for Text component `" + this.getName() + "`");
     }
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getFieldName(){
         return this.props.fieldApi.getFieldName();

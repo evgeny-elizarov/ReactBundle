@@ -137,7 +137,7 @@ export default class Page extends View {
                                 </tr>
                                 <tr>
                                     <th>UI backend class</th>
-                                    <td>{this.getBackendClassName()}</td>
+                                    <td>{this.constructor.getBackendClassName()}</td>
                                 </tr>
                                 </tbody>
                             </table>

@@ -209,9 +209,7 @@ export default class Menu extends Component {
         };
     }
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     eventList() {
         return ['itemClick']

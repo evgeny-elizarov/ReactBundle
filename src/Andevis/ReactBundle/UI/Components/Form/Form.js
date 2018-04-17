@@ -31,9 +31,7 @@ export default class Form extends Component {
         }
     }
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     // Attribute: isProcessing
     // get isProcessing() {

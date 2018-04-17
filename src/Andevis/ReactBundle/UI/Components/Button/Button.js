@@ -46,9 +46,8 @@ export default class Button extends Component
         this.setAttributeValue('isProcessing', value);
     }
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
+
     // TODO: для всех встроеных компонентов прописать класс вручную, это позволяет расширять базовые компоненты на фронте
     getShortClassName() {
         return 'Button';

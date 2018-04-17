@@ -9,15 +9,16 @@ class ViewStack {
      * Register view
      */
     register(view){
-        this.stackByName[view.getBundleName() + ":" + view.getName()] = view;
+        this.stackByName[view.constructor.getBundleName() + ":" + view.getName()] = view;
     }
 
     /**
      * Unregister view
      */
     unregister(view){
-        delete this.stackByName[view.getBundleName() + ":" + view.getName()];
+        delete this.stackByName[view.constructor.getBundleName() + ":" + view.getName()];
     }
+
 
     /**
      * Get registered view by glboal name (BundleName:ViewName)

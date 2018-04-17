@@ -5,9 +5,7 @@ import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 export default class ExampleDataTable extends ExampleBaseView {
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getInitialState(){
         return {

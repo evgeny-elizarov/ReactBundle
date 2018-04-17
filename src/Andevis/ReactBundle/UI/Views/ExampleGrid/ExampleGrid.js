@@ -8,9 +8,7 @@ const $ = window.$;
 
 export default class ExampleGrid extends ExampleBaseView {
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     componentDidMount(){
 

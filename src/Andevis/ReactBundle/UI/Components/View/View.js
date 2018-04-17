@@ -31,6 +31,8 @@ export default class View extends Component
     globalStateBindedSubs = null;
     globalStateAutoUpdateKeys = [];
 
+
+
     _hasAccess = null;
     // globalInitState = {};
 
@@ -98,10 +100,10 @@ export default class View extends Component
         if(this._hasAccess === null)
         {
             // 1. Check access permission
-            if(hasPermission('UI:Access', this.getBackendClassName()))
+            if(hasPermission('UI:Access', this.constructor.getBackendClassName()))
             {
                 if(this.context.userProvider) {
-                    this._hasAccess = isGranted('UI:Access', this.getBackendClassName())
+                    this._hasAccess = isGranted('UI:Access', this.constructor.getBackendClassName())
                 }
             }
 
@@ -118,18 +120,26 @@ export default class View extends Component
         return this.constructor.name;
     }
 
-    getBundleName(){
-        if(!this.context || !this.context.hasOwnProperty('bundleName')) {
-            throw new Error('Bundle context not set for this component. Wrap the component in a Bundle tag');
-        }
-        return this.context.bundleName;
-    }
+    // /**
+    //  * Return view bundle name
+    //  */
+    // static bundleName(){
+    //     throw new Error('Bundle context not set for this component. Create static method `bundleName` for this class');
+    // }
 
+    // getBundleName(){
+    //     if(!this.context || !this.context.hasOwnProperty('bundleName')) {
+    //         throw new Error('Bundle context not set for this component. Wrap the component in a Bundle tag');
+    //     }
+    //     return this.context.bundleName;
+    // }
+
+    // TODO: Не использовать эту функцию, использовать getNamespace
     /**
      * Get backend class name
      * @return {*}
      */
-    getBackendClassName(){
+    _getBackendClassName(){
         if(window.AndevisReactBundle.viewsClassMap.hasOwnProperty(this.getId())) {
             return window.AndevisReactBundle.viewsClassMap[this.getId()];
         }
@@ -141,20 +151,21 @@ export default class View extends Component
         };
     }
 
-    /**
-     * Get component permission name
-     * @return string
-     * @throws \Exception
-     */
-    getComponentPermissionName() {
-        return this.getBundleName()+":"+this.getShortClassName();
-    }
+    // // TODO: проверить что эта функция не дублирует getAccessPermission
+    // /**
+    //  * Get component permission name
+    //  * @return string
+    //  * @throws \Exception
+    //  */
+    // getComponentPermissionName() {
+    //     return this.getBundleName()+":"+this.getShortClassName();
+    // }
 
     /**
      * Get view by name
      */
     getViewByName(viewName){
-        let bundleName = this.getBundleName();
+        let bundleName = this.constructor.getBundleName();
         if(viewName.indexOf(":") !== -1){
             [bundleName, viewName] = viewName.split(":", 2);
         }

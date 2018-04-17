@@ -70,6 +70,14 @@ abstract class Component implements ComponentInterface
     }
 
     /**
+     * Return access permission
+     * @return string
+     */
+    static function getAccessPermission(){
+        return get_called_class();
+    }
+
+    /**
      * Get id
      * @return string
      */

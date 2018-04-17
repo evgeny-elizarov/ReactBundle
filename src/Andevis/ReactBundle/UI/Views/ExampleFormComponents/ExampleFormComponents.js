@@ -288,6 +288,7 @@ class ControlsList extends React.Component {
 
 export default class ExampleFormComponents extends ExampleBaseView {
 
+    static bundleName = 'React';
 
     constructor(props, context) {
         super(props, context);
@@ -298,9 +299,6 @@ export default class ExampleFormComponents extends ExampleBaseView {
         };
     }
 
-    getBundleName() {
-        return 'React';
-    }
 
     /**
      *  Logger to view debug info

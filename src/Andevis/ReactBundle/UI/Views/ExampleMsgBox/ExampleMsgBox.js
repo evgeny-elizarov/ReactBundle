@@ -5,9 +5,7 @@ import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 export default class ExampleMsgBox extends ExampleBaseView {
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     handleMsgBoxResult(result){
         switch (result){

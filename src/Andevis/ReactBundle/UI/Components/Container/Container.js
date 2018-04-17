@@ -8,9 +8,7 @@ export default class Container extends Component {
         content: PropTypes.func,
     });
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getShortClassName(){
         return 'Container';

@@ -4,9 +4,7 @@ import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 export default class ExampleComponents extends ExampleBaseView {
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     render() {
         return (

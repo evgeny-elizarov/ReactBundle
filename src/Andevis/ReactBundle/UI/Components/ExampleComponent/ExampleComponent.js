@@ -4,9 +4,7 @@ import { autobind } from 'core-decorators';
 
 export default class ExampleComponent extends Component {
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     constructor(props, context){
         super(props, context);

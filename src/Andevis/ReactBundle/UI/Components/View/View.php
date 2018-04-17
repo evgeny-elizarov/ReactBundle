@@ -77,7 +77,7 @@ class View extends Component implements ViewInterface
             {
                 /** @var AuthorizationChecker $permCheck */
                 $permCheck = $this->getContainer()->get('security.authorization_checker');
-                $hasAccess = $permCheck->isGranted('UI:Access', get_class($this));
+                $hasAccess = $permCheck->isGranted('UI:Access', self::getAccessPermission());
             }
         }
 

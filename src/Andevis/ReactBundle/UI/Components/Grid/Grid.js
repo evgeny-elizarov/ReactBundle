@@ -23,9 +23,7 @@ export default class Grid extends Component {
         pageable: true
     };
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     constructor(props, context) {
         super(props, context);

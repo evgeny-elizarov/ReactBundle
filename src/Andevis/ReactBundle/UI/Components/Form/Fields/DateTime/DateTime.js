@@ -36,9 +36,7 @@ class DateTimeBase extends FieldBase {
     //     }
     // }
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getShortClassName(){
         return 'DateTime';

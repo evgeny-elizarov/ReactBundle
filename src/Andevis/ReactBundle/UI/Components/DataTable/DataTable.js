@@ -34,9 +34,7 @@ export default class DataTable extends Component{
         }
     });
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     eventList(){
         return super.eventList().concat(['fetchData']);

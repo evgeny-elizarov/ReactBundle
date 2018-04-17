@@ -31,9 +31,7 @@ export default class Tabs extends Component {
         }
     }
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getInitialState(){
         return {
@@ -109,7 +107,7 @@ export default class Tabs extends Component {
      * @returns {*}
      */
     getHashedTabsGlobalName(){
-        return shorthash.unique(this.getView().getBundleName()+":"+this.getView().getName()+":"+this.getName());
+        return shorthash.unique(this.getView().constructor.getBundleName()+":"+this.getView().getName()+":"+this.getName());
     }
 
 

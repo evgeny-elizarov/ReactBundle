@@ -6,9 +6,7 @@ import { Component } from "@AndevisReactBundle/UI/ComponentBase";
 
 class TextAreaBase extends FieldBase {
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getShortClassName(){
         return 'TextArea';

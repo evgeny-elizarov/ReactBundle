@@ -3,9 +3,7 @@ import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
 
 export default class TestView1 extends ExampleBaseView {
 
-    getBundleName(){
-        return 'React';
-    }
+    static bundleName = 'React';
 
     /**
      * При монтировании вьшки инициализируе наблюдаемые переменные глобального состояния

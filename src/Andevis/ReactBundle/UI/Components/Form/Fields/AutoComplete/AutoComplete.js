@@ -45,9 +45,7 @@ class AutoCompleteBase extends TextBase {
         // useCache: false
     });
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getShortClassName(){
         return 'AutoComplete';

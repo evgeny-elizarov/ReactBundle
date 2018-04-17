@@ -38,6 +38,7 @@ export default class Component extends React.Component {
 
     static childContextTypes = {};
 
+    static bundleName = null;
 
     constructor(props, context) {
         super(props, context);
@@ -213,19 +214,47 @@ export default class Component extends React.Component {
     }
 
     /**
+     * Get access permission for current class
+     * @return {*}
+     */
+    static getAccessPermission(){
+        return this.getBackendClassName();
+    }
+
+    /**
+     * Get frontend class name
+     * @return {string}
+     */
+    static getJsClassName() {
+        return this.toString().split ('(' || /s+/)[0].split (' ' || /s+/)[1];
+    }
+
+    /**
+     * Get backend class name
+     * @return {*}
+     */
+    static getBackendClassName(){
+        // Get class name
+        const className = this.getJsClassName();
+        const bundleName = this.getBundleName();
+        const viewGlobalId = bundleName+className+":"+bundleName+className+":"+className;
+
+        if(window.AndevisReactBundle.viewsClassMap.hasOwnProperty(viewGlobalId)) {
+            return window.AndevisReactBundle.viewsClassMap[viewGlobalId];
+        } else {
+            throw new Error('Check if backend class `'+className+'` is created!');
+        }
+    }
+
+    /**
      * Get bundle name
      * @returns {string}
      */
-    getBundleName() {
-
-        // // TODO: можно упростить эту задачу таким орбазом - либо брать маппинг из webpack @BlaBlaBla и есть название бандла
-        // // TODO: либо ложить в паку бандла файл типа bundleInfo.js который будет автоматически подключаться ко всем компонентам этого бандла
-        // const name = (this.prototype) ? this.prototype.name : this;
-        // console.log(this);
-        throw new Error('getBundleName not implemented!. Add function getBundleName to component `' + this.getName() + '` !');
-        // if (!this.context.bundleName)
-        //     throw new Error('Bundle context not set for this component. Wrap the component in a Bundle tag');
-        // return this.context.bundleName;
+    static getBundleName() {
+        if(typeof this.bundleName === 'string' && this.bundleName !== ''){
+            return this.bundleName;
+        }
+        throw new Error('Can`t get bundle name! Add static variable bundleName to component class `' + this.getJsClassName() + '` !');
     }
 
     /**
@@ -241,17 +270,17 @@ export default class Component extends React.Component {
      * @returns {string}
      */
     getClassName() {
-        return this.getBundleName() + this.getShortClassName();
+        return this.constructor.getBundleName() + this.getShortClassName();
     }
 
-    /**
-     * Get component permission name
-     * @return string
-     * @throws \Exception
-     */
-    getComponentPermissionName() {
-        return this.getBundleName() + ":" + this.getView().getShortClassName() + ":" + this.getShortClassName();
-    }
+    // /**
+    //  * Get component permission name
+    //  * @return string
+    //  * @throws \Exception
+    //  */
+    // getComponentPermissionName() {
+    //     return this.constructor.getBundleName() + ":" + this.getView().getShortClassName() + ":" + this.getShortClassName();
+    // }
 
     /**
      * get component initial state

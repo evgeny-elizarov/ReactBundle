@@ -18,9 +18,7 @@ class CheckboxBase extends FieldBase
         checked: false
     });
 
-    getBundleName() {
-        return 'React';
-    }
+    static bundleName = 'React';
 
     getShortClassName(){
         return 'Checkbox';
