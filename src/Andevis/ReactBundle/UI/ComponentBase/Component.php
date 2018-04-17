@@ -28,6 +28,7 @@ abstract class Component implements ComponentInterface
 
 //    use ContainerAwareTrait;
     use ComponentIdTrait;
+    use ComponentHelpers;
     use TranslationTrait;
 
     /** @var string */

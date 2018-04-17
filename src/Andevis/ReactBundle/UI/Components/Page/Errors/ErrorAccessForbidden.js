@@ -91,7 +91,12 @@ export default class ErrorAccessForbidden extends React.Component {
                             <a onClick={this.handleGotoLoginPage}>{i18n(messages.loginWithSufficientPrivileges)}</a>
                         </li>
                         {/* Показываем техническую информацию доверенным людям */}
-                        { isGranted('System:Show access technical information', 'Debug') &&
+                        { isGranted('System:Show technical information', 'Debug') &&
+                        <li>
+                            {i18n(messages.permissionsNotSynchronized)}
+                        </li>
+                        }
+                        { isGranted('System:Show technical information', 'Debug') &&
                         <li>
                             <a onClick={this.handleShowTechnicalInfo}>{i18n(messages.showTechnicalInfo)}</a>
                             {this.state.showTechnicalInfo &&

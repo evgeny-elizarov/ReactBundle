@@ -8,12 +8,11 @@
 
 namespace Andevis\ReactBundle\UI\Views;
 
-
 use Andevis\ReactBundle\UI\Components\View\View;
 
 class ExampleBaseView extends View
 {
-    function access()
+    function hasAccess()
     {
         return true;
     }

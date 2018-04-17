@@ -31,12 +31,17 @@ class PermissionsFixtures extends Controller implements FixtureInterface, Ordere
     public function load(ObjectManager $em)
     {
         $permissions = [
-            // group, permission
             [
                 'System',
-                'Show access technical information',
+                'Show technical information',
                 'Debug',
-                'Allow user to see system technical information when access forbidden to access UI component'
+                'Allow user to see system technical information for debugging process'
+            ],
+            [
+                'System',
+                'Show example components',
+                'Developer',
+                'Allow developer to see examples'
             ]
         ];
         foreach ($permissions as $item) {

@@ -423,7 +423,7 @@ export default class View extends Component
      * @return {*}
      */
     static renderErrorAccessDenied(component) {
-        if(isGranted('System:Show access technical information', 'Debug')){
+        if(isGranted('System:Show technical information', 'Debug')){
             return <ErrorAccessForbidden component={component}/>
         }
         return null;

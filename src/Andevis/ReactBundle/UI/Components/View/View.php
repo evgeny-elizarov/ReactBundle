@@ -8,8 +8,6 @@
 
 namespace Andevis\ReactBundle\UI\Components\View;
 
-
-use Andevis\AuthReactBundle\UI\Components\PublicAccessComponent;
 use Andevis\ReactBundle\UI\ComponentBase\Component;
 use Andevis\ReactBundle\UI\ComponentBase\ExecutionContext;
 use ReflectionClass;
@@ -21,6 +19,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 class View extends Component implements ViewInterface
 {
     use ViewTrait;
+
 
     /**
      * Component constructor.
@@ -71,14 +70,11 @@ class View extends Component implements ViewInterface
         $hasAccess = true;
 
         // Check permissions
-        if(!($this instanceof PublicAccessComponent))
+        if ($this->getContainer()->has('security.authorization_checker'))
         {
-            if ($this->getContainer()->has('security.authorization_checker'))
-            {
-                /** @var AuthorizationChecker $permCheck */
-                $permCheck = $this->getContainer()->get('security.authorization_checker');
-                $hasAccess = $permCheck->isGranted('UI:Access', self::getAccessPermission());
-            }
+            /** @var AuthorizationChecker $permCheck */
+            $permCheck = $this->getContainer()->get('security.authorization_checker');
+            $hasAccess = $permCheck->isGranted('UI:Access', self::getAccessPermission());
         }
 
         // 2. Check user custom logic in access method

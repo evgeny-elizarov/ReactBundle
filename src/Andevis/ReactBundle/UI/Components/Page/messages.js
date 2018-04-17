@@ -19,4 +19,5 @@ export default defineMessages({
     goBack: 'Вернутся назад',
     refreshPage: 'Обновить страницу',
     contactWithAdministratorOrDeveloper: 'Связаться с системным администратором или разработчиком',
+    permissionsNotSynchronized: 'Права не синхронизированны. Выполните консольную команду ui:permissions:update'
 });

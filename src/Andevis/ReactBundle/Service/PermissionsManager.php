@@ -10,9 +10,7 @@ namespace Andevis\ReactBundle\Service;
 
 
 use Andevis\AuthBundle\Entity\Permission;
-use Andevis\AuthReactBundle\UI\Components\PublicAccessComponent;
 use Andevis\ReactBundle\UI\ComponentBase\ComponentSet;
-use Andevis\ReactBundle\UI\Components\Page\Page;
 use Andevis\ReactBundle\UI\Components\View\View;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
@@ -53,12 +51,10 @@ class PermissionsManager
             $viewPermissions = [];
             foreach ($componentSet->getViewsClasses() as $viewsClass)
             {
-                if(!(is_subclass_of($viewsClass, PublicAccessComponent::class))) {
+                if(!View::hasRedefinedMethod($viewsClass, 'hasAccess')){
                     $viewPermissions[] = $viewsClass;
                 }
-
             }
-
             // Load view permissions from db
             /** @var Query $query */
             $query = $this->em->createQueryBuilder()
