@@ -1,5 +1,7 @@
-import Moment from 'moment';
-export default Moment;
+import moment from 'moment';
+import FormattedDate from 'react-moment';
+export default moment;
 export {
-    Moment
+    moment,
+    FormattedDate
 }
