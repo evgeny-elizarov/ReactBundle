@@ -34,9 +34,9 @@ class PermissionsFixtures extends Controller implements FixtureInterface, Ordere
             // group, permission
             [
                 'System',
-                'Can debug UI permissions',
+                'Show access technical information',
                 'Debug',
-                'Allow user to see system information when access forbidden to access UI component'
+                'Allow user to see system technical information when access forbidden to access UI component'
             ]
         ];
         foreach ($permissions as $item) {

@@ -9,6 +9,9 @@ import { autobind } from "@AndevisReactBundle/decorators";
 import viewStack from './viewStack';
 import { authStore } from "@AndevisAuthReactBundle/UI/Stores";
 import { isGranted, hasPermission } from "@AndevisAuthReactBundle/UI/Helpers";
+import messages from "@AndevisReactBundle/UI/Components/Page/messages";
+import { i18n } from "@AndevisReactBundle/UI/Translation";
+import ErrorAccessForbidden from './Errors/ErrorAccessForbidden';
 
 /**
  * The root view should be named as well as the bundle.
@@ -30,8 +33,6 @@ export default class View extends Component
     globalStateDidUpdateSubs = null;
     globalStateBindedSubs = null;
     globalStateAutoUpdateKeys = [];
-
-
 
     _hasAccess = null;
     // globalInitState = {};
@@ -103,7 +104,7 @@ export default class View extends Component
             if(hasPermission('UI:Access', this.constructor.getBackendClassName()))
             {
                 if(this.context.userProvider) {
-                    this._hasAccess = isGranted('UI:Access', this.constructor.getBackendClassName())
+                    this._hasAccess = isGranted('UI:Access', this.constructor.getAccessPermission())
                 }
             }
 
@@ -415,6 +416,17 @@ export default class View extends Component
         var args = [].slice.call(arguments);
         args.unshift('callServerMethod');
         return this.fireEvent.apply(this, args);
+    }
+
+    /**
+     * Render error access denied
+     * @return {*}
+     */
+    static renderErrorAccessDenied(component) {
+        if(isGranted('System:Show access technical information', 'Debug')){
+            return <ErrorAccessForbidden component={component}/>
+        }
+        return null;
     }
 
     render(){

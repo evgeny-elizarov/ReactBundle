@@ -1,30 +1,45 @@
-import React from "@AndevisReactBundle/react";
-import PageLayout from "@AndevisReactBundle/UI/Components/Page/PageLayout";
+import React from '@AndevisReactBundle/react';
+import PropTypes from "@AndevisReactBundle/prop-types";
 import { i18n } from "@AndevisReactBundle/UI/Translation";
-import messages from "./messages";
-import Page from "@AndevisReactBundle/UI/Components/Page/Page";
+import messages from "@AndevisReactBundle/UI/Components/Page/messages";
+import { autobind } from "@AndevisReactBundle/decorators";
 
+export default class ErrorPageNotFound extends React.Component {
 
-export default class PageNotFound extends Page{
+    static contextTypes = {
+        router: PropTypes.object,
+    };
 
-    access() {
-        return true;
+    /**
+     * Go back
+     */
+    @autobind
+    handleGoBack(){
+        this.context.router.history.goBack();
     }
 
-    render(){
+    /**
+     * Refresh page
+     */
+    @autobind
+    handleRefreshPage(){
+        window.location.reload();
+    }
+
+    render (){
         return (
-            <PageLayout title={i18n(messages.pageNotFound)} className={"access-denied-page"}>
+            <div>
                 <div>
                     <b>{i18n(messages.whatHappened)}</b>
                     <ul>
                         <li>
-                            {i18n(messages.accessDeniedReasonOne)}
+                            {i18n(messages.notFoundReasonOne)}
                         </li>
                         <li>
-                            {i18n(messages.accessDeniedReasonTwo)}
+                            {i18n(messages.notFoundReasonTwo)}
                         </li>
                         <li>
-                            {i18n(messages.accessDeniedReasonThree)}
+                            {i18n(messages.notFoundReasonThree)}
                         </li>
                     </ul>
                 </div>
@@ -42,7 +57,7 @@ export default class PageNotFound extends Page{
                         </li>
                     </ul>
                 </div>
-            </PageLayout>
+            </div>
         )
     }
 }

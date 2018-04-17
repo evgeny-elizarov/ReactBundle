@@ -10,5 +10,13 @@ export default defineMessages({
     refreshPage: 'Обновить страницу',
     loginWithSufficientPrivileges: 'Зайти под пользователем с достаточными правами',
     contactWithAdministratorOrDeveloper: 'Связаться с системным администратором или разработчиком',
-    showTechnicalInfo: 'Посмотреть техническую информацию'
+    showTechnicalInfo: 'Посмотреть техническую информацию',
+    pageNotFound: 'Ошибка: Страница не найдена',
+    whatHappened: 'Что произошло?',
+    notFoundReasonOne: 'URL страницы изменился',
+    notFoundReasonTwo: 'Эта страница удалена',
+    notFoundReasonThree: 'Ошибка в написании URL',
+    goBack: 'Вернутся назад',
+    refreshPage: 'Обновить страницу',
+    contactWithAdministratorOrDeveloper: 'Связаться с системным администратором или разработчиком',
 });

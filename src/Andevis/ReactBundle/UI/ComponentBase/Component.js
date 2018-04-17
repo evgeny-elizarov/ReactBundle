@@ -77,7 +77,7 @@ export default class Component extends React.Component {
         // Wrap render by permission checker method
         this.render = this.checkAccessBeforeCall(
             this.checkVisibleBeforeRender(this.render.bind(this)),
-            this.renderAccessDenied.bind(this)
+            this.constructor.renderErrorAccessDenied
         );
 
         // Wrap react Lifecycle methods
@@ -123,17 +123,18 @@ export default class Component extends React.Component {
                 return callback.apply(this, args);
             } else {
                 if(typeof callbackDenied === 'function'){
-                    return callbackDenied();
+                    return callbackDenied(this);
                 }
             }
         };
     }
 
     /**
-     * Render access denied
+     * Render error access denied
+     * @param component
      * @return {null}
      */
-    renderAccessDenied(){
+    static renderErrorAccessDenied(component){
         return null;
     }
 
