@@ -4,7 +4,7 @@ export default defineMessages({
     previousText: 'Предыдущая',
     nextText: 'Следующая',
     loadingText: 'Загружаю...',
-    noDataText: 'Запийсей не найдено',
+    noDataText: 'Записей не найдено',
     pageText: 'Страница',
     ofText: 'из',
     rowsText: 'записей',
