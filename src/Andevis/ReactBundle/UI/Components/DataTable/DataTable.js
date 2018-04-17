@@ -18,7 +18,8 @@ export default class DataTable extends Component{
         defaultPageSize: PropTypes.number,
         filtered: PropTypes.array,
         sortable: PropTypes.bool,
-        loading: PropTypes.bool
+        loading: PropTypes.bool,
+        defaultFilterMethod: PropTypes.func
     });
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
@@ -26,6 +27,11 @@ export default class DataTable extends Component{
         defaultPageSize: 25,
         sortable: false,
         loading: false,
+        defaultFilterMethod: (filter, row, column) => {
+            const query = String(filter.value || '').toLowerCase();
+            const value = String(row[filter.id] || '').toLowerCase();
+            return value.indexOf(query) !== -1;
+        }
     });
 
     getBundleName(){
@@ -192,6 +198,7 @@ export default class DataTable extends Component{
             'originalKey',
             'indexKey',
             'groupedByPivotKey',
+            'defaultFilterMethod'
         ]);
 
         if(this.props.data === -1){

@@ -1,8 +1,8 @@
 services:
 
-  andevis_react.security.ui_voter:
-    class: Andevis\ReactBundle\Security\UIVoter
-    arguments: [ '@auth.permission_checker', '@service_container']
-    public: false
-    tags:
-      - { name: security.voter, priority: -10 }
+#  andevis_react.security.ui_voter:
+#    class: Andevis\ReactBundle\Security\UIVoter
+#    arguments: [ '@auth.permission_checker', '@service_container']
+#    public: false
+#    tags:
+#      - { name: security.voter, priority: -10 }
