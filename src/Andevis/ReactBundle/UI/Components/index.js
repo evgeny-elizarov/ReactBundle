@@ -8,10 +8,12 @@ import Grid from './Grid/Grid';
 import Menu from './Menu/Menu';
 import { Tab, Tabs, TabList, TabPanel } from './Tabs/Tabs';
 import './../../../../../node_modules/react-tabs/style/react-tabs.scss';
+import EntityEditor from "./EntityEditor/EntityEditor";
 
 export {
     View,
     Page,
+    EntityEditor,
     Container,
 
     Form,

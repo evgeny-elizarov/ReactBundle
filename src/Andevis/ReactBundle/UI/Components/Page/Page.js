@@ -1,7 +1,6 @@
 import React from "@AndevisReactBundle/react";
 import PropTypes from "@AndevisReactBundle/prop-types";
 import View from "@AndevisReactBundle/UI/Components/View/View";
-import { Component } from "@AndevisReactBundle/UI/ComponentBase";
 import { i18n } from "@AndevisReactBundle/UI/Translation";
 import messages from './messages';
 import PageLayout from './PageLayout';
@@ -11,7 +10,7 @@ import './Page.scss';
 
 export default class Page extends View {
 
-    static propTypes = Object.assign({}, Component.propTypes, {
+    static propTypes = Object.assign({}, View.propTypes, {
         title: PropTypes.string,
         toolbar: PropTypes.any
     });

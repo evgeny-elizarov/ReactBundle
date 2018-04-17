@@ -1,9 +1,9 @@
 let bundles = {};
 
-const setBundle = (bundleName, module) => {
+const setBundleRoutes = (bundleName, module) => {
     bundles[bundleName] = module;
 };
-const getBundle = (bundleName) => {
+const getBundleRoutes = (bundleName) => {
     if(bundles && bundles.hasOwnProperty(bundleName)){
         return bundles[bundleName];
     } else {
@@ -12,6 +12,6 @@ const getBundle = (bundleName) => {
 };
 
 export {
-    setBundle,
-    getBundle
+    setBundleRoutes,
+    getBundleRoutes
 };
