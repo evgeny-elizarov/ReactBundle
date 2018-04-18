@@ -1,7 +1,7 @@
 import React from 'react';
-import { GraphQLClient } from './../GraphQL';
+import { apolloClient } from './../GraphQL';
 import PropTypes from 'prop-types';
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 import {BaseResolveConfig, QueryResolveConfig, MutationResolveConfig} from "../GraphQL";
 import View from "./../Components/View/View";
 import {ucfirst} from './../Helpers';
@@ -747,14 +747,14 @@ export default class Component extends React.Component {
 
             if (resolverConfig instanceof QueryResolveConfig) {
                 // Execute query
-                GraphQLClient.query({
+                apolloClient.query({
                     query: gql`
                         query ${queryName}(${queryArgs}){
                             ${queryName}(${fieldArgs}) ${returnType}
                         }
                     `,
                     variables: variables,
-                    fetchPolicy: 'network-only'
+                    fetchPolicy: 'no-cache'
                 }).then(({data}) => {
                     resolve(data[queryName]);
                 }).catch(reject);
@@ -763,14 +763,14 @@ export default class Component extends React.Component {
 
             } else if (resolverConfig instanceof MutationResolveConfig) {
                 // Execute mutation
-                GraphQLClient.mutate({
+                apolloClient.mutate({
                     mutation: gql`
                     mutation ${queryName}(${queryArgs}){
                         ${queryName}(${fieldArgs}) ${returnType}
                     }
                     `,
                     variables: variables,
-                    fetchPolicy: 'network-only'
+                    fetchPolicy: 'no-cache'
                 }).then(({data}) => {
                     resolve(data[queryName]);
                 }).catch(reject);

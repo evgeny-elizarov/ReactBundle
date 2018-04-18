@@ -1,80 +1,40 @@
 /**
  * Created by EvgenijE on 07.09.2017.
  */
+import { ApolloLink } from 'apollo-link';
+import { createHttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { BatchHttpLink } from "apollo-link-batch-http";
+import { onError } from 'apollo-link-error';
+import clientSubscribeService from './clientSubscribeService';
 
-import ApolloClient from 'react-apollo';
-import { createBatchingNetworkInterface } from 'apollo-upload-client'
-//import { createNetworkInterface } from 'apollo-upload-client'
-import { appState } from './../Stores';
-import AppState from "@AndevisReactBundle/UI/Stores/AppState";
-//import { CriticalErrorMessage } from "@AndevisReactBundle/Resources/react/helpers/messages";
-
-let basename = (window.location.pathname.startsWith('/app_dev.php')) ? '/app_dev.php/' : '/';
-//
+const basename = (window.location.pathname.startsWith('/app_dev.php')) ? '/app_dev.php/' : '/';
+const uri = basename + 'graphql';
 
 
-const networkInterface = createBatchingNetworkInterface({
-    uri: basename + 'graphql',
-    batchInterval: 10,
-    opts: {
-        credentials: 'same-origin' // Add cookie to request
-    }
+const batchHttpLink = new BatchHttpLink({
+    uri: uri,
+    credentials: 'same-origin'
 });
 
-// const networkInterface = createNetworkInterface({
-//     uri: basename + 'graphql',
-//     // batchInterval: 0,
-//     opts: {
-//         credentials: 'same-origin' // Add cookie to request
-//     }
-// });
 
-
-networkInterface.use(
-    [
-        {
-            applyBatchMiddleware(req, next) {
-                if (!req.options.headers) {
-                    req.options.headers = {};  // Create the header object if needed.
-                }
-                appState.startPendingRequest();
-                next();
-            }
-        }
-    ]
-);
-
-networkInterface.useAfter(
-    [
-        {
-            applyBatchAfterware(res, next) {
-                appState.requestCompleted();
-
-                // console.log(res);
-                // Catch graphQL error
-                // TODO: create graphql error logger
-                // res.responses.forEach((response) => {
-                //     if(response.status === 500)
-                //     {
-                //         AppState.s
-                //     }
-                //     if(response.errors){
-                //         response.errors.forEach((error) => {
-                //             CriticalErrorMessage(error.message, "GraphQL Error");
-                //         });
-                //     }
-                // });
-                next();
-            }
-        }
-    ]
-);
-
-
-
-const GraphQLClient = new ApolloClient({
-    networkInterface: networkInterface,
-    addTypename: false
+const middlewareLink = new ApolloLink((operation, forward) => {
+    return clientSubscribeService.executeMiddlewareHandlers(operation, forward);
 });
 
-export default GraphQLClient;
+// Call error handlers
+const errorLink = onError((options) => {
+    clientSubscribeService.executeErrorHandlers(options);
+});
+
+// use with apollo-client
+const link = errorLink.concat(middlewareLink.concat(batchHttpLink));
+
+const client = new ApolloClient({
+    link: link,
+    cache: new InMemoryCache(),
+});
+
+export default client;

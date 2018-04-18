@@ -1,0 +1,30 @@
+.progressBar {
+
+  $brand-attention: #f68a24;
+  $brand-danger: #cb2027;
+  $brand-info: #5bc0de;
+  $brand-primary: #1581e2;
+  $brand-success: #669900;
+  $brand-warning: #ffcc33;
+
+  width: 100%;
+  height: 30px;
+  border-radius: 4px;
+  background-color: lightgrey;
+  padding: 0;
+  margin: 10px;
+  box-shadow: inset 0 0.5em 0.5em rgba(0,0,0,0.05);
+
+  .progress {
+    border-radius: 4px;
+    transition: width 1000ms ease-in-out;
+    height: 100%;
+  }
+
+  &.attention { .progress { background-color: $brand-attention; } }
+  &.danger {.progress {  background-color: $brand-danger; } }
+  &.info {.progress {  background-color: $brand-info; } }
+  &.primary { .progress {  background-color: $brand-primary; } }
+  &.success { .progress {  background-color: $brand-success; } }
+  &.warning { .progress {  background-color: $brand-warning; } }
+}

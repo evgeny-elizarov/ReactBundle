@@ -14,6 +14,13 @@ use Andevis\ReactBundle\UI\Exceptions\UserException;
 
 abstract class EntityEditor extends View implements EntityEditorInterface
 {
+    /**
+     * Get entity ID field name
+     * @return string
+     */
+    function getEntityIdField(){
+        return 'id';
+    }
 
     /**
      * Load entity list
@@ -42,7 +49,8 @@ abstract class EntityEditor extends View implements EntityEditorInterface
             $entityData = $em->getById(
                 $entityClass,
                 $entityId,
-                $this->getListFields()
+                $this->getListFields(),
+                $this->getEntityIdField()
             );
             if(!$entityData) return false;
         } else {
@@ -70,7 +78,7 @@ abstract class EntityEditor extends View implements EntityEditorInterface
      */
     public function deleteEntity(string $entityId){
         $em = $this->getNormalizedEntityManager();
-        $em->deleteById($this->getEntityClass(), $entityId);
+        $em->deleteById($this->getEntityClass(), $entityId, $this->getEntityIdField());
         return true;
     }
 

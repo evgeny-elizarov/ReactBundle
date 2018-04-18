@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { IntlProvider } from 'react-intl';
 import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter } from "react-router-dom";
-import { GraphQLClient } from './GraphQL';
+import { apolloClient } from './GraphQL';
 import { appState } from '@AndevisReactBundle/UI/Stores';
 import { getLocaleMessages } from './Translation';
 import { CookiesProvider } from 'react-cookie';
@@ -71,7 +71,7 @@ export default class App extends React.Component
                 locale={appState.getLocale()}
                 messages={this.props.messages}
                 ref={(provider) => { appState.setIntlProvider(provider); }} >
-                <ApolloProvider client={GraphQLClient}>
+                <ApolloProvider client={apolloClient}>
                     <CookiesProvider>
                         <BrowserRouter basename={basename}>
                             <UserProvider>

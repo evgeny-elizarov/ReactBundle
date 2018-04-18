@@ -98,23 +98,21 @@ export default class View extends Component
 
     // TODO: сделать кэширование результатов (см. бэкенд)
     hasAccess(){
-        if(this._hasAccess === null)
+        let hasAccess = true;
+        // 1. Check access permission
+        if(hasPermission('UI:Access', this.constructor.getBackendClassName()))
         {
-            // 1. Check access permission
-            if(hasPermission('UI:Access', this.constructor.getBackendClassName()))
-            {
-                if(this.context.userProvider) {
-                    this._hasAccess = isGranted('UI:Access', this.constructor.getAccessPermission())
-                }
-            }
-
-            // 2. Check user custom logic in access method
-            if(this._hasAccess){
-                this._hasAccess = this.access();
+            if(this.context.userProvider) {
+                hasAccess = isGranted('UI:Access', this.constructor.getAccessPermission())
             }
         }
 
-        return this._hasAccess;
+        // 2. Check user custom logic in access method
+        if(hasAccess){
+            hasAccess = this.access();
+        }
+
+        return hasAccess;
     }
 
     getName(){

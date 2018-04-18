@@ -229,12 +229,10 @@ export default class ComponentEvent {
                         if(queryResult['userError']){
                             MsgBox(queryResult['userError'], MsgBox.Type.OKOnly | MsgBox.Type.Exclamation | MsgBox.Type.SystemModal, i18n(exceptionMessages.userError));
                         }
+
                     } catch (e) {
                         await this.component.setAttributes({ backendEventProcessing: false });
-                        //console.log(this.getName(), eventName, "C");
-                        // TODO: create system critical message
-                        MsgBox(e.message, MsgBox.Type.OKOnly | MsgBox.Type.Critical | MsgBox.Type.SystemModal, i18n(exceptionMessages.criticalError));
-                        // alert(e);
+                        console.error(e.message);
                         if(!this.canceled) reject(e);
                         return;
                     }
@@ -410,5 +408,3 @@ export default class ComponentEvent {
     //     this.runSuccessCallbacks();
     // }
 }
-
-

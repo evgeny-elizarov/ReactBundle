@@ -43,10 +43,10 @@ class HotKeysRegister {
         {
             this.subscriptions.forEach((subs) => {
                 if(
-                    subs.hotKey.key == event.key &&
-                    subs.hotKey.altKey == event.altKey &&
-                    subs.hotKey.shiftKey == event.shiftKey &&
-                    subs.hotKey.ctrlKey == event.ctrlKey
+                    subs.hotKey.key === event.key &&
+                    subs.hotKey.altKey === event.altKey &&
+                    subs.hotKey.shiftKey === event.shiftKey &&
+                    subs.hotKey.ctrlKey === event.ctrlKey
                 ) {
                     event.preventDefault();
                     subs.handler(event);
