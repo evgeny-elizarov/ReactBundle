@@ -243,7 +243,7 @@ export default class Component extends React.Component {
         if(window.AndevisReactBundle.viewsClassMap.hasOwnProperty(viewGlobalId)) {
             return window.AndevisReactBundle.viewsClassMap[viewGlobalId];
         } else {
-            throw new Error('Check if backend class `'+className+'` is created!');
+            throw new Error('Check if backend class `'+className+'` is created for component with id `'+viewGlobalId+'`!');
         }
     }
 

@@ -329,7 +329,7 @@ export default class EntityEditor extends Page {
                         entityClass: this.getEntityClass(),
                         entity: this.state.entity,
                         title: i18n(messages.editPageTitle, {
-                            entityClass: this.getEntityClass(),
+                            // entityClass: this.getEntityClass(),
                             entityName: entityName
                         }),
                         canSave: this.canSave(this.state.entity),
@@ -351,7 +351,7 @@ export default class EntityEditor extends Page {
                         entityClass: this.getEntityClass(),
                         entity: this.state.entity,
                         title: i18n(messages.pageDeleteTitle, {
-                            entityClass: this.getEntityClass(),
+                            // entityClass: this.getEntityClass(),
                             entityName: entityName
                         }),
                         canDelete: this.canDelete(this.state.entity),
