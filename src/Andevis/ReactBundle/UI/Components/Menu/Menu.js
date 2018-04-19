@@ -69,14 +69,17 @@ class MenuItem extends React.Component {
     @autobind
     handleClick(e){
         e.preventDefault();
-        this.context.menuComponent.itemClick(this.props).then(() => {
-            if(this.props.items){
-                this.toggleOpen();
-            } else if(this.props.link && this.context.rootMenuList.selectedMenuItem) {
-                this.context.rootMenuList.selectedMenuItem.close();
-            }
+        if(this.context.menuComponent){
+            this.context.menuComponent.itemClick(this.props).then(() => {
+                if(this.props.items){
+                    this.toggleOpen();
+                } else if(this.props.link && this.context.rootMenuList.selectedMenuItem) {
+                    this.context.rootMenuList.selectedMenuItem.close();
+                }
 
-        });
+            });
+        }
+
     }
 
     render() {
@@ -259,6 +262,13 @@ export default class Menu extends Component {
                 this.refs.MenuList.selectedMenuItem.close();
         }
     }
+
+    componentWillReceiveProps(nextProps){
+        if(this.props.items !== nextProps.items){
+            this.setItems(nextProps.items);
+        }
+    }
+
 
     componentDidMount() {
         super.componentDidMount();

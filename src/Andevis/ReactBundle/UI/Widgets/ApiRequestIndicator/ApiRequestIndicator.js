@@ -49,6 +49,15 @@ export default class ApiRequestIndicator extends Component {
                     inProgress: false,
                     completedRequests: this.state.completedRequests + 1,
                 });
+                setTimeout(() => {
+                    if(!this.state.inProgress)
+                    {
+                        this.setState({
+                            createdRequests: 0,
+                            completedRequests: 0
+                        });
+                    }
+                }, 800);
             } else {
                 this.setState({
                     completedRequests: this.state.completedRequests + 1,

@@ -118,7 +118,6 @@ export default class Tabs extends Component {
      */
     prepareUrlHash(selectedIndex){
         let tabs = this.parseUrlHash();
-        console.log();
         tabs[this.getHashedTabsGlobalName()] = selectedIndex;
         return Object.keys(tabs).map(key => key + ":" + tabs[key]).join(";");
     }

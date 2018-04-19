@@ -1,5 +1,5 @@
 .api-indicator{
-    transition: opacity 400ms ease-in;
+    transition: opacity 500ms cubic-bezier(0.93, 0.26, 1, 0.44);
     position: fixed;
     z-index: 9999;
     top: 0;
@@ -12,7 +12,7 @@
         height: 2px;
         .progress{
             border: none;
-            border-radius: 0px;
+            border-radius: 0;
         }
     }
 }

@@ -84,19 +84,22 @@ class Schema extends AbstractBundleSchema
             }
         }
 
-//        // Views user handlers query
-//        $config->getQuery()->addField('viewsUserHandlers', [
-//            'type' => new ListType(new ViewUserHandlers()),
-//            'resolve' => function ($context, $args, ResolveInfo $info) use ($container, $componentClass, $resolveConfig) {
-//
-//                /** @var ComponentSet $componentSet */
-//                $componentSet = $this->container->get("andevis_react.component_set");
-//
-//                // Create execution context
-//                $executionContext = new ExecutionContext($componentSet, $container);
-//                return $executionContext->executeComponentResolver($componentClass, $args['id'], $resolveConfig, $args);
-//            }
-//        ]);
+        // Get views user handlers
+        $config->getQuery()->addField('viewsUserHandlers', [
+            'type' => new ListType(new ViewUserHandlers()),
+            'resolve' => function ($context, $args, ResolveInfo $info) use ($container ) {
+                /** @var ComponentSet $componentSet */
+                $componentSet = $this->container->get("andevis_react.component_set");
+                $response = array();
+                foreach ($componentSet->getViewsUserHandlers() as $viewId => $userHandlers){
+                    $response[] = [
+                        'viewId' => $viewId,
+                        'userHandlers' => $userHandlers
+                    ];
+                }
+                return $response;
+            }
+        ]);
 
         // $config->getQuery()->addField($fieldName, $fieldInfo);
     }

@@ -95,7 +95,7 @@ export default class ComponentEvent {
                 //
                 // 2. Call props user event handler
                 //
-                //console.log(this.getName(), eventName, "step 2 on:frontend");
+                // console.log(this.component.getName(), eventName, "step 2 on:frontend");
                 const propsUserHandlerName  = 'on' + ucfirst(eventName);
                 if (this.component.props.hasOwnProperty(propsUserHandlerName)) {
 
@@ -104,13 +104,16 @@ export default class ComponentEvent {
 
                     // arguments[0] = this;
                     eventResult = await this.component.props[propsUserHandlerName].apply(view, eventArguments);
+
+                    if(this.canceled) return;
+
                     // needCallBackend = (ret !== false);
                     // If backend return false, skip frontend event callbacks
-                    if(eventResult === false) {
-                        //console.log("DD");
-                        if(!this.canceled) resolve(eventResult);
-                        return;
-                    }
+                    // if(eventResult === false) {
+                    //     //console.log("DD");
+                    //     if(this.canceled) resolve(eventResult);
+                    //     return;
+                    // }
                 }
 
 
@@ -118,7 +121,7 @@ export default class ComponentEvent {
                 // 2.1 Call frontend user event handler
                 //
                 const viewUserHandlerName = this.component.getName() + '_on' + ucfirst(eventName);
-                //console.log(this.getName(), eventName, "step 2 on:frontend");
+                // console.log(this.component.getName(), eventName, "step 2 on:frontend");
                 if (typeof view[viewUserHandlerName] === 'function') {
                     // console.log("!!", view, viewUserHandlerName, this.component, this.component.getView(), typeof view[viewUserHandlerName], "aaa");
 
@@ -126,13 +129,15 @@ export default class ComponentEvent {
                     if(this.canceled) return;
                     // arguments[0] = this;
                     eventResult = await view[viewUserHandlerName].apply(view, eventArguments);
+
+                    if(this.canceled) return;
                     // needCallBackend = (ret !== false);
                     // If backend return false, skip frontend event callbacks
-                    if(eventResult === false) {
-                        //console.log("DD");
-                        if(!this.canceled) resolve(eventResult);
-                        return;
-                    }
+                    // if(eventResult === false) {
+                    //     //console.log("DD");
+                    //     if(!this.canceled) resolve(eventResult);
+                    //     return;
+                    // }
                 }
 
                 //
@@ -220,7 +225,7 @@ export default class ComponentEvent {
                     // Call backend event resolver
                     let queryResult = null;
                     try {
-                        //console.log(this.getName(), eventName, "B", queryArgs);
+                        // console.log(this.component.getName(), eventName, "B", queryArgs);
                         // TODO move backend resolveEvent functionality to ComponentEvent class
                         // queryResult = await this.component.backend.resolveEvent(queryArgs);
                         await this.component.setAttributes({ backendEventProcessing: true });
@@ -231,6 +236,7 @@ export default class ComponentEvent {
                         }
 
                     } catch (e) {
+                        // console.log("!!!!!!!");
                         await this.component.setAttributes({ backendEventProcessing: false });
                         console.error(e.message);
                         if(!this.canceled) reject(e);
