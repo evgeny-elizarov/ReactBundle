@@ -387,36 +387,6 @@ export default class View extends Component
     }
 
     /**
-     * Event list
-     * @returns {[string,string]}
-     */
-    eventList() {
-        return super.eventList().concat(['callServerMethod']);
-    }
-
-    /**
-     * Allow fire callServerMethod event
-     * @param eventName
-     * @return {boolean}
-     */
-    allowCallEventBackend(eventName){
-        if(eventName === 'callServerMethod'){
-            return true;
-        } else {
-            return super.allowCallEventBackend(eventName);
-        }
-    }
-
-    /**
-     * User method caller event
-     */
-    callServerMethod(serverMethodName){
-        var args = [].slice.call(arguments);
-        args.unshift('callServerMethod');
-        return this.fireEvent.apply(this, args);
-    }
-
-    /**
      * Render error access denied
      * @return {*}
      */

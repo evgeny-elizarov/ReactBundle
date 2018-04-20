@@ -51,6 +51,8 @@ export default class Window extends React.Component{
         content: PropTypes.node,
         isDragging: PropTypes.bool.isRequired,
         customClose: PropTypes.func,
+        width: PropTypes.any,
+        height: PropTypes.any,
         closable: PropTypes.bool
     };
 
@@ -115,19 +117,6 @@ export default class Window extends React.Component{
         }
     }
 
-    // /**
-    //  * Render window header
-    //  */
-    // renderHeader(){
-    //     const handleStyle = {
-    //         userSelect: false,
-    //         cursor: 'move',
-    //     };
-    //     return (
-    //
-    //     );
-    // }
-
 
     componentDidMount(){
         if(this.props.centred && this.windowBox){
@@ -139,6 +128,8 @@ export default class Window extends React.Component{
             // Golden position
             if(top > 0) {
                 top = (top / 3) * 2;
+            } else if (top < 0) {
+                top = 10;
             }
             this.move(left, top);
         }

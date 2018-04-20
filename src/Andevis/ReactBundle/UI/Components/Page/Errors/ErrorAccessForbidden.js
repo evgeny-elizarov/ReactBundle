@@ -2,7 +2,6 @@ import React from '@AndevisReactBundle/react';
 import PropTypes from "@AndevisReactBundle/prop-types";
 import { isGranted } from "@AndevisAuthReactBundle/UI/Helpers/security";
 import { i18n } from "@AndevisReactBundle/UI/Translation";
-import { authStore } from "@AndevisAuthReactBundle/UI/Stores";
 import messages from "@AndevisReactBundle/UI/Components/Page/messages";
 import { autobind } from "@AndevisReactBundle/decorators";
 import TechInfoAccessForbiddenError from '@AndevisReactBundle/UI/Common/TechInfoAccessForbiddenError/TechInfoAccessForbiddenError';
@@ -11,6 +10,7 @@ export default class ErrorAccessForbidden extends React.Component {
 
     static contextTypes = {
         router: PropTypes.object,
+        userProvider: PropTypes.object,
     };
 
     static propTypes = {
@@ -41,19 +41,11 @@ export default class ErrorAccessForbidden extends React.Component {
     }
 
     /**
-     * Go to login page
+     * Logout
      */
     @autobind
-    handleGotoLoginPage(){
-        let state = {};
-        if(this.context.router.history.location !== '/auth/login'){
-            // TODO: починить это, обраный редирект не работает
-            state.authAfterLoginPath = this.context.router.history.location;
-        }
-        this.context.router.history.push({
-            pathname: '/auth/login',
-            state: state
-        });
+    handleLogout(){
+        this.context.userProvider.logout();
     }
 
     /**
@@ -88,7 +80,7 @@ export default class ErrorAccessForbidden extends React.Component {
                             <a onClick={this.handleRefreshPage}>{i18n(messages.refreshPage)}</a>
                         </li>
                         <li>
-                            <a onClick={this.handleGotoLoginPage}>{i18n(messages.loginWithSufficientPrivileges)}</a>
+                            <a onClick={this.handleLogout}>{i18n(messages.loginWithSufficientPrivileges)}</a>
                         </li>
                         {/* Показываем техническую информацию доверенным людям */}
                         { isGranted('System:Show technical information', 'Debug') &&

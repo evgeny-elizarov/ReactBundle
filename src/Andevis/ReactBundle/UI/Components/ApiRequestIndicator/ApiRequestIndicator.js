@@ -1,23 +1,15 @@
 /**
  * Created by EvgenijE on 10.05.2017.
  */
-import React, { Component } from 'react'
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import clientSubscribeService from "@AndevisReactBundle/UI/GraphQL/clientSubscribeService";
+import React from 'react'
 import ProgressBar from '@AndevisReactBundle/UI/Components/ProgressBar/ProgressBar';
 import './ApiRequestIndicator.scss';
 
 
-export default class ApiRequestIndicator extends Component {
+export default class ApiRequestIndicator extends ProgressBar {
 
-    static contextTypes = {
-        appState: PropTypes.object
-    };
-
-    constructor(props, context){
-        super(props, context);
-        this.state = {
+    getInitialState(){
+        return {
             inProgress: false,
             createdRequests: 0,
             completedRequests: 0
@@ -26,8 +18,8 @@ export default class ApiRequestIndicator extends Component {
 
     componentDidMount(){
 
-        // Catch created API request
-        this.apiMiddlewareSubs = clientSubscribeService.registerMiddleware(() => {
+        // Catch API request begin
+        this.subscribeOnEvent('apiOperationBegin', () => {
             if(!this.state.inProgress) {
                 this.setState({
                     inProgress: true,
@@ -39,11 +31,10 @@ export default class ApiRequestIndicator extends Component {
                     createdRequests: this.state.createdRequests + 1,
                 });
             }
-
         });
 
-        // Catch completed API request
-        this.apiAfterwareSubs = clientSubscribeService.registerAfterware(() => {
+        // Catch completed API request complete
+        this.subscribeOnEvent('apiOperationComplete', () => {
             if((this.state.createdRequests - 1) === this.state.completedRequests ) {
                 this.setState({
                     inProgress: false,
@@ -65,21 +56,17 @@ export default class ApiRequestIndicator extends Component {
             }
         });
 
-        // On error reset all status to defaults
-        this.clientErrorSubs = clientSubscribeService.registerErrorHandler(() => {
+        // Catch API request error
+        this.subscribeOnEvent('apiOperationError', (result) => {
             this.setState({
                 inProgress: false,
                 createdRequests: 0,
                 completedRequests : 0
             });
         });
+
     }
 
-    componentWillUnmount(){
-        super.componentWillUnmount();
-        clientSubscribeService.unregisterMiddleware(this.apiMiddlewareSubs);
-        clientSubscribeService.unregisterMiddleware(this.apiAfterwareSubs);
-    }
 
     render() {
         const progress = (this.state.createdRequests > 0) ? (this.state.createdRequests + this.state.completedRequests) / (this.state.createdRequests * 2) : 0;

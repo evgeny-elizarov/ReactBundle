@@ -6,7 +6,7 @@ import './ProgressBar.scss';
 
 export default class ProgressBar extends Component {
 
-    static bundleName = 'AuthReact';
+    static bundleName = 'React';
 
     static propTypes = Object.assign({}, Component.propTypes, {
         progress: PropTypes.number,
@@ -17,6 +17,9 @@ export default class ProgressBar extends Component {
         styleType: 'primary',
     });
 
+    getShortClassName() {
+        return 'ProgressBar';
+    }
 
     render() {
         const progress = this.props.progress > 1 ? 100 : (

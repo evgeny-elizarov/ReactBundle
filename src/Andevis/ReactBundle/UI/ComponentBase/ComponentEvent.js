@@ -4,13 +4,8 @@ import { ComponentDataToJsonString } from "../Helpers/base";
 import MsgBox from "@AndevisReactBundle/UI/Components/MsgBox";
 import { i18n } from "@AndevisReactBundle/UI/Translation";
 import exceptionMessages from "@AndevisReactBundle/UI/Exceptions/messages";
+import { eventSubscribers } from '@AndevisReactBundle/UI/Events/EventSubscribers';
 
-// import React from "react";
-// import exceptionMessages from "@AndevisReactBundle/UI/Exceptions/messages";
-// import MsgBox from "@AndevisReactBundle/UI/Components/MsgBox";
-// import { ComponentDataToJsonString } from "@AndevisReactBundle/UI/Helpers/base";
-// import { ucfirst } from "@AndevisReactBundle/UI/Helpers";
-// import { i18n } from "@AndevisReactBundle/UI/Translation";
 
 // TODO: Event refactor: Заменить первый аргумент на событие.Т.к. событие может возвращать все что угодно и false в том числе.
 export default class ComponentEvent {
@@ -69,8 +64,22 @@ export default class ComponentEvent {
                 /** @var View **/
                 const view = this.component.getView();
 
+                // ------------------------------------------
+                //                  AFTER
+                // -------------------------------------------
                 //
-                // 1. Call frontend before user event handler
+                // 1.1 Call internal method  event handler
+                //
+                const internalBeforeUserHandlerName  = 'before' + ucfirst(eventName);
+                if (typeof this.component[internalBeforeUserHandlerName] === 'function') {
+                    // check if canceled
+                    if(this.canceled) return;
+                    eventResult = await this.component[internalBeforeUserHandlerName].apply(view, eventArguments);
+                    if(this.canceled) return;
+                }
+
+                //
+                // 1.2 Call frontend before user event handler
                 //
                 // console.log(this.getId(), this.getName(), eventName, "step 1 before");
                 const viewBeforeUserHandlerName = this.component.getName() + '_before' + ucfirst(eventName);
@@ -93,7 +102,24 @@ export default class ComponentEvent {
                 }
 
                 //
-                // 2. Call props user event handler
+                // 1.3 Call frontend added before event listeners
+                //
+                if(this.component.eventListeners && this.component.eventListeners.hasOwnProperty('before' + ucfirst(eventName))) {
+                    this.component.eventListeners['before' + ucfirst(eventName)].fireArray(eventArguments);
+                }
+
+
+                //
+                // 1.4 Call frontend added event subscribers
+                //
+                eventSubscribers.fireEventArray('before' + ucfirst(eventName), eventArguments);
+
+
+                // ------------------------------------------
+                //                  ON: FRONTEND
+                // -------------------------------------------
+                //
+                // 2.1 Call props user event handler
                 //
                 // console.log(this.component.getName(), eventName, "step 2 on:frontend");
                 const propsUserHandlerName  = 'on' + ucfirst(eventName);
@@ -116,9 +142,20 @@ export default class ComponentEvent {
                     // }
                 }
 
+                //
+                // 2.2 Call internal method  event handler
+                //
+                const internalUserHandlerName  = 'on' + ucfirst(eventName);
+                if (typeof this.component[internalUserHandlerName] === 'function') {
+                    // check if canceled
+                    if(this.canceled) return;
+                    eventResult = await this.component[internalUserHandlerName].apply(view, eventArguments);
+
+                    if(this.canceled) return;
+                }
 
                 //
-                // 2.1 Call frontend user event handler
+                // 2.3 Call frontend user event handler
                 //
                 const viewUserHandlerName = this.component.getName() + '_on' + ucfirst(eventName);
                 // console.log(this.component.getName(), eventName, "step 2 on:frontend");
@@ -141,7 +178,22 @@ export default class ComponentEvent {
                 }
 
                 //
-                // 3. Call backend user event handler (if exists)
+                // 2.4 Call frontend added event listeners
+                //
+                if(this.component.eventListeners && this.component.eventListeners.hasOwnProperty(eventName)) {
+                    this.component.eventListeners[eventName].fireArray(eventArguments);
+                }
+
+                //
+                // 2.5 Call frontend added event subscribers
+                //
+                eventSubscribers.fireEventArray(eventName, eventArguments);
+
+                // ------------------------------------------
+                //                  ON: BACKEND
+                // -------------------------------------------
+                //
+                // 3.1 Call backend user event handler (if exists)
                 //
                 if(this.component.allowCallEventBackend(eventName)) {
 
@@ -301,8 +353,23 @@ export default class ComponentEvent {
                     }
                 }
 
+                // ------------------------------------------
+                //                  AFTER
+                // -------------------------------------------
+
                 //
-                // 4. Call frontend after user event handler
+                // 4.1 Call internal method  event handler
+                //
+                const internalAfterUserHandlerName  = 'after' + ucfirst(eventName);
+                if (typeof this.component[internalAfterUserHandlerName] === 'function') {
+                    // check if canceled
+                    if(this.canceled) return;
+                    eventResult = await this.component[internalAfterUserHandlerName].apply(view, eventArguments);
+                    if(this.canceled) return;
+                }
+
+                //
+                // 4.2 Call frontend after user event handler
                 //
                 // check if canceled
                 if(this.canceled) return;
@@ -320,6 +387,23 @@ export default class ComponentEvent {
                         return;
                     }
                 }
+
+
+                //
+                // 4.3 Call frontend added before event listeners
+                //
+                if(this.component.eventListeners && this.component.eventListeners.hasOwnProperty('after' + ucfirst(eventName))) {
+                    this.component.eventListeners['after' + ucfirst(eventName)].fireArray(eventArguments);
+                }
+
+                //
+                // 4.4 Call frontend added event subscribers
+                //
+                eventSubscribers.fireEventArray('after' + ucfirst(eventName), eventArguments);
+
+                // ------------------------------------------
+                //                  FINISH
+                // -------------------------------------------
 
                 // // Set component attribute event processing
                 // newState = {};

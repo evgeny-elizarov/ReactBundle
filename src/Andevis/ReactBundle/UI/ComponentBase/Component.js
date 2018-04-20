@@ -8,9 +8,8 @@ import {ucfirst} from './../Helpers';
 import { autobind } from 'core-decorators';
 import ComponentEvent from "@AndevisReactBundle/UI/ComponentBase/ComponentEvent";
 import shorthash from "shorthash";
-import { authStore } from "@AndevisAuthReactBundle/UI/Stores";
-import { hasPermission } from "@AndevisAuthReactBundle/UI/Helpers";
-
+import Listeners from 'listeners';
+import { eventSubscribers } from '@AndevisReactBundle/UI/Events/EventSubscribers';
 
 export default class Component extends React.Component {
 
@@ -40,12 +39,17 @@ export default class Component extends React.Component {
 
     static bundleName = null;
 
+
     constructor(props, context) {
         super(props, context);
 
         // Name variable
         this.name = null;
         this.index = this.props.index;
+
+        // If mounted flag
+        this._mounted = false;
+
         // Private can change state flag
         this._canChangeState = true;
 
@@ -92,6 +96,10 @@ export default class Component extends React.Component {
         lifeCycleMethods.forEach((method) => {
             this[method] = this.checkAccessBeforeCall(this[method].bind(this));
         });
+
+        // Event listeners
+        this.eventListeners = {};
+        this.subscriptionOnEvents = {};
 
     }
 
@@ -367,49 +375,6 @@ export default class Component extends React.Component {
         ]
     }
 
-    // componentDidUpdate(prevProps){
-    //     const linkedAttributes = this.getAttributesLinkedToProps();
-    //
-    //     let updateAttributes = {};
-    //     linkedAttributes.forEach((attr) => {
-    //         if (prevProps.hasOwnProperty(attr) &&
-    //             // typeof nextProps[attr] !== 'undefined'
-    //             // &&
-    //             (
-    //                 // !this.props.hasOwnProperty(attr) ||
-    //                 this.getAttributeValue(attr) !== this.props[attr]
-    //             )
-    //         ) {
-    //             updateAttributes[attr] = this.props[attr];
-    //         }
-    //     });
-    //
-    //     if(Object.keys(updateAttributes).length > 0){
-    //         this.setAttributes(updateAttributes);
-    //     }
-    //     // console.log("componentDidUpdate", prevProps, this.props);
-    // }
-
-    componentWillReceiveProps(nextProps) {
-        this.willReceiveProps(nextProps).then(() => {
-            const linkedAttributes = this.getAttributesLinkedToProps();
-
-            let updateAttributes = {};
-            linkedAttributes.forEach((attr) => {
-                if (
-                    nextProps.hasOwnProperty(attr) &&
-                    this.props.hasOwnProperty(attr) &&
-                    this.props[attr] !== nextProps[attr]
-                ) {
-                    updateAttributes[attr] = nextProps[attr];
-                }
-            });
-
-            if(Object.keys(updateAttributes).length > 0){
-                this.setAttributes(updateAttributes);
-            }
-        });
-    }
 
 
     /**
@@ -427,17 +392,7 @@ export default class Component extends React.Component {
         });
     }
 
-    // /**
-    //  * Attribute: mounted
-    //  * @returns {*}
-    //  */
-    // get mounted() {
-    //     return this.getAttributeValue('mounted', false);
-    // }
-    //
-    // set mounted(value) {
-    //     this.setAttributeValue('mounted', value);
-    // }
+
 
     /**
      * Attribute: visible
@@ -516,10 +471,12 @@ export default class Component extends React.Component {
      */
     eventList() {
         return [
+            'didMount',
             'willReceiveProps',
             'willUpdate',
-            'didMount',
             'didUpdate',
+            'willUnmount',
+            'callServerMethod',
             'focus',
             'blur'
         ];
@@ -538,59 +495,118 @@ export default class Component extends React.Component {
 
     componentWillMount() {
         this.getView().mountComponent(this);
+        this._mounted = true;
     }
 
-    componentWillUnmount() {
-        this.processingEvents.forEach((event) => {
-            event.cancel();
-        });
-        this._canChangeState = false;
-        this.getView().unmountComponent(this);
-    }
-
-    componentWillUpdate(nextProps, nextState) {
-        this.willUpdate(nextProps, nextState);
-    }
-
+    /*******************
+     *
+     *  EVENT: DID MOUNT
+     *
+     */
     componentDidMount() {
         this.didMount()
     }
 
-    componentDidUpdate() {
-        this.didUpdate();
-    }
-
-    /**
-     * Did mount event
-     * @returns {Promise}
-     */
     @autobind
     didMount() {
         return this.fireEvent('didMount');
+    }
+
+    beforeDidMount(component){};
+    onDidMount(component){};
+    afterDidMount(component){};
+
+    /******************************
+     *
+     *   EVENT: WILL RECEIVE PROPS
+     *
+     */
+    componentWillReceiveProps(nextProps) {
+        this.willReceiveProps(nextProps).then(() => {
+            const linkedAttributes = this.getAttributesLinkedToProps();
+
+            let updateAttributes = {};
+            linkedAttributes.forEach((attr) => {
+                if (
+                    nextProps.hasOwnProperty(attr) &&
+                    this.props.hasOwnProperty(attr) &&
+                    this.props[attr] !== nextProps[attr]
+                ) {
+                    updateAttributes[attr] = nextProps[attr];
+                }
+            });
+
+            if(Object.keys(updateAttributes).length > 0){
+                this.setAttributes(updateAttributes);
+            }
+        });
+    }
+
+    willReceiveProps(nextProps) {
+        return this.fireEvent('willReceiveProps', nextProps);
+    }
+
+    beforeWillReceiveProps(component, nextProps) {}
+    onWillReceiveProps(component, nextProps) {}
+    afterWillReceiveProps(component, nextProps) {}
+
+
+    /***************************
+     *
+     *  EVENT: WILL UPDATE
+     *
+     */
+    componentWillUpdate(nextProps, nextState) {
+        this.willUpdate(nextProps, nextState);
+    }
+
+    willUpdate(nextProps, nextState) {
+        return this.fireEvent('willUpdate', nextProps, nextState);
+    }
+
+    // beforeWillUpdate(component, nextProps, nextState){}
+    // onWillUpdate(component, nextProps, nextState){}
+    // afterWillUpdate(component, nextProps, nextState){}
+
+    /***********************
+     *
+     *  EVENT: DID UPDATE
+     *
+     */
+    componentDidUpdate() {
+        this.didUpdate();
     }
 
     didUpdate() {
         return this.fireEvent('didUpdate');
     }
 
-    /**
-     * Component will update
-     * @param nextProps
-     * @param nextState
-     * @returns {Promise}
+    onDidUpdate(component){}
+
+
+    /**************************
+     *
+     *  EVENT: WILL UNMOUNT
+     *
      */
-    willUpdate(nextProps, nextState) {
-        return this.fireEvent('willUpdate', nextProps, nextState);
+    componentWillUnmount() {
+        this.unsubscribeAllEvents();
+        this.clearAllEventListeners();
+        this.willUnmount().then(() => {
+            this.processingEvents.forEach((event) => {
+                event.cancel();
+            });
+            this._canChangeState = false;
+            this._mounted = false;
+            this.getView().unmountComponent(this);
+        });
     }
 
-    /**
-     * Will receive props event
-     * @param nextProps
-     * @returns {Promise}
-     */
-    willReceiveProps(nextProps) {
-        return this.fireEvent('willReceiveProps', nextProps);
+    willUnmount(){
+        return this.fireEvent('willUnmount');
     }
+
+    onWillUnmount(component){}
 
 
     /**
@@ -615,7 +631,20 @@ export default class Component extends React.Component {
      * @returns {boolean}
      */
     allowCallEventBackend(eventName){
-        return this.getView().isBackendUserHandlerExists(this, eventName);
+        if(eventName === 'callServerMethod'){
+            return true;
+        } else {
+            return this.getView().isBackendUserHandlerExists(this, eventName);
+        }
+    }
+
+    /**
+     * User method caller event
+     */
+    callServerMethod(serverMethodName){
+        let args = [].slice.call(arguments);
+        args.unshift('callServerMethod');
+        return this.fireEvent.apply(this, args);
     }
 
     /**
@@ -637,7 +666,6 @@ export default class Component extends React.Component {
         if(arguments.length === 0)
             throw new Error('Event name not set!');
 
-
         // Check if component exists in view
         if(!this.getView().getComponentById(this.getId())){
             console.warn('Component with id `' +this.getId()+ ' ` not exist in view ');
@@ -649,9 +677,88 @@ export default class Component extends React.Component {
 
         const eventName = args.shift();
 
+        if(!this._mounted){
+            console.warn('Can`t fire event `'+eventName+'` for unmounted component `' + this.getName() + '`');
+            return new Promise((resolve, reject) => {
+                reject();
+            });
+        }
+
         const event = new ComponentEvent(this, eventName, args);
         this.processingEvents.push(event);
         return event.getPromise();
+    }
+
+    /**
+     * Subscribe on event
+     */
+    subscribeOnEvent(eventName, callback){
+        if(this.subscriptionOnEvents.hasOwnProperty(eventName)) {
+            this.unsubscribeOnEvent(eventName, this.subscriptionOnEvents[eventName]);
+        }
+        this.subscriptionOnEvents[eventName] = callback;
+        eventSubscribers.subscribe(eventName, callback, this);
+    }
+
+    /**
+     * Unsubscribe on event
+     */
+    unsubscribeOnEvent(eventName, callback){
+        eventSubscribers.unsubscribeComponent(eventName, callback, this);
+        if(this.subscriptionOnEvents.hasOwnProperty(eventName)) {
+            delete this.subscriptionOnEvents[eventName];
+        }
+    }
+
+    /**
+     * Unsubscribe all subscribed events
+     */
+    unsubscribeAllEvents(){
+        Object.keys(this.subscriptionOnEvents).forEach((eventName) => {
+            this.unsubscribeOnEvent(eventName, this.subscriptionOnEvents[eventName]);
+        });
+    }
+
+    /**
+     * Add event listener
+     * @param eventName
+     * @param callback
+     * @param context
+     */
+    addEventListener(eventName, callback, context)
+    {
+        if(!this.eventListeners.hasOwnProperty(eventName)) {
+            this.eventListeners[eventName] = new Listeners((e) => {
+                console.log("Catch listener error", e);
+                // stop call other listeners
+                return false;
+            });
+        }
+        this.eventListeners[eventName].add(callback, context);
+    }
+
+    /**
+     * Remove event listener
+     * @param eventName
+     * @param callback
+     * @param context
+     */
+    removeEventListener(eventName, callback, context)
+    {
+        if(this.eventListeners.hasOwnProperty(eventName))
+        {
+            this.eventListeners[eventName].remove(callback, context);
+        }
+    }
+
+    /**
+     * Clear all event listeners
+     */
+    clearAllEventListeners(){
+        Object.keys(this.eventListeners).forEach((eventName) => {
+            this.eventListeners[eventName].clear();
+            delete this.eventListeners;
+        });
     }
 
 

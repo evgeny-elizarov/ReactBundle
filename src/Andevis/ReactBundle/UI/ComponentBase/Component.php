@@ -14,6 +14,8 @@ use Andevis\ReactBundle\GraphQL\Type\EventResponseType;
 use Andevis\ReactBundle\GraphQL\MutationResolveConfig;
 use Andevis\ReactBundle\UI\Exceptions\UserException;
 use Andevis\ReactBundle\UI\Translation\TranslationTrait;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -335,14 +337,46 @@ abstract class Component implements ComponentInterface
      */
     function eventList(){
         return [
+            'callServerMethod',
             'willReceiveProps',
             'willUpdate',
             'didMount',
+            'willUnmount',
             'didUpdate',
             'focus',
-            'blur'
+            'blur',
         ];
     }
+
+
+    /**
+     * Server method caller handler
+     * @return mixed
+     * @throws \Exception
+     * @throws \ReflectionException
+     */
+    function callServerMethod()
+    {
+        $args = func_get_args();
+        $methodName = array_shift($args);
+        $refClass = new ReflectionClass(get_class($this));
+//        $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methodDefined = false;
+        foreach ($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method){
+            // $method->class == $refClass->getName() &&
+            if ($method->name == $methodName){
+                $methodDefined = true;
+                break;
+            }
+        }
+
+        if($methodDefined){
+            return call_user_func_array([$this, $methodName], $args);
+        } else {
+            throw new \Exception(sprintf('Server method `%s` not defined in  view `%s`', $methodName, $this->getName()));
+        }
+    }
+
 
 //    /**
 //     * Init event handler
@@ -372,6 +406,14 @@ abstract class Component implements ComponentInterface
      */
     function willReceiveProps(array $nextProps){
         $this->fireEvent('willReceiveProps', $nextProps);
+    }
+
+    /**
+     * Component will unmount
+     * @throws \Exception
+     */
+    function willUnmount(){
+        $this->fireEvent('willUnmount');
     }
 
     /**

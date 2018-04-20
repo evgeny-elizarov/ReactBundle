@@ -9,6 +9,7 @@ import { appState } from '@AndevisReactBundle/UI/Stores';
 import { CookiesProvider } from 'react-cookie';
 import UserProvider from "@AndevisAuthReactBundle/UI/Views/UserProvider/UserProvider";
 import WindowsContainer from "@AndevisReactBundle/UI/Components/Windows/WindowsContainer";
+import { eventSubscribers } from "@AndevisReactBundle/UI/Events/EventSubscribers";
 
 //import registerServiceWorker from './Services/registerServiceWorker';
 
@@ -62,6 +63,14 @@ export default class App extends React.Component {
             locale: appState.getLocale(),
             appState: appState
         };
+    }
+
+    componentWillMount(){
+        eventSubscribers.unsubscribeAll();
+    }
+
+    componentWillUnmount(){
+        eventSubscribers.unsubscribeAll();
     }
 
     render() {

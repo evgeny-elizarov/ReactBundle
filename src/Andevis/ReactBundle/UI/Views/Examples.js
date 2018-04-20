@@ -11,6 +11,7 @@ import ExampleDataTable from './ExampleDataTable/ExampleDataTable';
 import ExampleTabs from './ExampleTabs/ExampleTabs';
 import ExampleGlobalState from './ExampleGlobalState/ExampleGlobalState';
 import ExampleServerMethod from './ExampleServerMethod/ExampleServerMethod';
+import ExampleEvents from './ExampleEvents/ExampleEvents';
 import Menu from "@AndevisReactBundle/UI/Components/Menu/Menu";
 
 export default () => (
@@ -64,6 +65,10 @@ export default () => (
                             {
                                 label: 'Server method',
                                 link: '/react/example/server-method',
+                            },
+                            {
+                                label: 'Events',
+                                link: '/react/example/events',
                             }
                         ]}
                     />
@@ -83,6 +88,7 @@ export default () => (
                 <Route path='/react/example/msg-box' component={ExampleMsgBox}/>
                 <Route path='/react/example/global-state' component={ExampleGlobalState}/>
                 <Route path='/react/example/server-method' component={ExampleServerMethod}/>
+                <Route path='/react/example/events' component={ExampleEvents}/>
             </Switch>
         </div>
     </div>

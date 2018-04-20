@@ -10,8 +10,6 @@ namespace Andevis\ReactBundle\UI\Components\View;
 
 use Andevis\ReactBundle\UI\ComponentBase\Component;
 use Andevis\ReactBundle\UI\ComponentBase\ExecutionContext;
-use ReflectionClass;
-use ReflectionMethod;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
@@ -19,7 +17,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 class View extends Component implements ViewInterface
 {
     use ViewTrait;
-
 
     /**
      * Component constructor.
@@ -36,20 +33,6 @@ class View extends Component implements ViewInterface
         }
         parent::__construct($name, $index, $context, $container);
     }
-
-//    static function resolveConfig()
-//    {
-//        $config = parent::resolveConfig();
-//        $config[] = new MutationResolveConfig(
-//            'reactOnInit',
-//            'init',
-//            [
-//                'components' => new ListType(new ComponentInputType())
-//            ],
-//            new ViewInitStatusType()
-//        );
-//        return $config;
-//    }
 
     static public function getInitialState(string $viewId, ContainerInterface $container){}
     static public function getInitialGlobalState(string $viewId, ContainerInterface $container){}
@@ -86,40 +69,6 @@ class View extends Component implements ViewInterface
         return $this->_hasAccess;
     }
 
-    function eventList()
-    {
-        return array_merge(parent::eventList(), ['callServerMethod']);
-    }
-
-    /**
-     * Server method caller handler
-     * @return mixed
-     * @throws \Exception
-     * @throws \ReflectionException
-     */
-    function callServerMethod()
-    {
-        $args = func_get_args();
-        $methodName = array_shift($args);
-        $refClass = new ReflectionClass(get_class($this));
-        $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC);
-        $methodDefined = false;
-        foreach ($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method){
-            // $method->class == $refClass->getName() &&
-            if ($method->name == $methodName){
-                $methodDefined = true;
-                break;
-            }
-        }
-
-        if($methodDefined){
-            return call_user_func_array([$this, $methodName], $args);
-        } else {
-            throw new \Exception(sprintf('Server method `%s` not defined in  view `%s`', $methodName, $this->getName()));
-        }
-    }
-
-
     // TODO: rename it to getServiceById
     /**
      * Get symfony service
@@ -130,16 +79,6 @@ class View extends Component implements ViewInterface
         return $this->container->get($id);
     }
 
-    /**
-     * Load event handler
-     */
-//    function load(){
-////        foreach ($this->getContext()->getMountedComponents() as $component){
-////            if($this !== $component){
-////                $component->load();
-////            }
-////        }
-//    }
 
     /**
      * @param $args
