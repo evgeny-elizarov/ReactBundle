@@ -46,7 +46,6 @@ abstract class Component implements ComponentInterface
     protected $translationPrefixKey;
     protected $translationMessageFile;
 
-    private $container;
 
     /**
      * Component constructor.
@@ -143,14 +142,6 @@ abstract class Component implements ComponentInterface
      */
     function setContext(ExecutionContext $context){
         $this->context = $context;
-    }
-
-    /**
-     * Get container
-     * @return Container
-     */
-    function getContainer(){
-        return $this->container;
     }
 
 

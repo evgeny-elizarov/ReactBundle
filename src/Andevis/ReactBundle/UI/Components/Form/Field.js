@@ -45,7 +45,6 @@ const formFieldWrapper = (WrappedComponent) => {
         }
 
         render() {
-
             // let field = <WrappedComponent {...this.props} />;
             const className = classNames("form-input form-component", this.props.className);
 
@@ -186,38 +185,49 @@ class FieldBase extends Component {
         this.setAttributeValue('readOnly', value);
     }
 
-    componentWillReceiveProps(nextProps) {
-        let currentValue = this.getValue();
-        if (this.props.fieldApi) {
-            const valueAttrName = this.getAttributeStateName('value');
-            currentValue = this.state.hasOwnProperty(valueAttrName) && this.state[valueAttrName];
-        }
-        super.componentWillReceiveProps(nextProps);
-        // if (nextProps.hasOwnProperty('value') && !this._inputProcess) {
-        //     if (currentValue !== nextProps['value']) {
-        //         this.change(nextProps['value']);
-        //     }
-        // }
-    }
-
-    componentWillReceiveBackendState(nextState) {
+    // componentWillReceiveProps(nextProps) {
+    //     let currentValue = this.getValue();
+    //     if (this.props.fieldApi) {
+    //         const valueAttrName = this.getAttributeStateName('value');
+    //         currentValue = this.state.hasOwnProperty(valueAttrName) && this.state[valueAttrName];
+    //     }
+    //     super.componentWillReceiveProps(nextProps);
+    //     // if (nextProps.hasOwnProperty('value') && !this._inputProcess) {
+    //     //     if (currentValue !== nextProps['value']) {
+    //     //         this.change(nextProps['value']);
+    //     //     }
+    //     // }
+    // }
+    componentDidReceiveBackendState(prevState) {
+        super.componentDidReceiveBackendState(prevState);
         const valueAttrName = this.getAttributeStateName('value');
-        // Update field value if controlled by form
-        if (nextState.hasOwnProperty(valueAttrName)) {
-
-        }
-        if(this.props.fieldApi)
-        {
-            if(this.props.fieldApi.value !== nextState[valueAttrName]){
-                this.props.fieldApi.setValue(nextState[valueAttrName]);
-            }
-
-        } else {
-            if(this.getValue() !== nextState[valueAttrName]){
-                this.setValue(nextState[valueAttrName]);
+        if(!this.props.fieldApi) {
+            if(this.getValue() !== this.state[valueAttrName]){
+                this.setValue(this.state[valueAttrName]);
             }
         }
     }
+    //
+    // componentWillReceiveBackendState(nextState) {
+    //     super.componentWillReceiveBackendState(nextState);
+    //
+    //     const valueAttrName = this.getAttributeStateName('value');
+    //     // Update field value if controlled by form
+    //     if (nextState.hasOwnProperty(valueAttrName)) {
+    //
+    //     }
+    //     if(this.props.fieldApi)
+    //     {
+    //         if(this.props.fieldApi.value !== nextState[valueAttrName]){
+    //             this.props.fieldApi.setValue(nextState[valueAttrName]);
+    //         }
+    //
+    //     } else {
+    //         if(this.getValue() !== nextState[valueAttrName]){
+    //             this.setValue(nextState[valueAttrName]);
+    //         }
+    //     }
+    // }
 
     getAttributesLinkedToProps(){
         return super.getAttributesLinkedToProps().concat([

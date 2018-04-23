@@ -368,6 +368,14 @@ export default class Component extends React.Component {
 
     }
 
+    /**
+     * Called after set new state from backend
+     * @param prevState
+     */
+    componentDidReceiveBackendState(prevState){
+
+    }
+
     getAttributesLinkedToProps(){
         return [
             'enabled',

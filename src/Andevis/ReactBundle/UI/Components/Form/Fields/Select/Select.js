@@ -5,11 +5,16 @@ import {FieldBase, formFieldWrapper } from "@AndevisReactBundle/UI/Components/Fo
 import InputWrapper from "@AndevisReactBundle/UI/Components/Form/InputWrapper";
 import { Component } from "@AndevisReactBundle/UI/ComponentBase";
 import PropTypes from "prop-types";
+import View from "@AndevisReactBundle/UI/Components/View/View";
 
 class SelectBase extends FieldBase {
     static propTypes = Object.assign({}, FieldBase.propTypes, {
         options: PropTypes.array,
         selectProps: PropTypes.object
+    });
+
+    static contextTypes = Object.assign({}, FieldBase.contextTypes, {
+        form: PropTypes.object,
     });
 
     static defaultProps = Object.assign({}, FieldBase.defaultProps, {
@@ -109,20 +114,18 @@ class SelectBase extends FieldBase {
         }, this.props.selectProps);
     }
 
-    componentWillReceiveBackendState(nextState) {
-        super.componentWillReceiveBackendState(nextState);
+    componentDidReceiveBackendState(prevState) {
+        super.componentDidReceiveBackendState(prevState);
         const optionsAttrName = this.getAttributeStateName('options');
-        if(nextState.hasOwnProperty(optionsAttrName)){
-            this.setAttributes({
-                options: nextState[optionsAttrName]
-            });
+        if(this.state.hasOwnProperty(optionsAttrName)){
+            this.setAttributes({ options: this.state[optionsAttrName] });
         }
     }
 
     render() {
         return (
             <InputWrapper {...this.getFieldWrapperProps()}>
-                <select {...this.getFieldControlProps()}>
+                <select ref={(ref) => this.selectInput = ref } {...this.getFieldControlProps()}>
                     {this.options.map((option, i) =>
                          <option key={i} value={option.value}>{option.text}</option>
                      )}
