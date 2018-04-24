@@ -42,7 +42,7 @@ class SelectBase extends FieldBase {
 
     /**
      * Add options
-     * @param text
+     * @param text // TODO: refactor rename it to label
      * @param value
      * @param data
      */
@@ -126,9 +126,13 @@ class SelectBase extends FieldBase {
         return (
             <InputWrapper {...this.getFieldWrapperProps()}>
                 <select ref={(ref) => this.selectInput = ref } {...this.getFieldControlProps()}>
-                    {this.options.map((option, i) =>
-                         <option key={i} value={option.value}>{option.text}</option>
-                     )}
+                    {this.options.map((option, i) => {
+                        const optionProps = {
+                            value: option.value,
+                            disabled: option.hasOwnProperty('disabled') ? option.disabled : null
+                        }
+                        return <option key={i} {...optionProps}>{option.text}</option>;
+                    })}
                 </select>
             </InputWrapper>
         );

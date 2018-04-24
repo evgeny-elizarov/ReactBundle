@@ -4,6 +4,7 @@ import Form from "@AndevisReactBundle/UI/Components/Form/Form";
 import Text from "@AndevisReactBundle/UI/Components/Form/Fields/Text/Text";
 import Button from "@AndevisReactBundle/UI/Components/Button/Button";
 import ExampleBaseView from "@AndevisReactBundle/UI/Views/ExampleBaseView";
+import Select from "@AndevisReactBundle/UI/Components/Form/Fields/Select/Select";
 
 export default class ExampleForm extends ExampleBaseView {
 
@@ -24,7 +25,12 @@ export default class ExampleForm extends ExampleBaseView {
                 <Form name="formExample" defaultValues={{
                     test: 'aaa'
                 }}>
-                    <Text field="test" />
+                    <Select field="testSelect" options={[
+                        { value: '', text: 'Default'},
+                        { value: 'Y', text: 'Yes'},
+                        { value: 'N', text: 'No'},
+                    ]}/>
+                    <Text field="testText" />
                     <Button type="submit" />
                 </Form>
                 <pre>

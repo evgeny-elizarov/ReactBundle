@@ -32,15 +32,17 @@ class Select extends FormInputBase
      * Add option
      * @param $value
      * @param $text
-     * @param null $data
+     * @param bool $disabled
+     * @param null $data - Extra data
      * @internal param array $extraData
      */
-    function addOption($value, $text, $data = null)
+    function addOption($value, $text, $disabled = false, $data = null)
     {
         $options = $this->getOptions();
         array_push($options, [
             'value' => $value,
             'text' => $text,
+            'disabled' => $disabled,
             'data' => $data
         ]);
         $this->setOptions($options);

@@ -73,5 +73,7 @@
     "webpack-dashboard": "^0.3.0",
     "webpack-dev-server": "^2.4.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "why-did-you-update": "^0.1.1"
+  }
 }

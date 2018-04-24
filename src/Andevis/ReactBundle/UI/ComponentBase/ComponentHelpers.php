@@ -9,6 +9,7 @@
 namespace Andevis\ReactBundle\UI\ComponentBase;
 
 
+use Andevis\HelperBundle\Service\NormalizedEntityManager;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\DependencyInjection\Container;
@@ -77,6 +78,25 @@ trait ComponentHelpers
     protected function get($id)
     {
         return $this->container->get($id);
+    }
+
+
+    /**
+     * Shortcut function to get Doctrine entity manager
+     * @return \Doctrine\ORM\EntityManager|object
+     * @throws \Exception
+     */
+    function getEntityManager(){
+        return $this->get('doctrine.orm.entity_manager');
+    }
+
+    /**
+     * Shortcut function to get normalized entity manager
+     * @return \Andevis\HelperBundle\Service\NormalizedEntityManager|object
+     * @throws \Exception
+     */
+    function getNormalizedEntityManager(){
+        return $this->get('andevis.helper.normalized_entity_manager');
     }
 
 }

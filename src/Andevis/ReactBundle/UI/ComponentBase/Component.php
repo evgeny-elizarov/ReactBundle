@@ -8,7 +8,6 @@
 
 namespace Andevis\ReactBundle\UI\ComponentBase;
 
-use Andevis\HelperBundle\Service\NormalizedEntityManager;
 use Andevis\ReactBundle\GraphQL\InputType\EventInputType;
 use Andevis\ReactBundle\GraphQL\Type\EventResponseType;
 use Andevis\ReactBundle\GraphQL\MutationResolveConfig;
@@ -17,9 +16,6 @@ use Andevis\ReactBundle\UI\Translation\TranslationTrait;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 
 define('COMPONENT_MOUNTED', 1);
@@ -542,21 +538,6 @@ abstract class Component implements ComponentInterface
         ];
     }
 
-    /**
-     * Shortcut function to get Doctrine entity manager
-     * @return \Doctrine\ORM\EntityManager|object
-     */
-    function getEntityManager(){
-        return $this->container->get('doctrine.orm.entity_manager');
-    }
-
-    /**
-     * Shortcut function to get normalized entity manager
-     * @return NormalizedEntityManager
-     */
-    function getNormalizedEntityManager(){
-        return $this->container->get('andevis.helper.normalized_entity_manager');
-    }
 
 
 

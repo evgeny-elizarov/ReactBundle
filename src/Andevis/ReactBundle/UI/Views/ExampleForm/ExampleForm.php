@@ -13,9 +13,16 @@ use Andevis\ReactBundle\UI\Views\ExampleBaseView;
 
 class ExampleForm extends ExampleBaseView
 {
-    function formExample_onSubmit(Form $form, array $values){
-        $this->setState([
-           'testBuffer' => $values
+    function formExample_onDidMount(Form $form)
+    {
+        $form->setValues([
+            'testSelect' => 'Y',
+            'testText' => 'Y'
         ]);
     }
+//    function formExample_onSubmit(Form $form, array $values){
+//        $this->setState([
+//           'testBuffer' => $values
+//        ]);
+//    }
 }
