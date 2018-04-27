@@ -235,3 +235,10 @@
     margin-top: 37px;
   }
 }
+
+// Fix overflow for datetime picker in window
+.component-window{
+  .dateTime-form-component .rdtPicker{
+    position: fixed;
+  }
+}
