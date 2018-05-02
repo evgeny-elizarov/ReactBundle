@@ -38,31 +38,11 @@ export default class ComponentEvent {
         const eventComponent = this.component;
         const eventArguments = this.arguments;
         eventArguments.unshift(this.component);
-
         return new Promise((resolve, reject) => {
             (async () => {
                 let eventResult = null;
-                // // Set component attribute event processing
-                // let newState = {};
-                // newState[this.getAttributeStateName('eventProcessing')] = true;
-                // await this.setState(newState);
-
-                //
-                // Prepare state
-                //
-                // let componentsUpdatedState = {};
-                // componentsUpdatedState[this.getId()] = {};
-                // componentsUpdatedState[this.getId()][this.getAttributeStateName('eventProcessing')] = false;
-                //
-                // // TODO: move it do didMount method
-                // if (eventName === 'didMount')
-                //     componentsUpdatedState[this.getId()][this.getAttributeStateName('mounted')] = true;
-                //
-                // let componentsUpdatesOrder = [];
-                // componentsUpdatesOrder.push(this.getId());
-
                 /** @var View **/
-                const view = this.component.getView();
+                const view = eventComponent.getView();
 
                 // ------------------------------------------
                 //                  AFTER
@@ -70,11 +50,12 @@ export default class ComponentEvent {
                 //
                 // 1.1 Call internal method  event handler
                 //
+
                 const internalBeforeUserHandlerName  = 'before' + ucfirst(eventName);
-                if (typeof this.component[internalBeforeUserHandlerName] === 'function') {
+                if (typeof eventComponent[internalBeforeUserHandlerName] === 'function') {
                     // check if canceled
                     if(this.canceled) return;
-                    eventResult = await this.component[internalBeforeUserHandlerName].apply(view, eventArguments);
+                    eventResult = await eventComponent[internalBeforeUserHandlerName].apply(eventComponent, eventArguments);
                     if(this.canceled) return;
                 }
 
@@ -82,13 +63,11 @@ export default class ComponentEvent {
                 // 1.2 Call frontend before user event handler
                 //
                 // console.log(this.getId(), this.getName(), eventName, "step 1 before");
-                const viewBeforeUserHandlerName = this.component.getName() + '_before' + ucfirst(eventName);
+                const viewBeforeUserHandlerName = eventComponent.getName() + '_before' + ucfirst(eventName);
 
                 if (typeof view[viewBeforeUserHandlerName] === 'function') {
 
-
                     // arguments[0] = this;
-
                     // check if canceled
                     if(this.canceled) return;
 
@@ -104,8 +83,8 @@ export default class ComponentEvent {
                 //
                 // 1.3 Call frontend added before event listeners
                 //
-                if(this.component.eventListeners && this.component.eventListeners.hasOwnProperty('before' + ucfirst(eventName))) {
-                    this.component.eventListeners['before' + ucfirst(eventName)].fireArray(eventArguments);
+                if(eventComponent.eventListeners && eventComponent.eventListeners.hasOwnProperty('before' + ucfirst(eventName))) {
+                    eventComponent.eventListeners['before' + ucfirst(eventName)].fireArray(eventArguments);
                 }
 
 
@@ -123,13 +102,13 @@ export default class ComponentEvent {
                 //
                 // console.log(this.component.getName(), eventName, "step 2 on:frontend");
                 const propsUserHandlerName  = 'on' + ucfirst(eventName);
-                if (this.component.props.hasOwnProperty(propsUserHandlerName)) {
+                if (eventComponent.props.hasOwnProperty(propsUserHandlerName)) {
 
                     // check if canceled
                     if(this.canceled) return;
 
                     // arguments[0] = this;
-                    eventResult = await this.component.props[propsUserHandlerName].apply(view, eventArguments);
+                    eventResult = await eventComponent.props[propsUserHandlerName].apply(view, eventArguments);
 
                     if(this.canceled) return;
 
@@ -146,10 +125,10 @@ export default class ComponentEvent {
                 // 2.2 Call internal method  event handler
                 //
                 const internalUserHandlerName  = 'on' + ucfirst(eventName);
-                if (typeof this.component[internalUserHandlerName] === 'function') {
+                if (typeof eventComponent[internalUserHandlerName] === 'function') {
                     // check if canceled
                     if(this.canceled) return;
-                    eventResult = await this.component[internalUserHandlerName].apply(view, eventArguments);
+                    eventResult = await eventComponent[internalUserHandlerName].apply(view, eventArguments);
 
                     if(this.canceled) return;
                 }
@@ -157,7 +136,7 @@ export default class ComponentEvent {
                 //
                 // 2.3 Call frontend user event handler
                 //
-                const viewUserHandlerName = this.component.getName() + '_on' + ucfirst(eventName);
+                const viewUserHandlerName = eventComponent.getName() + '_on' + ucfirst(eventName);
                 // console.log(this.component.getName(), eventName, "step 2 on:frontend");
                 if (typeof view[viewUserHandlerName] === 'function') {
                     // console.log("!!", view, viewUserHandlerName, this.component, this.component.getView(), typeof view[viewUserHandlerName], "aaa");
@@ -180,8 +159,8 @@ export default class ComponentEvent {
                 //
                 // 2.4 Call frontend added event listeners
                 //
-                if(this.component.eventListeners && this.component.eventListeners.hasOwnProperty(eventName)) {
-                    this.component.eventListeners[eventName].fireArray(eventArguments);
+                if(eventComponent.eventListeners && eventComponent.eventListeners.hasOwnProperty(eventName)) {
+                    eventComponent.eventListeners[eventName].fireArray(eventArguments);
                 }
 
                 //
@@ -195,13 +174,13 @@ export default class ComponentEvent {
                 //
                 // 3.1 Call backend user event handler (if exists)
                 //
-                if(this.component.allowCallEventBackend(eventName)) {
+                if(eventComponent.allowCallEventBackend(eventName)) {
 
 
 
                     let componentsUpdatedState = {};
                     let componentsUpdatesOrder = [];
-                    componentsUpdatesOrder.push(this.component.getId());
+                    componentsUpdatesOrder.push(eventComponent.getId());
 
                     // Prepare event arguments
                     let queryArgs = {
@@ -280,16 +259,16 @@ export default class ComponentEvent {
                         // console.log(this.component.getName(), eventName, "B", queryArgs);
                         // TODO move backend resolveEvent functionality to ComponentEvent class
                         // queryResult = await this.component.backend.resolveEvent(queryArgs);
-                        await this.component.setAttributes({ backendEventProcessing: true });
-                        queryResult = await this.component._requestBackend("resolveEvent", queryArgs);
-                        await this.component.setAttributes({ backendEventProcessing: false });
+                        await eventComponent.setAttributes({ backendEventProcessing: true });
+                        queryResult = await eventComponent._requestBackend("resolveEvent", queryArgs);
+                        await eventComponent.setAttributes({ backendEventProcessing: false });
                         if(queryResult['userError']){
                             MsgBox(queryResult['userError'], MsgBox.Type.OKOnly | MsgBox.Type.Exclamation | MsgBox.Type.SystemModal, i18n(exceptionMessages.userError));
                         }
 
                     } catch (e) {
                         // console.log("!!!!!!!");
-                        await this.component.setAttributes({ backendEventProcessing: false });
+                        await eventComponent.setAttributes({ backendEventProcessing: false });
                         console.error(e.message);
                         if(!this.canceled) reject(e);
                         return;
@@ -364,10 +343,10 @@ export default class ComponentEvent {
                 // 4.1 Call internal method  event handler
                 //
                 const internalAfterUserHandlerName  = 'after' + ucfirst(eventName);
-                if (typeof this.component[internalAfterUserHandlerName] === 'function') {
+                if (typeof eventComponent[internalAfterUserHandlerName] === 'function') {
                     // check if canceled
                     if(this.canceled) return;
-                    eventResult = await this.component[internalAfterUserHandlerName].apply(view, eventArguments);
+                    eventResult = await eventComponent[internalAfterUserHandlerName].apply(view, eventArguments);
                     if(this.canceled) return;
                 }
 
@@ -378,9 +357,9 @@ export default class ComponentEvent {
                 if(this.canceled) return;
 
                 //console.log(this.getName(), eventName, "step 4 after:frontend");
-                const viewAfterUserHandlerName = this.component.getName() + '_after' + ucfirst(eventName);
+                const viewAfterUserHandlerName = eventComponent.getName() + '_after' + ucfirst(eventName);
                 if (typeof view[viewAfterUserHandlerName] === 'function') {
-                    let afterArguments = [this.component, eventResult];
+                    let afterArguments = [eventComponent, eventResult];
                     eventResult = await view[viewAfterUserHandlerName].apply(view, afterArguments);
                     // needCallBackend = (ret !== false);
                     // If backend return false, skip frontend event callbacks
@@ -395,8 +374,8 @@ export default class ComponentEvent {
                 //
                 // 4.3 Call frontend added before event listeners
                 //
-                if(this.component.eventListeners && this.component.eventListeners.hasOwnProperty('after' + ucfirst(eventName))) {
-                    this.component.eventListeners['after' + ucfirst(eventName)].fireArray(eventArguments);
+                if(eventComponent.eventListeners && eventComponent.eventListeners.hasOwnProperty('after' + ucfirst(eventName))) {
+                    eventComponent.eventListeners['after' + ucfirst(eventName)].fireArray(eventArguments);
                 }
 
                 //
@@ -425,79 +404,4 @@ export default class ComponentEvent {
 
         });
     }
-
-    //
-    // /**
-    //  * Add user complete callback
-    //  */
-    // onSuccess(userCallback){
-    //     if(typeof userCallback !== 'function')
-    //         throw new Error('Event user callback must be a function!');
-    //     this.onSuccessCallbackStack.push(userCallback);
-    // }
-    //
-    // onError(userCallback){
-    //     if(typeof userCallback !== 'function')
-    //         throw new Error('Event user callback must be a function!');
-    //     this.onErrorCallbackStack.push(userCallback);
-    // }
-    //
-    // preventBackend(){
-    //     this.preventBackendCall = true;
-    // }
-    //
-    // frontendCompleted(){
-    //     this.isFrontendCompleted = true;
-    // }
-    //
-    // backendCompleted(){
-    //     this.isBackendCompleted = true;
-    // }
-    //
-    // preventDefault(){
-    //     this.preventDefault = true;
-    // }
-    //
-    // runSuccessCallbacks(){
-    //     if(this.onSuccessCallbackStack){
-    //         for (let i in this.onSuccessCallbackStack){
-    //             if(this.onSuccessCallbackStack.hasOwnProperty(i)){
-    //                 const callback = this.onSuccessCallbackStack[i];
-    //                 try{
-    //                     callback(this);
-    //                 } catch (error){
-    //                     this.runErrorCallbacks(error);
-    //                     break;
-    //                 }
-    //
-    //                 if(this.preventDefault){
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-    //
-    // runErrorCallbacks(error){
-    //     if(this.onErrorCallbackStack){
-    //         for (let i in this.onErrorCallbackStack){
-    //             if(this.onErrorCallbackStack.hasOwnProperty(i)){
-    //                 const callback = this.onErrorCallbackStack[i];
-    //                 try{
-    //                     callback(this, error);
-    //                 } catch (error2){
-    //                     console.error(error2.getMessage());
-    //                     break;
-    //                 }
-    //                 if(this.preventDefault){
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-    //
-    // eventCompleted(){
-    //     this.runSuccessCallbacks();
-    // }
 }

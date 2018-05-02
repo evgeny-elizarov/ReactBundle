@@ -17,6 +17,7 @@ export default class ApiRequestIndicator extends ProgressBar {
     }
 
     componentDidMount(){
+        super.componentDidMount();
 
         // Catch API request begin
         this.subscribeOnEvent('apiOperationBegin', () => {

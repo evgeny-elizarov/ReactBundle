@@ -48,17 +48,20 @@ export default class Tabs extends Component {
     }
 
     componentDidMount(){
+        super.componentDidMount();
         const tabIndex = this.getSelectedTabIndexFromUrl();
         if(tabIndex) {
             this.setAttributes({
                 selectedTabIndex: tabIndex
-            }).then(() => {
-                super.componentDidMount();
             });
+            // });.then(() => {
+            //     super.componentDidMount();
+            // });
 
-        } else {
-            super.componentDidMount();
         }
+        // else {
+        //     super.componentDidMount();
+        // }
     }
 
     eventList(){

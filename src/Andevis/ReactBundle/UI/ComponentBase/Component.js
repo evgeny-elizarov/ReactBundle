@@ -47,11 +47,14 @@ export default class Component extends React.Component {
         this.name = null;
         this.index = this.props.index;
 
-        // If mounted flag
+        // If registered in view
+        this._registeredInView = false;
+
+        // If is mounted
         this._mounted = false;
 
         // Private can change state flag
-        this._canChangeState = true;
+        this._canChangeState = false;
 
         this.processingEvents = [];
 
@@ -101,6 +104,14 @@ export default class Component extends React.Component {
         this.eventListeners = {};
         this.subscriptionOnEvents = {};
 
+    }
+
+    /**
+     * Return true if component mounted
+     * @return {boolean}
+     */
+    isMounted(){
+        return this._mounted;
     }
 
     /**
@@ -389,8 +400,8 @@ export default class Component extends React.Component {
      * Promised set state
      * @param newState
      */
-    promisedSetState(newState)
-    {
+    @autobind
+    promisedSetState(newState) {
         return new Promise((resolve) => {
             if(this._canChangeState) {
                 this.setState(newState, () => {
@@ -502,8 +513,8 @@ export default class Component extends React.Component {
     }
 
     componentWillMount() {
-        this.getView().mountComponent(this);
-        this._mounted = true;
+        this.getView().registerComponent(this);
+        this._registeredInView = true;
     }
 
     /*******************
@@ -512,7 +523,9 @@ export default class Component extends React.Component {
      *
      */
     componentDidMount() {
-        this.didMount()
+        this._canChangeState = true;
+        this._mounted = true;
+        this.didMount();
     }
 
     @autobind
@@ -520,9 +533,9 @@ export default class Component extends React.Component {
         return this.fireEvent('didMount');
     }
 
-    beforeDidMount(component){};
+    // beforeDidMount(component){};
     onDidMount(component){};
-    afterDidMount(component){};
+    // afterDidMount(component){};
 
     /******************************
      *
@@ -554,9 +567,9 @@ export default class Component extends React.Component {
         return this.fireEvent('willReceiveProps', nextProps);
     }
 
-    beforeWillReceiveProps(component, nextProps) {}
+    // beforeWillReceiveProps(component, nextProps) {}
     onWillReceiveProps(component, nextProps) {}
-    afterWillReceiveProps(component, nextProps) {}
+    // afterWillReceiveProps(component, nextProps) {}
 
 
     /***************************
@@ -598,15 +611,17 @@ export default class Component extends React.Component {
      *
      */
     componentWillUnmount() {
+        this._canChangeState = false;
         this.unsubscribeAllEvents();
         this.clearAllEventListeners();
         this.willUnmount().then(() => {
             this.processingEvents.forEach((event) => {
                 event.cancel();
             });
+            this.getView().unregisterComponent(this);
             this._canChangeState = false;
+            this._registeredInView = false;
             this._mounted = false;
-            this.getView().unmountComponent(this);
         });
     }
 
@@ -671,6 +686,7 @@ export default class Component extends React.Component {
      * @returns {Promise}
      */
     fireEvent() {
+
         if(arguments.length === 0)
             throw new Error('Event name not set!');
 
@@ -685,13 +701,15 @@ export default class Component extends React.Component {
 
         const eventName = args.shift();
 
-        if(!this._mounted){
-            console.warn('Can`t fire event `'+eventName+'` for unmounted component `' + this.getName() + '`');
+        if(!this._registeredInView){
+            console.warn('Can`t fire event `'+eventName+'` for un registered component `' + this.getName() + '`');
             return new Promise((resolve, reject) => {
                 reject();
             });
         }
-
+        if(!this.isMounted()){
+            console.warn("Was fired event `" + eventName + "` for component `"+this.getName()+"` that not mounted");
+        }
         const event = new ComponentEvent(this, eventName, args);
         this.processingEvents.push(event);
         return event.getPromise();
