@@ -17,7 +17,7 @@ export default class Tabs extends Component {
     });
 
     static defaultProps = Object.assign({}, Component.defaultProps, {
-        defaultIndex: 0,
+        defaultIndex: null,
         forceRenderTabPanel: true
     });
 
@@ -48,7 +48,11 @@ export default class Tabs extends Component {
     }
 
     componentDidMount(){
-        const tabIndex = this.getSelectedTabIndexFromUrl();
+        const tabIndexFromURL = this.getSelectedTabIndexFromUrl();
+        const selectedTabIndex = this.selectedTabIndex;
+
+        //Prefer selectedTabIndex. It's can be customed by user. If no selectedTabIndex, then use tabIndexFromURL. If no tabIndexFromURL, then 0
+        const tabIndex = (selectedTabIndex != null) ? selectedTabIndex : (tabIndexFromURL ? tabIndexFromURL : 0);
         if(tabIndex) {
             this.setAttributes({
                 selectedTabIndex: tabIndex
@@ -155,7 +159,7 @@ export default class Tabs extends Component {
             // 'selectedIndex',
         ]), {
             onSelect: this.handleSelectTab,
-            selectedIndex: this.selectedTabIndex,
+            selectedIndex: this.selectedTabIndex ? this.selectedTabIndex : 0,
         });
         return (
             <ReactTabs {...tabProps}>{this.props.children}</ReactTabs>
