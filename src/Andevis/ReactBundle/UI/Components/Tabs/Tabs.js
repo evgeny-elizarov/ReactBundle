@@ -48,6 +48,7 @@ export default class Tabs extends Component {
     }
 
     componentDidMount(){
+        super.componentDidMount();
         const tabIndexFromURL = this.getSelectedTabIndexFromUrl();
         const selectedTabIndex = this.selectedTabIndex;
 
@@ -56,13 +57,15 @@ export default class Tabs extends Component {
         if(tabIndex) {
             this.setAttributes({
                 selectedTabIndex: tabIndex
-            }).then(() => {
-                super.componentDidMount();
             });
+            // });.then(() => {
+            //     super.componentDidMount();
+            // });
 
-        } else {
-            super.componentDidMount();
         }
+        // else {
+        //     super.componentDidMount();
+        // }
     }
 
     eventList(){

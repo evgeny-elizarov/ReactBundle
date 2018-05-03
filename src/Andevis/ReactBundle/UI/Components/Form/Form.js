@@ -94,7 +94,7 @@ export default class Form extends Component {
      */
     @autobind
     change(formState) {
-        return this.fireEvent('change', formState.values);
+        return this.fireEvent('change', formState);
     }
 
     /**

@@ -319,10 +319,10 @@ export default class View extends Component
 
 
     /**
-     * Mount component to view
+     * Register component to view
      * @param component
      */
-    mountComponent(component){
+    registerComponent(component){
 
         if(this.componentsById.hasOwnProperty(component.getId())){
             throw new Error('Component with ID `'+component.getId()+'` is already registered!');
@@ -359,10 +359,10 @@ export default class View extends Component
     }
 
     /**
-     * Unmount component from view
+     * Un register component from view
      * @param component
      */
-    unmountComponent(component){
+    unregisterComponent(component){
         if(!this.componentsById.hasOwnProperty(component.getId())){
             throw new Error('Component with ID `'+ component.getName() + '` not registered in view `'+this.constructor.name+'`!');
         }

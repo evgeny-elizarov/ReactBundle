@@ -28,7 +28,7 @@ const fieldTypes = {
     warning: PropTypes.string,
     success: PropTypes.string,
     autoComplete: PropTypes.string
-}
+};
 
 const formFieldWrapper = (WrappedComponent) => {
     class FormField extends React.Component {
@@ -267,7 +267,7 @@ class FieldBase extends Component {
         if(event){
             return this.fireEvent('focus').then(() => this.setAttributes({hasFocus: true }) );
         } else {
-            if ( document.activeElement !== ReactDOM.findDOMNode(this.refInput) ) {
+            if (this.refInput && document.activeElement !== ReactDOM.findDOMNode(this.refInput) ) {
                 this.refInput.focus();
             }
             // if(this.refInput)
