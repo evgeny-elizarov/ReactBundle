@@ -32,6 +32,7 @@ class AutoCompleteBase extends TextBase {
         // useCache: PropTypes.bool,
 
         renderItem: PropTypes.func,
+        renderMenu: PropTypes.func,
         inputProps: PropTypes.object,
         selectOnBlur: PropTypes.bool,
         menuStyle: PropTypes.object,
@@ -293,9 +294,10 @@ class AutoCompleteBase extends TextBase {
     renderMenu(items, value, style) {
         return (
             <div className="autoComplete-form-component-menu" style={style}>
-                {this.isLoading ? '...'+i18n(messages.loading) : (
-                    (!this.dataSource || this.dataSource.length == 0) ?
-                        i18n(messages.empty) : items
+                {this.props.renderMenu ? this.props.renderMenu(items, value, style) : (
+                    this.isLoading ? '...'+i18n(messages.loading) : (
+                        (!items || items.length == 0) ? i18n(messages.empty) : items
+                    )
                 )}
             </div>
         );
@@ -349,7 +351,7 @@ class AutoCompleteBase extends TextBase {
     @autobind
     handleKeyDown(event){
         const value = event.target.value;
-        if(this.props.fetchOnEnter && event.key === 'Enter'){
+        if(this.props.fetchOnEnter && event.key === 'Enter' && (!event.ctrlKey && !event.shiftKey && !event.altKey)){
             event.preventDefault();
             if(this.autoComplete && this.autoComplete.state.highlightedIndex !== null) return;
             // const needFetch = (this.value !== '' || this.text !== e.target.value);
