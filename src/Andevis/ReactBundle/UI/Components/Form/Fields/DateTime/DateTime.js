@@ -17,6 +17,7 @@ class DateTimeBase extends FieldBase {
         valueDateTimeFormat: PropTypes.string,
         timeFormat: PropTypes.any,
         inputProps: PropTypes.object,
+        isValidDate: PropTypes.any
         // closeOnSelect: PropTypes.bool
     });
 
@@ -161,6 +162,7 @@ class DateTimeBase extends FieldBase {
                 inputProps: inputProps,
                 onChange: this.handleDateTimeChangeEvent,
                 onBlur: this.handleDateTimeBlurEvent,
+                isValidDate: this.props.isValidDate,
                 // renderInput: (props, openCalendar, closeCalendar) => {
                 //     return (
                 //         <div>
