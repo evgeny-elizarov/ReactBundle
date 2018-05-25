@@ -37,6 +37,7 @@ class AutoCompleteBase extends TextBase {
         selectOnBlur: PropTypes.bool,
         menuStyle: PropTypes.object,
         isItemSelectable: PropTypes.func,
+        shouldItemRender: PropTypes.func
     });
 
     static defaultProps = Object.assign({}, TextBase.defaultProps, {
@@ -461,7 +462,7 @@ class AutoCompleteBase extends TextBase {
                 wrapperStyle: {}
 
             }, filterObjectByKeys(this.props, [
-                'wrapperStyle', 'renderMenu'
+                'wrapperStyle', 'renderMenu', 'shouldItemRender'
             ]));
             return attr;
         }
