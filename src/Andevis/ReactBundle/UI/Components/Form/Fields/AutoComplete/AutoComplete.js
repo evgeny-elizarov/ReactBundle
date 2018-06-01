@@ -150,6 +150,9 @@ class AutoCompleteBase extends TextBase {
                     isLoading: false,
                     dataSource: data
                 });
+                if(data.length === 1) {
+                    this.handleSelectOption(null, data[0]);
+                }
                 return data;
             });
     }
