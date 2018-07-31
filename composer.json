@@ -1,7 +1,7 @@
 {
   "name": "andevis/react-bundle",
   "description": "React UI for symfony",
-  "homepage": "http://andevis.ee",
+  "homepage": "https://git.andevis.ee/Andevis/ReactBundle",
   "authors": [
     {
       "name": "Evgeny Elizarov",
@@ -10,17 +10,21 @@
   ],
   "repositories": [
     {
-      "type":"git",
-      "url":"git@git.mozart.andevis.ee:andevis/GraphQLBundle.git"
-    },
-    {
-      "type":"git",
-      "url":"git@git.mozart.andevis.ee:andevis/AuthReactBundle.git"
+      "type": "composer",
+      "url": "https://git.andevis.ee:8000/"
     }
   ],
+  "require": {
+    "andevis/auth-bundle": "^1.1.0",
+    "maba/webpack-bundle": "^1.0",
+    "overblog/graphql-bundle": "^0.11.4"
+  },
+  "require-dev": {
+    "overblog/graphiql-bundle": "^0.1.1"
+  },
   "autoload": {
-    "psr-0" : {
-      "Andevis\\ReactBundle" : "src"
+    "psr-4": {
+      "Andevis\\ReactBundle\\": "src/"
     }
   }
 }
