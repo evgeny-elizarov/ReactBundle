@@ -19,7 +19,6 @@
       "url": "https://git.andevis.ee:8000/"
     }
   ],
-  "minimum-stability": "dev",
   "require": {
     "andeivs/helper-bundle": "v2.x-dev",
     "andevis/auth-bundle": "v2.x-dev",
