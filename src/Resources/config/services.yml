@@ -16,7 +16,7 @@ services:
     # Component translation service
     andevis_react.ui_translator:
         class: Andevis\ReactBundle\Service\UITranslator
-        arguments: ['@service_container','%locale%', '%locales%']
+        arguments: ['@service_container','%locale%']
         public: true
 
     # React components

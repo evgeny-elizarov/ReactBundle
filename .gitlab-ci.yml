@@ -1,0 +1,8 @@
+stages:
+- deploy
+
+deploy:
+  stage: deploy
+  image: registry.andevis.ee/andevis/reactbundle
+  script:
+  - curl -sS -d'url=git@git.andevis.ee:Andevis/ReactBundle.git' https://git.andevis.ee:8000/api/build?secret=d5a7c0d0c897665188cd0844744e3109

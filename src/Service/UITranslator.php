@@ -37,7 +37,7 @@ class UITranslator implements ContainerAwareInterface
      * @param $locales
      * @throws \Exception
      */
-    public function __construct(Container $container, string $locale, $locales)
+    public function __construct(Container $container, string $locale)
     {
         $this->setContainer($container);
 

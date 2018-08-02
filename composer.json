@@ -15,9 +15,12 @@
     }
   ],
   "require": {
-    "andevis/auth-bundle": "^1.1.0",
+    "andeivs/helper-bundle": "v2.x-dev",
+    "andevis/auth-bundle": "v2x-dev",
+    "andevis/auth-react-bundle": "v2.x-dev",
     "maba/webpack-bundle": "^1.0",
-    "overblog/graphql-bundle": "^0.11.4"
+    "overblog/graphql-bundle": "^0.11.4",
+    "symfony/translation": "^4.1"
   },
   "require-dev": {
     "overblog/graphiql-bundle": "^0.1.1"
