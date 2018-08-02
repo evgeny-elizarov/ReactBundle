@@ -8,12 +8,18 @@
       "email": "evgeny@andevis.ee"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "Andevis\\ReactBundle\\": "src/"
+    }
+  },
   "repositories": [
     {
       "type": "composer",
       "url": "https://git.andevis.ee:8000/"
     }
   ],
+  "minimum-stability": "dev",
   "require": {
     "andeivs/helper-bundle": "v2.x-dev",
     "andevis/auth-bundle": "v2.x-dev",
@@ -24,10 +30,5 @@
   },
   "require-dev": {
     "overblog/graphiql-bundle": "^0.1.1"
-  },
-  "autoload": {
-    "psr-4": {
-      "Andevis\\ReactBundle\\": "src/"
-    }
   }
 }
