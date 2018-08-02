@@ -20,7 +20,7 @@
     }
   ],
   "require": {
-    "andeivs/helper-bundle": "v2.x-dev",
+    "andeivs/helper-bundle": "dev-master",
     "andevis/auth-bundle": "v2.x-dev",
     "andevis/auth-react-bundle": "v2.x-dev",
     "maba/webpack-bundle": "^1.0",
