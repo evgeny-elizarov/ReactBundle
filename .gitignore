@@ -2,4 +2,9 @@
 vendors
 node_modules
 package-lock.json
+yarn.lock
+yarn-error.log
+.composer
+composer.lock
+tmp
 
