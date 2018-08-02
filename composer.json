@@ -15,14 +15,18 @@
   },
   "repositories": [
     {
+      "type": "git",
+      "url": "git@git.andevis.ee:Andevis/HelperBundle.git"
+    },
+    {
       "type": "composer",
       "url": "https://git.andevis.ee:8000/"
     }
   ],
   "require": {
-    "andeivs/helper-bundle": "dev-master",
-    "andevis/auth-bundle": "v2.x-dev",
-    "andevis/auth-react-bundle": "v2.x-dev",
+    "andevis/helper-bundle": "^2.0",
+    "andevis/auth-bundle": "dev-master",
+    "andevis/auth-react-bundle": "dev-master",
     "maba/webpack-bundle": "^1.0",
     "overblog/graphql-bundle": "^0.11.4",
     "symfony/translation": "^4.1"
