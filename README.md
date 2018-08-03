@@ -40,3 +40,7 @@ yarn install
 ```
 function __construct($name, ?int $index, $context, $container)
 ```
+- Change requirements overblog/graphql-bundle to stable version
+```
+    "overblog/graphql-bundle": "^0.11",
+```

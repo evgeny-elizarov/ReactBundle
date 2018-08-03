@@ -27,9 +27,12 @@ class Schema extends AbstractBundleSchema
      */
     function build(SchemaConfig $config)
     {
+        global $kernel;
+        $container = $kernel->getContainer();
+
         /** @var ComponentSet $componentSet */
-        $componentSet = $this->container->get("andevis_react.component_set");
-        $container = $this->container;
+        $componentSet = $container->get("andevis_react.component_set");
+
 
         /** @var Component $component */
         foreach ($componentSet->getBundleComponentClasses() as $componentClass)
