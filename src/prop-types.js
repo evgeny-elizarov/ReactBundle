@@ -1,4 +1,4 @@
-import PropTypes from 'web/vendor/andevis/react-bundle/src/prop-types';
+import PropTypes from 'prop-types';
 export default PropTypes;
 export {
     PropTypes

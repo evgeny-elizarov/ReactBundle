@@ -17,7 +17,7 @@
     [
       "react-intl",
       {
-        "messagesDir": "./app/Resources/assets/i18n/messages"
+        "messagesDir": "./src/UI/i18n/messages"
       }
     ]
   ]
