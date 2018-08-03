@@ -36,3 +36,7 @@ yarn install
     "andevis/auth-bundle": "v2x-dev",
     "andevis/auth-react-bundle": "v2.x-dev",
 ```
+- Check backend React component initialization
+```
+function __construct($name, ?int $index, $context, $container)
+```

@@ -50,7 +50,8 @@ abstract class Component implements ComponentInterface
      * @param $context
      * @param $container
      */
-    function __construct($name, ?int $index, $context, $container)
+//    function __construct($name, ?int $index, $context, $container)
+    function __construct()
     {
         $this->name = $name;
         $this->index = $index;

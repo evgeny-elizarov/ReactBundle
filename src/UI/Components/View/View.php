@@ -26,7 +26,8 @@ class View extends Component implements ViewInterface
      * @param $container
      * @throws \Exception
      */
-    function __construct($name, ?int $index, $context, $container)
+//    function __construct($name, ?int $index, $context, $container)
+    function __construct()
     {
         if(!is_null($index)){
             throw new \Exception('View can not have an index');
