@@ -1,45 +1,81 @@
 services:
-    andevis_react.twig.react_extension:
-        class: Andevis\ReactBundle\Twig\ReactExtension
-        public: false
-        tags: [twig.extension]
-        arguments: ['@service_container']
+  andevis_react.twig.react_extension:
+    class: Andevis\ReactBundle\Twig\ReactExtension
+    public: false
+    tags: [twig.extension]
+    arguments: ['@service_container']
 
-    # Auto-builder
-    Andevis\ReactBundle\EventSubscriber\BuildSubscriber:
-        arguments: ['@service_container']
-        tags: [kernel.event_subscriber]
+  # Auto-builder
+  Andevis\ReactBundle\EventSubscriber\BuildSubscriber:
+    arguments: ['@service_container']
+    tags: [kernel.event_subscriber]
 
-    Andevis\ReactBundle\GraphQL\Schema:
-        tags: [graphql.schema]
+  Andevis\ReactBundle\GraphQL\Schema:
+    tags: [graphql.schema]
 
-    # Component translation service
-    andevis_react.ui_translator:
-        class: Andevis\ReactBundle\Service\UITranslator
-        arguments: ['@service_container','%locale%']
-        public: true
+  # Component translation service
+  andevis_react.ui_translator:
+    class: Andevis\ReactBundle\Service\UITranslator
+    arguments: ['@service_container','%locale%']
+    public: true
 
-    # React components
-#    Andevis\ReactBundle\UI\Components\:
-#        resource: '../../UI/Components/*'
-#        public: true
-#        tags: [react.components]
+  # React components
+  #    Andevis\ReactBundle\UI\Components\:
+  #        resource: '../../UI/Components/*'
+  #        public: true
+  #        tags: [react.components]
 
-    andevis_react.component_set:
-        class: Andevis\ReactBundle\UI\ComponentBase\ComponentSet
-        arguments: ['@service_container']
-        public: true
+  andevis_react.component_set:
+    class: Andevis\ReactBundle\UI\ComponentBase\ComponentSet
+    arguments: ['@service_container']
+    public: true
 
-    # Auto-register react components
-    Andevis\ReactBundle\UI\Components\:
-      resource: '../../UI/Components/*'
-      public: true
-      tags: [react.components]
-      arguments: ['@?']
+  # Auto-register react components
+  Andevis\ReactBundle\UI\Components\:
+    resource: '../../UI/Components/*'
+    public: true
+    tags: [react.components]
+    arguments: ['@?']
 
-    # Auto-register react components
-    Andevis\ReactBundle\UI\Views\:
-      resource: '../../UI/Views/*'
-      public: true
-      tags: [react.components]
-      arguments: ['@?']
+  # Auto-register react components
+  Andevis\ReactBundle\UI\Views\:
+    resource: '../../UI/Views/*'
+    public: true
+    tags: [react.components]
+    arguments: ['@?']
+
+
+  andevis_react.question_helper:
+    class: Symfony\Component\Console\Helper\QuestionHelper
+
+  andevis_react.install_assets_helper:
+    class: Andevis\ReactBundle\Command\InstallAssetsHelper
+    public: true
+    arguments: ['@andevis_react.question_helper', "@=service('kernel').locateResource('@AndevisReactBundle')"]
+
+  # COMMANDS:
+  andevis_react.command.install_node_modules:
+    class: Andevis\ReactBundle\Command\InstallNodeModulesCommand
+    arguments: ['@andevis_react.install_assets_helper']
+    tags:
+    - { name: 'console.command', command: 'andevis:react:install-node-modules' }
+
+
+#      <service id="maba_webpack.command.install_node_modules"
+#      class="Maba\Bundle\WebpackBundle\Command\InstallNodeModulesCommand">
+#      <tag name="console.command" command="maba:webpack:install-node-modules"/>
+#
+#      <argument type="service">
+#      <service class="Maba\Bundle\WebpackBundle\Command\InstallAssetsHelper">
+#      <argument type="service">
+#      <service class="Symfony\Component\Console\Helper\QuestionHelper"/>
+#      </argument>
+#      <argument>%maba_webpack.bin.working_directory%</argument>
+#      <argument>%maba_webpack.bin.disable_tty%</argument>
+#
+#      <call method="setInstallWithoutAsking">
+#      <argument>true</argument>
+#      </call>
+#      </service>
+#      </argument>
+#      </service>
