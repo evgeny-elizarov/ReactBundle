@@ -27,6 +27,7 @@
     "andevis/helper-bundle": "^2.0",
     "andevis/auth-bundle": "dev-master",
     "andevis/auth-react-bundle": "dev-master",
+    "andevis/graph-gl-bundle": "dev-master",
     "overblog/graphql-bundle": "^0.11.0@dev",
     "maba/webpack-bundle": "^1.0",
     "symfony/translation": "^4.1"
