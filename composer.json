@@ -24,7 +24,7 @@
     }
   ],
   "require": {
-    "andevis/helper-bundle": "^2.0",
+    "andevis/helper-bundle": "dev-master",
     "andevis/auth-bundle": "dev-master",
     "andevis/auth-react-bundle": "dev-master",
     "andevis/graph-ql-bundle": "dev-master",
