@@ -10,8 +10,8 @@ services:
     arguments: ['@service_container']
     tags: [kernel.event_subscriber]
 
-  Andevis\ReactBundle\GraphQL\Schema:
-    tags: [graphql.schema]
+#  Andevis\ReactBundle\GraphQL\Schema:
+#    tags: [graphql.schema]
 
   # Component translation service
   andevis_react.ui_translator:
